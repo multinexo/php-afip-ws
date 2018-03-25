@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSMTXCA;
+namespace Multinexo\Afip\WSMTXCA;
 
-use Reyesoft\Afip\Exceptions\WsException;
+use Multinexo\Afip\Exceptions\WsException;
 
 /**
  * Class ManejadorResultados.
@@ -30,12 +30,11 @@ class ManejadorResultados
         $errores = null;
         //Porque el error viene de otra forma si existe message
         if (!property_exists($resultado, 'message')) {
-            $errores =
-                isset($resultado->arrayErrores) ?
-                    (isset($resultado->arrayErrores->codigoDescripcion) ?
-                        $resultado->arrayErrores->codigoDescripcion
-                        : $resultado->arrayErrores)
-                    : null;
+            $errores = isset($resultado->arrayErrores) ?
+                (isset($resultado->arrayErrores->codigoDescripcion) ?
+                    $resultado->arrayErrores->codigoDescripcion
+                    : $resultado->arrayErrores)
+                : null;
         } else {
             $errores = $resultado->getMessage();
         }

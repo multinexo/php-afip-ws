@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Tests;
+namespace Multinexo\Afip\Tests;
 
-use Reyesoft\Afip\WSPN3\Wspn3;
+use Multinexo\Afip\WSPN3\Wspn3;
 
 class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
 {
@@ -39,11 +39,11 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
         $config = [
             'dir' => [
                     // @todo fix path
-                    'xml_generados' => '/storage/Afip/'.$filename.'/xml_generated/',
+                    'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
                 ],
             'archivos' => [
                     'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Reyesoft/Afip/WSAA/wsaa.wsdl',
-                    'certificado' => 'storage/Afip/'.$filename.'/'.$filename.'.crt',
+                    'certificado' => 'storage/Afip/' . $filename . '/' . $filename . '.crt',
                     'clavePrivada' => 'storage/Afip/privateKey',
                 ],
             'cuit' => '20327936221',
@@ -54,8 +54,8 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
                     'wsaa' => 'https://wsaahomo.afip.gov.ar/ws/services/LoginCms',
                     'wsmtxca' => 'https://fwshomo.afip.gov.ar/wsmtxca/services/MTXCAService',
                     'wsfe' => 'https://wswhomo.afip.gov.ar/wsfev1/service.asmx',
-                    'wspn3' => $wsurl. 'select.ContribuyenteNivel3SelectServiceImpl',
-                    'padron-puc-ws-consulta-nivel4' => $wsurl.'select.ContribuyenteNivel4SelectServiceImpl',
+                    'wspn3' => $wsurl . 'select.ContribuyenteNivel3SelectServiceImpl',
+                    'padron-puc-ws-consulta-nivel4' => $wsurl . 'select.ContribuyenteNivel4SelectServiceImpl',
                 ],
         ];
 

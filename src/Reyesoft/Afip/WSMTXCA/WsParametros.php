@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSMTXCA;
+namespace Multinexo\Afip\WSMTXCA;
 
 class WsParametros
 {

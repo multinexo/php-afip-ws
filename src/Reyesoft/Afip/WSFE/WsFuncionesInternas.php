@@ -7,16 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSFE;
+namespace Multinexo\Afip\WSFE;
 
-use Reyesoft\Afip\Exceptions\WsException;
+use Multinexo\Afip\Exceptions\WsException;
 
-/**
- * Created by PhpStorm.
- * User: Ayelen Guerra (www.ayelenguerra.com)
- * Date: 14/03/16
- * Time: 13:59.
- */
 class WsFuncionesInternas
 {
     /**
@@ -351,7 +345,8 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados puntos de venta
+     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                           puntos de venta
      * @param int(4)     $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoConsultar($client, $authRequest, $caea, $ptoVta)
@@ -374,7 +369,8 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados puntos de venta
+     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                           puntos de venta
      * @param int(4)     $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoInformar($client, $authRequest, $caea, $ptoVta)

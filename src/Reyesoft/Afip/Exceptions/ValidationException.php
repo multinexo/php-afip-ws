@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Exceptions;
+namespace Multinexo\Afip\Exceptions;
 
 class ValidationException extends \Exception
 {

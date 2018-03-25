@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Tests;
+namespace Multinexo\Afip\Tests;
 
 /**
  * This class doesn't do much yet..

@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSFE;
+namespace Multinexo\Afip\WSFE;
 
-use Reyesoft\Afip\Exceptions\WsException;
+use Multinexo\Afip\Exceptions\WsException;
 
 /**
  * Class ManejadorResultados.

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Traits;
+namespace Multinexo\Afip\Traits;
 
 /**
  * Class General.

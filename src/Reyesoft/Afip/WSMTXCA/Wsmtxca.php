@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSMTXCA;
+namespace Multinexo\Afip\WSMTXCA;
 
 use Illuminate\Support\Facades\Log;
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\Traits\Autenticacion as TraitAutenticacion;
-use Reyesoft\Afip\Traits\Validaciones;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Validaciones;
 
 /**
  * Class Wsmtxca.
@@ -108,7 +108,7 @@ class Wsmtxca extends WsFuncionesInternas
      * @return mixed
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function consultarCAEA()
     {
@@ -146,7 +146,7 @@ class Wsmtxca extends WsFuncionesInternas
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado entre un rango de fechas.
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function consultarCAEAEntreFechas()
     {
@@ -167,7 +167,7 @@ class Wsmtxca extends WsFuncionesInternas
      * @return mixed
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function consultarComprobante()
     {

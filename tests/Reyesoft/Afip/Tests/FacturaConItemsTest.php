@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Tests;
+namespace Multinexo\Afip\Tests;
 
-use Reyesoft\Afip\Models\FacturaConItems;
+use Multinexo\Afip\Models\FacturaConItems;
 
 class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -281,8 +281,8 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_crear_comprobante_con_items_con_array_comp_asoc(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\WsException::class);
-        $this->expectExceptionMessage('Para la CUIT, Tipo de Comprobante y Punto de Ventas requeridos '.
+        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectExceptionMessage('Para la CUIT, Tipo de Comprobante y Punto de Ventas requeridos ' .
             'no se registran comprobantes en las bases del Organismo');
 
         $arrayItems = [
@@ -497,8 +497,8 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
     public function getConf()
     {
-        //        $dirAfip = '/home/aye/Documents/AFIP';
-        $dirAfip = '/var/www/html/App/storage/Afip/4c15dc21c91634c1b301de6236eb08ead86be4ae';
+        // @todo
+        $dirAfip = 'storage/Afip/4c15dc21c91634c1b301de6236eb08ead86be4ae';
 
         return [
             'dir' => [

@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip;
+namespace Multinexo\Afip;
 
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\Traits\Autenticacion as TraitAutenticacion;
-use Reyesoft\Afip\Traits\General;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\General;
 
 class Autenticacion
 {

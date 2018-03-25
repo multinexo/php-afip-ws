@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Tests;
+namespace Multinexo\Afip\Tests;
 
-use Reyesoft\Afip\Models\FacturaSinItems;
+use Multinexo\Afip\Models\FacturaSinItems;
 
 class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -113,7 +113,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_crear_factura_sin_items_con_array_opcionales(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessageRegExp('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
 
         $arrayOpcionales = [
@@ -135,7 +135,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_crear_factura_sin_items_con_errores_servidor(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
 
         $this->factura->datos = $this->getDatosFactura(1, 220.00, 0, 0, 200.00, 0);
 
@@ -144,7 +144,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_crear_factura_sin_items_con_errores_validacion(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\ValidationException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
 
         $arrayComprobantesAsociados = [
             'comprobanteAsociado' => [
@@ -221,7 +221,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_consultar_factura_con_error_servidor(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
 
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
@@ -233,7 +233,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_consultar_factura_con_error_validacion(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\ValidationException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
 
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
@@ -266,7 +266,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function test_solicitar_caea_error_vencido(): void
     {
-        $this->expectException(\Reyesoft\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessage(
             '{"Err":{"Code":15007,"Msg":"El <Periodo> 201603  se encuentra vencido para solicitar CAEA."}}'
         );

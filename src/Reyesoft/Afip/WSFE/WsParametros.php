@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSFE;
+namespace Multinexo\Afip\WSFE;
 
 class WsParametros
 {
@@ -59,9 +59,9 @@ class WsParametros
      *
      * @return array PtoVenta: Detalle de los tipos puntos de venta electrónicos:
      *               * Nro int(4) Punto de venta
-     *               * EmisionTipo string(8) Identifica si es punto de venta para CAE o CAEA
-     *               * Bloqueado string(1) Indica si el punto de  venta  esta  bloqueado. De darse esta situación se deberá
-     *               ingresar al ABM de puntos de venta a regularizar la situación Valores  S o N
+     *               * EmisionTipo string(8) Identifica si es punto de venta para CAE o CAE
+     *               * Bloqueado string(1) Indica si el punto de  venta  esta  bloqueado. De darse esta situación se
+     *               deberá ingresar al ABM de puntos de venta a regularizar la situación Valores  S o N
      *               * FchBaja string(8) Indica la fecha de baja en caso de estarlo
      */
     public function FEParamGetPtosVenta($client, $authRequest)

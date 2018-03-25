@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSFE;
+namespace Multinexo\Afip\WSFE;
 
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\Traits\Autenticacion as TraitAutenticacion;
-use Reyesoft\Afip\Traits\Validaciones;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Validaciones;
 
 /**
  * Class Wsfe.
@@ -96,7 +96,7 @@ class Wsfe extends WsFuncionesInternas
      * @return mixed
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function consultarCAEAPorPeriodo()
     {
@@ -116,7 +116,7 @@ class Wsfe extends WsFuncionesInternas
      * @return mixed
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function solicitarCAEA()
     {
@@ -136,7 +136,7 @@ class Wsfe extends WsFuncionesInternas
      * @return mixed
      *
      * @throws WsException
-     * @throws \Reyesoft\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Afip\Exceptions\ValidationException
      */
     public function consultarComprobante()
     {

@@ -7,18 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Traits;
+namespace Multinexo\Afip\Traits;
 
 use Illuminate\Support\Facades\Log;
+use Multinexo\Afip\Exceptions\ValidationException;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\WSFE\WsFuncionesInternas as WsfeFunc;
+use Multinexo\Afip\WSFE\WsParametros as FeSinItemsParam;
+use Multinexo\Afip\WSMTXCA\WsFuncionesInternas as WsmtxcaFunc;
+use Multinexo\Afip\WSMTXCA\WsParametros as FeConItemsParam;
+use Multinexo\Afip\WSPN3\WsFuncionesInternas as Wspn3Func;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
-use Reyesoft\Afip\Exceptions\ValidationException;
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\WSFE\WsFuncionesInternas as WsfeFunc;
-use Reyesoft\Afip\WSFE\WsParametros as FeSinItemsParam;
-use Reyesoft\Afip\WSMTXCA\WsFuncionesInternas as WsmtxcaFunc;
-use Reyesoft\Afip\WSMTXCA\WsParametros as FeConItemsParam;
-use Reyesoft\Afip\WSPN3\WsFuncionesInternas as Wspn3Func;
 
 /**
  * Class Validaciones.
@@ -404,9 +404,9 @@ trait Validaciones
             }, $codigos->arrayPuntosVenta->puntoVenta);
         }
         //elseif ($this->ws == 'wsfe') {
-            //            // Todo: arreglar
-            //            $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
-            //            $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
+        //            // Todo: arreglar
+        //            $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
+        //            $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
         //}
 
         return $codigos;

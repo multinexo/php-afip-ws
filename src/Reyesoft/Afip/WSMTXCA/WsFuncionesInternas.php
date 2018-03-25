@@ -7,16 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSMTXCA;
+namespace Multinexo\Afip\WSMTXCA;
 
-use Reyesoft\Afip\Exceptions\WsException;
+use Multinexo\Afip\Exceptions\WsException;
 
-/**
- * Created by PhpStorm.
- * User: Ayelen Guerra (www.ayelenguerra.com)
- * Date: 11/03/16
- * Time: 17:31.
- */
 class WsFuncionesInternas
 {
     /**
@@ -344,7 +338,7 @@ class WsFuncionesInternas
         return $comprobante;
     }
 
-    /**********************************************************************************************************************/
+    /****************************************************************************************************************/
 
     // TODO: Testar funciones
 

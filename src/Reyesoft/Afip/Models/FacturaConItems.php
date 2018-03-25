@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\Models;
+namespace Multinexo\Afip\Models;
 
-use Reyesoft\Afip\WSMTXCA\Wsmtxca;
+use Multinexo\Afip\WSMTXCA\Wsmtxca;
 
 class FacturaConItems extends Wsmtxca
 {

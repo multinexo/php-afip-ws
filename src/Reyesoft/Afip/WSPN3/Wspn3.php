@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSPN3;
+namespace Multinexo\Afip\WSPN3;
 
 use App\Helpers\GeneralHelper;
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\Traits\Autenticacion as TraitAutenticacion;
-use Reyesoft\Afip\Traits\Validaciones;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Validaciones;
 
 /**
  * Class Wspn3.

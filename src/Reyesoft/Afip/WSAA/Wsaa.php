@@ -7,10 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  */
 
-namespace Reyesoft\Afip\WSAA;
+namespace Multinexo\Afip\WSAA;
 
-use Reyesoft\Afip\Exceptions\WsException;
-use Reyesoft\Afip\Traits\General;
+use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\Traits\General;
 
 /**
  * Class wsaa
@@ -112,8 +112,12 @@ class Wsaa
             'exceptions' => 0,
         ]);
         $results = $client->loginCms(['in0' => $CMS]);
-        file_put_contents($this->configuracion->dir->xml_generados . 'request-loginCms.xml', $client->__getLastRequest());
-        file_put_contents($this->configuracion->dir->xml_generados . 'response-loginCms.xml', $client->__getLastResponse());
+        file_put_contents($this->configuracion->dir->xml_generados . 'request-loginCms.xml',
+            $client->__getLastRequest()
+        );
+        file_put_contents($this->configuracion->dir->xml_generados . 'response-loginCms.xml',
+            $client->__getLastResponse()
+        );
         if (is_soap_fault($results)) {
             throw new WsException('SOAP Fault: [' . $results->faultcode . ']: ' . $results->faultstring);
         }
@@ -142,7 +146,9 @@ class Wsaa
         /* Se verifica que exista la clave privada, el certificado y el wsaa.wsdl */
         foreach ($archivos as $archivo) {
             if (!file_exists($archivo)) {
-                throw new WsException('Error al abrir el archivo "' . basename($archivo) . PHP_EOL . '", verifique su existencia');
+                throw new WsException(
+                    'Error al abrir el archivo "' . basename($archivo) . PHP_EOL . '", verifique su existencia'
+                );
             }
         }
 
@@ -150,7 +156,8 @@ class Wsaa
         $CMS = $this->signTRA($service);
         $TA = $this->callWSAA($CMS);
 
-        if (!file_put_contents($dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml', $TA)) {
+        $filename = $dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml';
+        if (!file_put_contents($filename, $TA)) {
             throw new WsException('Hubo un error al tratar de autenticarse');
         }
 
