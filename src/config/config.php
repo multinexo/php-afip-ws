@@ -24,7 +24,7 @@ $configuracion = [
     ],
 
     'archivos' => [
-        'wsaaWsdl' => __DIR__ . '/../Reyesoft/Afip/WSAA/wsaa.wsdl',
+        'wsaaWsdl' => __DIR__ . '/../Multinexo/Afip/WSAA/wsaa.wsdl',
         'certificado' => null,
         'clavePrivada' => null,
     ],

@@ -42,7 +42,7 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
                     'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
                 ],
             'archivos' => [
-                    'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Reyesoft/Afip/WSAA/wsaa.wsdl',
+                    'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Multinexo/Afip/WSAA/wsaa.wsdl',
                     'certificado' => 'storage/Afip/' . $filename . '/' . $filename . '.crt',
                     'clavePrivada' => 'storage/Afip/privateKey',
                 ],

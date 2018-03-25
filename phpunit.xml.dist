@@ -18,7 +18,7 @@
 
     <testsuites>
         <testsuite name="Afip Webservice Test Suite">
-            <directory suffix=".php">./tests/Reyesoft/Afip/Test</directory>
+            <directory suffix=".php">./tests/Multinexo/Afip/Test</directory>
         </testsuite>
     </testsuites>
 
