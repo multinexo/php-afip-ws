@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+        targetNamespace="http://10.30.11.67/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"
+        xmlns:apachesoap="http://xml.apache.org/xml-soap"
+        xmlns:impl="http://10.30.11.67/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"
+        xmlns:intf="http://10.30.11.67/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <!--WSDL created by Apache Axis version: 1.4  Built on Apr 22, 2006 (06:55:48 PDT)-->
+    <wsdl:message name="dummyRequest">
+    </wsdl:message>
+    <wsdl:message name="dummyResponse">
+        <wsdl:part name="dummyReturn" type="soapenc:string">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getRequest">
+        <wsdl:part name="pContribuyentePK" type="soapenc:string">
+        </wsdl:part>
+        <wsdl:part name="pToken" type="soapenc:string">
+        </wsdl:part>
+        <wsdl:part name="pSign" type="soapenc:string">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getResponse">
+        <wsdl:part name="getReturn" type="soapenc:string">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="ContribuyenteNivel3SelectServiceImpl">
+        <wsdl:operation name="get" parameterOrder="pContribuyentePK pToken pSign">
+            <wsdl:input message="impl:getRequest" name="getRequest">
+            </wsdl:input>
+            <wsdl:output message="impl:getResponse" name="getResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="dummy">
+            <wsdl:input message="impl:dummyRequest" name="dummyRequest">
+            </wsdl:input>
+            <wsdl:output message="impl:dummyResponse" name="dummyResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="select.ContribuyenteNivel3SelectServiceImplSoapBinding"
+                  type="impl:ContribuyenteNivel3SelectServiceImpl">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="get">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="getRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://select.services.server.ws.impl.puc.padron.afip.gov" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="getResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://10.30.11.67/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"
+                               use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="dummy">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="dummyRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://select.services.server.ws.impl.puc.padron.afip.gov" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="dummyResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                               namespace="http://10.30.11.67/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"
+                               use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ContribuyenteNivel3SelectServiceImplService">
+        <wsdl:port binding="impl:select.ContribuyenteNivel3SelectServiceImplSoapBinding"
+                   name="select.ContribuyenteNivel3SelectServiceImpl">
+            <wsdlsoap:address
+                    location="https://awshomo.afip.gov.ar/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,47 @@
+{
+  "name": "multinexo/php-afip-ws",
+  "description": "Librería PHP para interactuar con el webservice de AFIP (Argentina -> factura electrónica).",
+  "type": "library",
+  "keywords": [
+    "afip",
+    "argentina",
+    "factura electronica",
+    "webservice",
+    "php"
+  ],
+  "homepage": "https://github.com/reyesoft/php-afip-ws",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ayelen Guerra"
+    },
+    {
+      "name": "Pablo Reyes"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/multinexo/php-afip-ws/issues"
+  },
+  "require": {
+    "php": ">=7.1",
+    "respect/validation": "^1.0"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "2.10.0",
+    "squizlabs/php_codesniffer": "3.2.2",
+    "phpunit/phpunit": "4.3.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Multinexo\\Afip\\": "src/Multinexo/Afip/"
+    },
+    "exclude-from-classmap": [
+      "/tests/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-0": {
+      "Multinexo\\AfipTest\\": "tests"
+    }
+  }
+}
