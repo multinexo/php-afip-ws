@@ -13,10 +13,12 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Ayelen Guerra"
+      "name": "Ayelen Guerra",
+      "homepage": "http://ayelenguerra.com/"
     },
     {
-      "name": "Pablo Reyes"
+      "name": "Pablo Reyes",
+      "homepage": "http://pabloreyes.com/"
     }
   ],
   "support": {
