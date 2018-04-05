@@ -38,25 +38,25 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
         $wsurl = 'https://awshomo.afip.gov.ar/padron-puc-ws/services/';
         $config = [
             'dir' => [
-                    // @todo fix path
-                    'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
-                ],
+                // @todo fix path
+                'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
+            ],
             'archivos' => [
-                    'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Multinexo/Afip/WSAA/wsaa.wsdl',
-                    'certificado' => 'storage/Afip/' . $filename . '/' . $filename . '.crt',
-                    'clavePrivada' => 'storage/Afip/privateKey',
-                ],
+                'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Multinexo/Afip/WSAA/wsaa.wsdl',
+                'certificado' => 'storage/Afip/' . $filename . '/' . $filename . '.crt',
+                'clavePrivada' => 'storage/Afip/privateKey',
+            ],
             'cuit' => '20327936221',
             'passPhrase' => '12345678',
             'proxyHost' => '10.20.152.113',
             'proxyPort' => '80',
             'url' => [
-                    'wsaa' => 'https://wsaahomo.afip.gov.ar/ws/services/LoginCms',
-                    'wsmtxca' => 'https://fwshomo.afip.gov.ar/wsmtxca/services/MTXCAService',
-                    'wsfe' => 'https://wswhomo.afip.gov.ar/wsfev1/service.asmx',
-                    'wspn3' => $wsurl . 'select.ContribuyenteNivel3SelectServiceImpl',
-                    'padron-puc-ws-consulta-nivel4' => $wsurl . 'select.ContribuyenteNivel4SelectServiceImpl',
-                ],
+                'wsaa' => 'https://wsaahomo.afip.gov.ar/ws/services/LoginCms',
+                'wsmtxca' => 'https://fwshomo.afip.gov.ar/wsmtxca/services/MTXCAService',
+                'wsfe' => 'https://wswhomo.afip.gov.ar/wsfev1/service.asmx',
+                'wspn3' => $wsurl . 'select.ContribuyenteNivel3SelectServiceImpl',
+                'padron-puc-ws-consulta-nivel4' => $wsurl . 'select.ContribuyenteNivel4SelectServiceImpl',
+            ],
         ];
 
         return $config;

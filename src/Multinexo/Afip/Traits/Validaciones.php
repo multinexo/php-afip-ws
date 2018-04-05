@@ -208,8 +208,8 @@ trait Validaciones
             'puntoVenta' => 'Punto de venta: Debe debe estar comprendido entre 1 y 9998.',
         ];
         $errorMessages = [
-        //            'notEmpty' => "The field '{{name}}' is required",
-        //            'in' => "The field '{{name}}' must be one of the values: {{haystack}}",
+            //            'notEmpty' => "The field '{{name}}' is required",
+            //            'in' => "The field '{{name}}' must be one of the values: {{haystack}}",
         ];
 
         return $errorMessages;

@@ -69,7 +69,7 @@ return PhpCsFixer\Config::create()
         /* PHP 7.1 */
         '@PHP71Migration' => true,
         '@PHP71Migration:risky' => true,
-        'declare_strict_types' => true,
+        'declare_strict_types' => false,
 
         // on future?
         'explicit_string_variable' => true, //check classes like $user->first_name
