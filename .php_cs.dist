@@ -29,7 +29,8 @@ return PhpCsFixer\Config::create()
         'random_api_migration' => true,
         'concat_space' => ['spacing' => 'one'],
         'no_unreachable_default_argument_value' => true,
-        'no_multiline_whitespace_before_semicolons' => true,
+        'class_definition' => ['singleLine' => true, 'singleItemSingleLine' => true],
+        'no_unreachable_default_argument_value' => true,
 
         /* php-cs-fixer 2.7 */
         'yoda_style' => false,
@@ -45,8 +46,22 @@ return PhpCsFixer\Config::create()
         'hash_to_slash_comment' => true,
         'linebreak_after_opening_tag' => true,
         'method_chaining_indentation' => true,
-        'no_unreachable_default_argument_value' => true,
-        'class_definition' => ['singleLine' => true, 'singleItemSingleLine' => true],
+
+        /* php-cs-fixer 2.10/2.11 */
+        'multiline_whitespace_before_semicolons' => true,
+        'no_alternative_syntax' => true,
+        'ordered_imports' => true,
+        'php_unit_ordered_covers' => true,
+        'php_unit_construct' => true,
+        // 'php_unit_strict' => true,   //  API-941
+        'string_line_ending' => true,
+        'php_unit_set_up_tear_down_visibility' => true,
+        'function_to_constant' => true,
+        'magic_constant_casing' => true,
+        'single_quote' => true,
+        'fully_qualified_strict_types' => true,
+        'date_time_immutable' => true,  // ver implicancias de este cambio
+        'array_indentation' => true,
 
         /* PHP 7.0 */
         '@PHP70Migration:risky' => true,
@@ -54,7 +69,7 @@ return PhpCsFixer\Config::create()
         /* PHP 7.1 */
         '@PHP71Migration' => true,
         '@PHP71Migration:risky' => true,
-        'declare_strict_types' => false,     // related with API-836
+        'declare_strict_types' => true,
 
         // on future?
         'explicit_string_variable' => true, //check classes like $user->first_name
