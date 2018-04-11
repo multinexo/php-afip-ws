@@ -1,0 +1,100 @@
+## Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+## This file is part of a Reyesoft Project. This can not be copied and/or
+## distributed without the express permission of Reyesoft
+
+## more info on https://github.com/nanobox-quickstarts/nanobox-laravel/blob/new-qs-pattern/boxfile.yml
+run.config:
+  engine: php
+  engine.config:
+    runtime: php-7.1
+    document_root: public
+
+    ## we need configure nginx routes
+    #webserver: nginx
+
+    ## options for nginx
+    #nginx_document_root: public
+
+    ## more extensions? https://guides.nanobox.io/php/laravel/php-extensions
+    extensions:
+      - curl
+      - fileinfo
+      - gd
+      - json
+      - mbstring
+      - mcrypt
+      - pdo
+      - pdo_mysql
+      - ctype       ## used by laravel
+      - session     ## used by artisan:migrate
+      - tokenizer
+      - dom         ## used by phpunit & dompdf
+      - zip
+      - xml         ## used by phpmd & phpoffice/phpexcel
+      - xmlwriter   ## used by phpunit & phpoffice/phpexcel
+      - simplexml   ## used by squizlabs/php_codesniffer
+    #dev_extensions:
+    #  add:
+    #    - simplexml   ## used by squizlabs/php_codesniffer
+    date_timezone: 'America/Argentina/Mendoza'
+    php_max_execution_time: 240
+    php_max_input_time: 30
+    memory_limit: '256M'
+  cache_dirs:
+    - vendor
+  extra_steps:
+    ## composer install its runed, but without succes because we are missing extensions
+    #- composer install --no-dev ## runned by nanobox default (but without --no-dev)
+    - composer dump-autoload --optimize
+
+deploy.config:
+  extra_steps:
+    ## after compile build
+    - rm -Rf bootstrap/cache/*
+    - rm -f -R storage/framework/sessions/*
+    - rm -f -R storage/framework/views/*
+    - rm -f -R storage/framework/cache/*
+    - mv .env.example .env
+  before_live:
+    web.main:
+      ## needs storage
+      - mkdir -p storage/{app,framework/{sessions,cache,views}}
+      - php artisan view:clear --no-interaction
+      ## needs mysql
+      - php artisan migrate --no-interaction --env force_production
+      # - php artisan multinexo:deploy
+  after_live_all:
+    web.main:
+      ## don't needs services
+      - php artisan clear-compiled --no-interaction
+      - php artisan config:cache --no-interaction
+      - php artisan route:cache --no-interaction
+
+data.db:
+  image: nanobox/mysql:5.6
+
+data.storage:
+  image: nanobox/unfs:0.9
+
+web.main:
+  start: php-server
+  #start:
+  #  php: start-php
+  #  nginx: start-nginx
+  writable_dirs:
+    - bootstrap/cache
+  log_watch:
+    laravel[error]: /app/storage/logs/laravel.log
+  network_dirs:
+    data.storage:
+      - storage
+
+## ONLY PROVISION COMPONENT LOCALLY
+## WARNING, THIS COMPONENT RUN PRODUCTION DANGEROUS EXTRA STEPS
+data.db_test:
+  image: nanobox/mysql:5.6
+  extra_steps:
+    ## runned only when deploy or never :/
+    - php artisan config:clear
+  local_only: true
+
