@@ -6,6 +6,9 @@
  *
  * For the full copyright and license information, please view the LICENSE
  */
+
+declare(strict_types=1);
+
 $configuracion = [
     /*
     |--------------------------------------------------------------------------
