@@ -22,16 +22,12 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-
+        $this->wspn3 = new Wspn3();
+        $this->wspn3->setearConfiguracion($this->getConf());
     }
 
     public function test_consultar_datos_persona(): void
     {
-        $this->wspn3 = new Wspn3();
-        dd();
-        dd($this->getConf());
-        $this->wspn3->setearConfiguracion($this->getConf());
-
         $cuitContribuyente = '30561785402';
         $result = $this->wspn3->consultarDatosPersona($cuitContribuyente);
 
