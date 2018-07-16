@@ -43,7 +43,7 @@ Reemplace (siempre en mayúsculas):
 * subj_cn por su nombre o server hostname (el nombre de tu máquina).
 * subj_cuit por el CUIT sin guiones del desarrollador.
 
-Luego de estos pasos debemos iniciar sesion en [AFIP](http://www.afip.gob.ar).
+Luego de estos pasos debemos iniciar sesión en [AFIP](http://www.afip.gob.ar).
 (Sino tenes clave acercate a tu sucursal mas cercana para obtenerla)
 
 En el apartado **Servicios Administrativos** ingresar a:
@@ -76,7 +76,7 @@ En el menú seleccionamos:
 > Crear autorización a servicio
 
 En el formulario en el punto N°5, buscamos de a un servicio y creamos autorización de acceso.
-- [x] wsfe - Factura electrónica
-- [x] wsmtxca - Factura electrónica con Detalle
+1. wsfe - Factura electrónica
+1. wsmtxca - Factura electrónica con Detalle
 
 En el menú *Autorizaciones* podemos ver los servicios autorizados.
