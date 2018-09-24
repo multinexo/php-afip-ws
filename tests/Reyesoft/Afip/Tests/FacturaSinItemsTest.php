@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -204,9 +203,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
             'arrayOpcionales' => $arrayOpcionales,
         ];
 
-        $comprobante = json_decode(json_encode($comprobante));
-
-        return $comprobante;
+        return json_decode(json_encode($comprobante));
     }
 
     public function test_consultar_factura(): void
@@ -270,7 +267,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessage(
-            '{"Err":{"Code":15007,"Msg":"El <Periodo> 201603  se encuentra vencido para solicitar CAEA."}}'
+            '{"Err":{"Code":15007,"Msg":"El <Periodo> 201603 se encuentra vencido para solicitar CAEA."}}'
         );
 
         $this->factura->datos = (object) [

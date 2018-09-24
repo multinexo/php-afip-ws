@@ -23,6 +23,8 @@ jobs:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.lock" }}
-        
+      # composer ci!
+      - run: composer ci
       # run tests!
       - run: ./vendor/bin/phpunit
+

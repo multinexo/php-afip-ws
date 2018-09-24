@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -25,10 +24,6 @@ class WsParametros
      * Recupera la cotizacion de la moneda consultada y su fecha.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      * @param $monId       string(3): Código de moneda de la que se solicita cotización
      *
      * @return : Retorna la última cotización de la base de datos aduanera de la moneda ingresada.
@@ -54,10 +49,6 @@ class WsParametros
      * previamente por la CUIT emisora.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array PtoVenta: Detalle de los tipos puntos de venta electrónicos:
      *               * Nro int(4) Punto de venta
@@ -66,7 +57,7 @@ class WsParametros
      *               deberá ingresar al ABM de puntos de venta a regularizar la situación Valores  S o N
      *               * FchBaja string(8) Indica la fecha de baja en caso de estarlo
      */
-    public function FEParamGetPtosVenta($client, $authRequest)
+    public function FEParamGetPtosVenta($client, $authRequest): array
     {
         $resultado = $client->FEParamGetPtosVenta([
             'Auth' => $authRequest,
@@ -82,10 +73,6 @@ class WsParametros
      * Permite consultar los tipos de comprobantes habilitados en este WS.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array CbteTipo: Detalle de los tipos de comprobantes; esta compuesto por los siguientes campos:
      *               * Id int(3)  Código  de comprobante
@@ -93,7 +80,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposCbte($client, $authRequest)
+    public function FEParamGetTiposCbte($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposCbte([
             'Auth' => $authRequest,
@@ -108,10 +95,6 @@ class WsParametros
      * Recupera el listado de identificadores para el campo Concepto.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array ConceptoTipo: Detalle de los tipos de conceptos; esta compuesto por los siguientes campos:
      *               * Id int(3)  Código  de concepto
@@ -119,7 +102,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposConcepto($client, $authRequest)
+    public function FEParamGetTiposConcepto($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposConcepto([
             'Auth' => $authRequest,
@@ -134,10 +117,6 @@ class WsParametros
      * Recupera el listado de Tipos de Documentos utilizables en servicio de autorización.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array DocTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
@@ -146,7 +125,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposDoc($client, $authRequest)
+    public function FEParamGetTiposDoc($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposDoc([
             'Auth' => $authRequest,
@@ -162,10 +141,6 @@ class WsParametros
      * Se obtiene la totalidad de alícuotas de IVA posibles de uso en el presente WS, detallando código y descripción.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array IvaTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
@@ -174,7 +149,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposIva($client, $authRequest)
+    public function FEParamGetTiposIva($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposIva([
             'Auth' => $authRequest,
@@ -189,10 +164,6 @@ class WsParametros
      * Recupera el listado de monedas utilizables en servicio de autorización.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array Moneda: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
@@ -201,7 +172,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposMonedas($client, $authRequest)
+    public function FEParamGetTiposMonedas($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposMonedas([
             'Auth' => $authRequest,
@@ -218,10 +189,6 @@ class WsParametros
      * para ser usados en el WS.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array OpcionalTipo: Detalle de los tipos de datos opcionales; esta compuesto por los siguientes campos:
      *               * Id string(4) Identificador de campo  opcional
@@ -229,7 +196,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposOpcional($client, $authRequest)
+    public function FEParamGetTiposOpcional($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposOpcional([
             'Auth' => $authRequest,
@@ -244,16 +211,12 @@ class WsParametros
      *Recupera el listado de los diferentes paises que pueden ser utilizados en el servicio de autorizacion.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array PaisTipo: Lista de paises; esta compuesto por los siguientes campos:
      *               * Id string(4) Código de país
      *               * Desc string(250) Descripción
      */
-    public function FEParamGetTiposPaises($client, $authRequest)
+    public function FEParamGetTiposPaises($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposPaises([
             'Auth' => $authRequest,
@@ -268,10 +231,6 @@ class WsParametros
      *Recupera el listado de los diferente tributos que pueden ser utilizados en el servicio de autorizacion.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
      *
      * @return array TributoTipo: Detalle de los tipos de tributos; esta compuesto por los siguientes campos:
      *               * Id string(2) Código de Tributo
@@ -279,7 +238,7 @@ class WsParametros
      *               * FchDesde string(8) Fecha de vigencia desde
      *               * FchHasta string(8) Fecha de vigencia hasta
      */
-    public function FEParamGetTiposTributos($client, $authRequest)
+    public function FEParamGetTiposTributos($client, $authRequest): array
     {
         $resultado = $client->FEParamGetTiposTributos([
             'Auth' => $authRequest,

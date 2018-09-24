@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -38,7 +37,8 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
     {
         $filename = '7320828c9153b2a9848d6bc45d3544236b22fc48';
         $wsurl = 'https://awshomo.afip.gov.ar/padron-puc-ws/services/';
-        $config = [
+
+        return [
             'dir' => [
                 // @todo fix path
                 'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
@@ -60,7 +60,5 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
                 'padron-puc-ws-consulta-nivel4' => $wsurl . 'select.ContribuyenteNivel4SelectServiceImpl',
             ],
         ];
-
-        return $config;
     }
 }

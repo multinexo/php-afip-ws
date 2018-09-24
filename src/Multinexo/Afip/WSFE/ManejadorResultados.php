@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -25,7 +24,7 @@ class ManejadorResultados
      *
      * @return array con eventos o null si no existen
      */
-    public function obtenerEventos($resultado)
+    public function obtenerEventos($resultado): array
     {
         return isset($resultado->Events) ? $resultado->Events : null;
     }
@@ -38,7 +37,7 @@ class ManejadorResultados
      *
      * @return array con observaciones o null si no existen
      */
-    public function obtenerObservaciones($path, $name)
+    public function obtenerObservaciones($path, $name): array
     {
         return $path->{$name} ?? null;
     }

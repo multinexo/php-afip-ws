@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -31,9 +30,7 @@ class WsFuncionesInternas
         $this->resultado->procesar($resultado);
 
         $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
-        $resultado = json_decode(json_encode($resultado));
-
-        return $resultado;
+        return json_decode(json_encode($resultado));
     }
 
     public function wsDummy($client)
@@ -45,8 +42,6 @@ class WsFuncionesInternas
         }
 
         $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
-        $resultado = json_decode(json_encode($resultado));
-
-        return $resultado;
+        return json_decode(json_encode($resultado));
     }
 }

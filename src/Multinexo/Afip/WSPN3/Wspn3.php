@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -73,9 +72,7 @@ class Wspn3 extends WsFuncionesInternas
             <id>' . $cuit . '</id>
             </contribuyentePK>';
 
-        $response = $this->wsGet($this->client, $this->authRequest, $contribuyente);
-
-        return $response;
+        return $this->wsGet($this->client, $this->authRequest, $contribuyente);
     }
 
     public function getResumeWspn3Information($data)
@@ -98,8 +95,6 @@ class Wspn3 extends WsFuncionesInternas
 
     /**
      * @param $array
-     *
-     * @return mixed
      */
     private static function flushNullFromArray($array)
     {
@@ -164,7 +159,7 @@ class Wspn3 extends WsFuncionesInternas
 
         if (property_exists($data, 'actividades')) {
             if (property_exists($data->actividades, 'actividad')) {
-                if (count($data->actividades->actividad) > 1) {
+                if (\count($data->actividades->actividad) > 1) {
                     $responsibility = $data->actividades->actividad[0]->actividadPK->estado;
                 } else {
                     $responsibility = $data->actividades->actividad->actividadPK->estado;

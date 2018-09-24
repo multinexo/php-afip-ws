@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -27,8 +26,6 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param $data :
-     *              $caea int(14): Especifica el CAEA previamente otorgado sobre el cual se solicita información
      *
      * @return:
      */
@@ -58,8 +55,6 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param $data :
-     *              $caea int(14): Especifica el CAEA previamente otorgado sobre el cual se solicita información
      *
      * @return:
      */
@@ -84,8 +79,6 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param $data :
-     *              $caea int(14): Especifica el CAEA previamente otorgado sobre el cual se solicita información
      *
      * @return:
      */
@@ -177,10 +170,8 @@ class WsFuncionesInternas
      * @param $client
      * @param $authRequest
      * @param int(2) $cbteTipo : Tipo de comprobante que se desea consultar
-     * @param int(4) $ptoVta   : Punto de venta para el cual se requiera conocer el último número de
-     *                         comprobante autorizado
-     *
-     * @return mixed
+     * @param int(4) $ptoVta : Punto de venta para el cual se requiera conocer el último número de
+     *                       comprobante autorizado
      */
     public function wsConsultarUltimoComprobanteAutorizado($client, $authRequest, $cbteTipo, $ptoVta)
     {
@@ -223,8 +214,6 @@ class WsFuncionesInternas
 
     /**
      * @param $result
-     *
-     * @return mixed
      */
     // TODO: Exception
     public function checkSoapFault($result)
@@ -335,12 +324,10 @@ class WsFuncionesInternas
             $comprobante->{'arrayOtrosTributos'} = $arrayOtrosTributos;
         }
 
-        $comprobante = json_decode(json_encode($comprobante));
-
-        return $comprobante;
+        return json_decode(json_encode($comprobante));
     }
 
-    /****************************************************************************************************************/
+    /*/
 
     // TODO: Testar funciones
 
@@ -348,8 +335,6 @@ class WsFuncionesInternas
      * @param $client
      * @param $authRequest
      * @param $cbte
-     *
-     * @return mixed
      */
     public function wsInformarComprobanteCAEA($client, $authRequest, $cbte)
     {
@@ -378,8 +363,6 @@ class WsFuncionesInternas
      * @param $client
      * @param $authRequest
      * @param $caea
-     *
-     * @return mixed
      */
     public function wsInformarCAEANoUtilizado($client, $authRequest, $caea)
     {
@@ -409,8 +392,6 @@ class WsFuncionesInternas
      * @param $authRequest
      * @param $caea
      * @param $ptoVta
-     *
-     * @return mixed
      */
     public function wsInformarCAEANoUtilizadoPtoVta($client, $authRequest, $caea, $ptoVta)
     {
@@ -440,8 +421,6 @@ class WsFuncionesInternas
      * @param $client
      * @param $authRequest
      * @param $caea
-     *
-     * @return mixed
      */
     public function wsConsultarPtosVtaCAEANoInformados($client, $authRequest, $caea)
     {
