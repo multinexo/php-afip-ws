@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -54,11 +53,9 @@ class Wsaa
      *
      * @param $service
      *
-     * @return string
-     *
      * @throws WsException
      */
-    public function signTRA($service)
+    public function signTRA($service): string
     {
         $configuracion = $this->configuracion;
         $dir = $configuracion->dir;
@@ -78,7 +75,7 @@ class Wsaa
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
-        $inf = fopen($dir->xml_generados . 'TRA-' . $service . '.tmp', 'r');
+        $inf = fopen($dir->xml_generados . 'TRA-' . $service . '.tmp', 'rb');
         $i = 0;
         $CMS = '';
 
@@ -169,7 +166,7 @@ class Wsaa
     /**
      * Permite obtener un atributo de un archivo con formato xml.
      *
-     * @param       $path
+     * @param $path
      * @param array $nodes
      *
      * @return bool|\SimpleXMLElement|\SimpleXMLElement[]
@@ -193,11 +190,9 @@ class Wsaa
      *
      * @param $service
      *
-     * @return bool
-     *
      * @throws WsException
      */
-    public function checkTARenovation($service)
+    public function checkTARenovation($service): bool
     {
         $path = $this->configuracion->dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml';
 

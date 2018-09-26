@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -38,22 +37,18 @@ class Autenticacion
             }
         }
 
-        $client = $this->connectToSoapClient($wsdl, $this->configuracion->url->{$ws});
-
-        return $client;
+        return $this->connectToSoapClient($wsdl, $this->configuracion->url->{$ws});
     }
 
     public function connectToSoapClient($wsdlPath, $url)
     {
-        $client = new \SoapClient($wsdlPath,
+        return new \SoapClient($wsdlPath,
             [
                 'soap_version' => SOAP_1_2,
                 'location' => $url,
                 'exceptions' => 0,
                 'trace' => 1,
             ]);
-
-        return $client;
     }
 
     public function getCredentials($ws)

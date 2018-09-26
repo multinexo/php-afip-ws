@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -182,10 +181,8 @@ trait Validaciones
 
     /**
      * Devuelve mensajes de error personalizados.
-     *
-     * @return array
      */
-    public function getErrorMessages()
+    public function getErrorMessages(): array
     {
         $errorMessagesEs = [
             'notEmpty' => 'Campo {{name}} obligatorio',
@@ -209,12 +206,11 @@ trait Validaciones
             'puntoVenta.notEmpty' => 'Punto de venta: es obligatorio',
             'puntoVenta' => 'Punto de venta: Debe debe estar comprendido entre 1 y 9998.',
         ];
-        $errorMessages = [
+
+        return [
             //            'notEmpty' => "The field '{{name}}' is required",
             //            'in' => "The field '{{name}}' must be one of the values: {{haystack}}",
         ];
-
-        return $errorMessages;
     }
 
     /**
@@ -334,7 +330,7 @@ trait Validaciones
                 return [];
             }
 
-            if (count($result->ResultGet->PtoVenta) > 1) {
+            if (\count($result->ResultGet->PtoVenta) > 1) {
                 $puntosVenta = $result->ResultGet->PtoVenta;
             } else {
                 $puntosVenta = $result->ResultGet;
@@ -485,10 +481,8 @@ trait Validaciones
 
     /**
      * Retorna array con los codigos de opcionales permitidos para una persona determinada.
-     *
-     * @return array
      */
-    public function codOpcionales()
+    public function codOpcionales(): array
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
@@ -503,10 +497,8 @@ trait Validaciones
 
     /**
      * Retorna array con los codigos de tributos permitidos para una persona determinada.
-     *
-     * @return array
      */
-    public function codTributos()
+    public function codTributos(): array
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {

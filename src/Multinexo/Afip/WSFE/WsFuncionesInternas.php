@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -29,9 +28,7 @@ class WsFuncionesInternas
      *                           $token: Token devuelto por el WSAA
      *                           $sign: Sign devuelto por el WSAA
      *                           $cuit: Cuit contribuyente (representado o Emisora)
-     * @param array $data        : Contiene información del comprobante
-     *
-     * @return mixed
+     * @param array $data : Contiene información del comprobante
      *
      * @throws WsException
      */
@@ -90,13 +87,6 @@ class WsFuncionesInternas
      * para un periodo/orden.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
-     * @param $data        :
-     *                     int(6) $periodo: Periodo del CAEA.  (yyyymm)
-     *                     int(1) $orden: Orden del CAEA dentro del periodo. Quincena 1, Quincena 2
      */
     public function FECAEAConsultar($client, $authRequest, $data)
     {
@@ -116,15 +106,6 @@ class WsFuncionesInternas
      * Podrá ser solicitado dentro de los 5 (cinco) días corridos anteriores al comienzo de cada quincena.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
-     * @param $data        :
-     *                     int(6) $periodo: Periodo del CAEA.  (yyyymm)
-     *                     int(1) $orden: Orden del CAEA dentro delperiodo. Quincena 1, Quincena 2
-     *
-     * @return mixed
      */
     public function FECAEASolicitar($client, $authRequest, $data)
     {
@@ -145,16 +126,6 @@ class WsFuncionesInternas
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
      *
      * @param $client
-     * @param $authRequest :
-     *                     $token: Token devuelto por el WSAA
-     *                     $sign: Sign devuelto por el WSAA
-     *                     $cuit: Cuit contribuyente (representado o Emisora)
-     * @param $data        :
-     *                     $cbteTipo
-     *                     $cbteNro
-     *                     $ptoVta
-     *
-     * @return mixed
      */
     public function FECompConsultar($client, $authRequest, $data)
     {
@@ -197,12 +168,10 @@ class WsFuncionesInternas
     /**
      * @param $wsdlPath
      * @param $url
-     *
-     * @return \SoapClient
      */
-    public function connectToSoapClient($wsdlPath, $url)
+    public function connectToSoapClient($wsdlPath, $url): \SoapClient
     {
-        $client = new \SoapClient($wsdlPath,
+        return new \SoapClient($wsdlPath,
             [
                 'soap_version' => SOAP_1_2,
                 'location' => $url,
@@ -211,8 +180,6 @@ class WsFuncionesInternas
                 'exceptions' => 0,
                 'trace' => 1,
             ]);
-
-        return $client;
     }
 
     /**
@@ -305,7 +272,7 @@ class WsFuncionesInternas
         return $comprobante;
     }
 
-    /*************************************************************************/
+    /*/
 
     // TODO: Testar funciones
     // TODO: error 10002
@@ -317,16 +284,6 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param $data          :
-     *                       int(4 ) $cantReg: Cantidad de registros del detalle del comprobante o lote de comprobantes
-     *                       de ingreso. int(4) $ptoVta: Punto de Venta del comprobante que se está informando. Si se
-     *                       informa más de un comprobante, todos deben corresponder al mismo punto de venta. int
-     *                       $cbteTipo  (3): Tipo de comprobante que se está informando. Si se informa más de un
-     *                       comprobante, todos deben ser del mismo tipo.
-     *                       $cbteDesde
-     *                       $cbteHasta
-     *
-     * @return mixed
      */
     public function FECAEARegInformativo($client, $authRequest, $data)
     {
@@ -347,9 +304,9 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
-     *                           puntos de venta
-     * @param int(4)     $ptoVta : Punto de venta vinculado al CAEA informado
+     * @param string(14) $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                         puntos de venta
+     * @param int(4) $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoConsultar($client, $authRequest, $caea, $ptoVta)
     {
@@ -371,9 +328,9 @@ class WsFuncionesInternas
      *
      * @param $client
      * @param $authRequest
-     * @param string(14) $caea   : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
-     *                           puntos de venta
-     * @param int(4)     $ptoVta : Punto de venta vinculado al CAEA informado
+     * @param string(14) $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                         puntos de venta
+     * @param int(4) $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoInformar($client, $authRequest, $caea, $ptoVta)
     {

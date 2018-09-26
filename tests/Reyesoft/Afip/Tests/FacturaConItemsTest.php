@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -20,14 +19,14 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
     /**
      * FacturaConItemsTest constructor.
      */
-    public function __construct()
+    public function setUp()
     {
         $this->factura = new FacturaConItems();
         $this->factura->setearConfiguracion($this->getConf());
     }
 
     //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)
-    public function tests_mono_a_mono(): void
+    public function testMonotributistaMonotributista(): void
     {
         //@@@@@@@@@@@DETAILS
         //###CodigoCondicionIva
@@ -110,7 +109,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
     }
 
     //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)
-    public function tests_mono_a_responsable_inscripto(): void
+    public function testsMonotributistaResponsableInscripto(): void
     {
         //@@@@@@@@@@@DETAILS
         //###CodigoCondicionIva
@@ -191,7 +190,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
-    public function test_crear_factura_con_items_con_array_iva(): void
+    public function testCrearFacturaConItemsConArrayIva(): void
     {
         $arrayItems = [
             'item' => [
@@ -242,7 +241,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
-    public function test_crear_factura_con_items_con_array_tipo_b(): void
+    public function testCrearFacturaConItemsConArrayTipoB(): void
     {
         $arrayItems = [
             'item' => [
@@ -281,7 +280,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
-    public function test_crear_comprobante_con_items_con_array_comp_asoc(): void
+    public function testCrearComprobanteConItemsConArrayCompAsoc(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessage('Para la CUIT, Tipo de Comprobante y Punto de Ventas requeridos ' .
@@ -350,7 +349,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->crearComprobante();
     }
 
-    public function test_crear_comprobante_con_items_con_array_trib(): void
+    public function testCrearComprobanteConItemsConArrayTrib(): void
     {
         $arrayItems = [
             'item' => [
@@ -408,7 +407,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
-    public function test_consultar_comprobante_con_items(): void
+    public function testConsultarComprobanteConItems(): void
     {
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
@@ -419,7 +418,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->codigoAutorizacion);
     }
 
-    public function test_consultar_caea_entre_fechas(): void
+    public function testConsultarCaeaEntreFechas(): void
     {
         $this->factura->datos = (object) [
             'fechaDesde' => '2015-05-30',
@@ -430,7 +429,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result);
     }
 
-    public function test_solicitar_caea(): void
+    public function testSolicitarCaea(): void
     {
         $this->factura->datos = (object) [
             'periodo' => '201604',
@@ -441,7 +440,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result);
     }
 
-    public function test_consultar_caea(): void
+    public function testConsultarCaea(): void
     {
         $this->factura->datos = (object) [
             'caea' => 26119315562071,
@@ -492,15 +491,14 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             'arrayOtrosTributos' => $arrayOtrosTributos,
         ];
 
-        $comprobante = json_decode(json_encode($comprobante));
-
-        return $comprobante;
+        return json_decode(json_encode($comprobante));
     }
 
     public function getConf()
     {
         // @todo
-        $dirAfip = 'storage/Afip/4c15dc21c91634c1b301de6236eb08ead86be4ae';
+        $base_path = __DIR__ . '/../../../..';
+        $dirAfip = $base_path . '/storage/Afip/4c15dc21c91634c1b301de6236eb08ead86be4ae';
 
         return [
             'dir' => [
@@ -509,7 +507,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
             'archivos' => [
                 'certificado' => $dirAfip . '/4c15dc21c91634c1b301de6236eb08ead86be4ae.crt',
-                'clavePrivada' => '/var/www/html/App/storage/Afip/privateKey',
+                'clavePrivada' =>  $base_path . '/storage/Afip/privateKey',
             ],
 
             'cuit' => 20327936221,
