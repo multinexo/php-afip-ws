@@ -26,4 +26,4 @@ jobs:
       # composer ci!
       - run: composer ci
       # run tests!
-      - run: ./vendor/bin/phpunit /tests
+      - run: ./vendor/bin/phpunit
