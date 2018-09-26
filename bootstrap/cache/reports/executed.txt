@@ -1,6 +1,0 @@
-Multinexo\Afip\Tests\Afip
- [x] Is valid
-
-Multinexo\Afip\Tests\ConsultaPadron3
- [ ] Consultar datos persona
-
