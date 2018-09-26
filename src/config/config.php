@@ -19,7 +19,6 @@ $configuracion = [
     | sin intervención de operadores.
     |
     */
-    'base_path' => __DIR__ . '/..',
 
     'dir' => [
         'xml_generados' => null,
