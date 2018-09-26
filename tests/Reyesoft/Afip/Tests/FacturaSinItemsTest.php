@@ -19,13 +19,13 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     /**
      * FacturaSinItemsTest constructor.
      */
-    public function __construct()
+    public function setUp()
     {
         $this->factura = new FacturaSinItems();
         $this->factura->setearConfiguracion($this->getConf());
     }
 
-    public function test_crear_factura_sin_items_sin_arrays(): void
+    public function testCrearFacturaSinItemsSinArrays(): void
     {
         $this->factura->datos = $this->getDatosFactura(1, 200.00, 0, 0, 200.00, 0, null);
 
@@ -33,7 +33,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->CAE);
     }
 
-    public function test_crear_factura_sin_items_monot_sin_arrays(): void
+    public function testCrearFacturaSinItemsMonotributoSinArrays(): void
     {
         $this->factura->datos = $this->getDatosFactura(11, 200.00, 200, 0, 0.00, 0, null);
 
@@ -41,7 +41,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->CAE);
     }
 
-    public function test_crear_comprobante_sin_items_con_array_comp_asoc(): void
+    public function testCrearComprobanteSinItemsConArrayCompAsoc(): void
     {
         $arrayComprobantesAsociados = [
             'comprobanteAsociado' => [
@@ -63,7 +63,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->CAE);
     }
 
-    public function test_crear_factura_sin_items_monot_con_array_tributos(): void
+    public function testCrearFacturaSinItemsMonotributoConArrayTributos(): void
     {
         $arrayOtrosTributos = [
             'otroTributo' => [
@@ -112,7 +112,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result->CAE);
     }
 
-    public function test_crear_factura_sin_items_con_array_opcionales(): void
+    public function testCrearFacturaSinItemsConArrayOpcionales(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessageRegExp('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
@@ -134,7 +134,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->crearComprobante();
     }
 
-    public function test_crear_factura_sin_items_con_errores_servidor(): void
+    public function testCrearFacturaSinItemsConErroresServidor(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
 
@@ -143,7 +143,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->crearComprobante();
     }
 
-    public function test_crear_factura_sin_items_con_errores_validacion(): void
+    public function testCrearFacturaSinItemsConErroresValidacion(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
 
@@ -206,7 +206,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         return json_decode(json_encode($comprobante));
     }
 
-    public function test_consultar_factura(): void
+    public function testConsultarFactura(): void
     {
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
@@ -218,7 +218,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($result);
     }
 
-    public function test_consultar_factura_con_error_servidor(): void
+    public function testConsultarFacturaConErrorServidor(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
 
@@ -230,7 +230,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->consultarComprobante();
     }
 
-    public function test_consultar_factura_con_error_validacion(): void
+    public function testConsultarFacturaConErrorValidacion(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
 
@@ -242,7 +242,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->consultarComprobante();
     }
 
-    public function test_consultar_caea_por_periodo(): void
+    public function testConsultarCaeaPorPeriodo(): void
     {
         $this->factura->datos = (object) [
             'periodo' => '201603',
@@ -263,7 +263,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     //        $this->assertNotEmpty($result);
     //    }
 
-    public function test_solicitar_caea_error_vencido(): void
+    public function testSolicitarCaeaErrorVencido(): void
     {
         $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
         $this->expectExceptionMessage(
@@ -281,7 +281,9 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function getConf()
     {
-        $dirAfip = '/home/aye/Documents/AFIP';
+        $base_path = __DIR__ . '/../../../..';
+
+        $dirAfip =  $base_path  . '/Documents/AFIP';
 
         return [
             'dir' => [

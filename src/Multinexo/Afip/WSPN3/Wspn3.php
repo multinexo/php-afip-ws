@@ -58,7 +58,9 @@ class Wspn3 extends WsFuncionesInternas
     public function __construct()
     {
         $this->ws = 'wspn3';
+
         $this->resultado = new ManejadorResultados();
+
     }
 
     public function consultarDatosPersona($cuit)
@@ -66,7 +68,6 @@ class Wspn3 extends WsFuncionesInternas
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
         }
-
         $contribuyente = '<?xml version="1.0" encoding="UTF-8"?>
             <contribuyentePK>
             <id>' . $cuit . '</id>

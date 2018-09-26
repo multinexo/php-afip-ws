@@ -19,34 +19,34 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
     /**
      * FacturaSinItemsTest constructor.
      */
-    public function __construct()
+    public function setUp()
     {
         $this->wspn3 = new Wspn3();
         $this->wspn3->setearConfiguracion($this->getConf());
     }
 
-    public function test_consultar_datos_persona(): void
+    public function testConsultarDatosPersona()
     {
         $cuitContribuyente = '30561785402';
         $result = $this->wspn3->consultarDatosPersona($cuitContribuyente);
-
         $this->assertNotEmpty($result);
     }
 
     public function getConf()
     {
+        $base_path = __DIR__ . '/../../../..';
         $filename = '7320828c9153b2a9848d6bc45d3544236b22fc48';
         $wsurl = 'https://awshomo.afip.gov.ar/padron-puc-ws/services/';
 
         return [
             'dir' => [
                 // @todo fix path
-                'xml_generados' => '/storage/Afip/' . $filename . '/xml_generated/',
+                'xml_generados' => $base_path . '/storage/Afip/' . $filename . '/xml_generated/',
             ],
             'archivos' => [
-                'wsaaWsdl' => 'reyesoft/php-afip-ws/src/Multinexo/Afip/WSAA/wsaa.wsdl',
-                'certificado' => 'storage/Afip/' . $filename . '/' . $filename . '.crt',
-                'clavePrivada' => 'storage/Afip/privateKey',
+                'wsaaWsdl' => $base_path . '/src/Multinexo/Afip/WSAA/wsaa.wsdl',
+                'certificado' => $base_path . '/storage/Afip/' . $filename . '/' . $filename . '.crt',
+                'clavePrivada' => $base_path . '/storage/Afip/privateKey',
             ],
             'cuit' => '20327936221',
             'passPhrase' => '12345678',
