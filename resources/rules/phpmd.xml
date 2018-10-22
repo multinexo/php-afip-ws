@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="Reyesoft PHPMD rule set"
+     xmlns="http://pmd.sf.net/ruleset/1.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0"
+     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <rule ref="../../../../../reyesoft/ci/php/rules/phpmd.dist.xml" />
+
+</ruleset>

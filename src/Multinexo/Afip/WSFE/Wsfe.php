@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -64,8 +63,6 @@ class Wsfe extends WsFuncionesInternas
     /**
      * Permite crear un comprobante sin items.
      *
-     * @return mixed
-     *
      * @throws WsException
      */
     public function crearComprobante()
@@ -86,16 +83,13 @@ class Wsfe extends WsFuncionesInternas
         $this->datos = $this->parseFacturaArray($this->datos);
         $this->datos->FeDetReq->FECAEDetRequest->CbteDesde = $ultimoComprobante + 1;
         $this->datos->FeDetReq->FECAEDetRequest->CbteHasta = $ultimoComprobante + 1;
-        $result = $this->FECAESolicitar($this->client, $this->authRequest, $this->datos);
 
-        return $result;
+        return $this->FECAESolicitar($this->client, $this->authRequest, $this->datos);
     }
 
     /**
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado
      * para un periodo/orden.
-     *
-     * @return mixed
      *
      * @throws WsException
      * @throws \Multinexo\Afip\Exceptions\ValidationException
@@ -107,15 +101,12 @@ class Wsfe extends WsFuncionesInternas
         }
 
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
 
-        return $result;
+        return $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
     }
 
     /**
      * Permite solicitar Código de Autorización Electrónico Anticipado (CAEA).
-     *
-     * @return mixed
      *
      * @throws WsException
      * @throws \Multinexo\Afip\Exceptions\ValidationException
@@ -127,15 +118,12 @@ class Wsfe extends WsFuncionesInternas
         }
 
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
 
-        return $result;
+        return $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
     }
 
     /**
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
-     *
-     * @return mixed
      *
      * @throws WsException
      * @throws \Multinexo\Afip\Exceptions\ValidationException
@@ -147,8 +135,7 @@ class Wsfe extends WsFuncionesInternas
         }
 
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
 
-        return $result;
+        return $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
     }
 }

@@ -1,10 +1,9 @@
 <?php
 /**
- * This file is part of Multinexo PHP Afip WS package.
- *
  * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
  *
- * For the full copyright and license information, please view the LICENSE
+ * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
+ * distributed without the express permission of Reyesoft
  */
 
 declare(strict_types=1);
@@ -27,8 +26,6 @@ class WsParametros
      * @param $serviceName
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultar($serviceName, $client, $authRequest)
     {
@@ -46,8 +43,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarTiposComprobante($client, $authRequest)
     {
@@ -65,8 +60,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarTiposDocumento($client, $authRequest)
     {
@@ -84,16 +77,12 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarAlicuotasIVA($client, $authRequest)
     {
-        $resultado = $client->consultarAlicuotasIVA([
+        return $client->consultarAlicuotasIVA([
             'authRequest' => $authRequest,
         ]);
-
-        return $resultado;
     }
 
     /**
@@ -101,8 +90,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarCondicionesIVA($client, $authRequest)
     {
@@ -120,8 +107,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarMonedas($client, $authRequest)
     {
@@ -140,8 +125,6 @@ class WsParametros
      * @param $client
      * @param $authRequest
      * @param $codMon
-     *
-     * @return mixed
      */
     public function consultarCotizacionMoneda($client, $authRequest, $codMon)
     {
@@ -160,8 +143,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarUnidadesMedida($client, $authRequest)
     {
@@ -179,8 +160,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarPuntosVenta($client, $authRequest)
     {
@@ -198,8 +177,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarPuntosVentaCAE($client, $authRequest)
     {
@@ -217,8 +194,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarPuntosVentaCAEA($client, $authRequest)
     {
@@ -236,8 +211,6 @@ class WsParametros
      *
      * @param $client
      * @param $authRequest
-     *
-     * @return mixed
      */
     public function consultarTiposTributo($client, $authRequest)
     {
