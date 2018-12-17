@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-$configuracion = [
+return [
     /*
     |--------------------------------------------------------------------------
     | Directorio del archivo wsdl del WS de Autenticación y Autorización
@@ -44,5 +44,3 @@ $configuracion = [
 
     'cuit' => null,
 ];
-
-return $configuracion;

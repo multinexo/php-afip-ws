@@ -10,46 +10,53 @@ declare(strict_types=1);
 
 namespace Multinexo\Afip\WSFE;
 
+use Multinexo\Afip\Autenticacion as claseAutenticacion;
 use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
 use Multinexo\Afip\Traits\Validaciones;
+use Multinexo\Afip\WSAA\Wsaa;
 
 /**
  * Class Wsfe.
  */
 class Wsfe extends WsFuncionesInternas
 {
-    use Validaciones;
-    use TraitAutenticacion;
+    use Validaciones, AuthenticateTrait;
 
     /**
      * @var string
      */
     protected $ws;
+
     /**
-     * @var
+     * @var Wsaa
      */
-    public $wsaa;
+    protected $wsaa;
+
     /**
-     * @var
+     * @var claseAutenticacion
      */
     protected $autenticacion;
+
     /**
-     * @var
+     * @var \stdClass
      */
     public $client;
+
     /**
-     * @var
+     * @var \stdClass
      */
     protected $authRequest;
+
     /**
-     * @var
-     */
-    protected $validaciones;
-    /**
-     * @var
+     * @var \stdClass
      */
     public $datos;
+
+    /**
+     * @var \stdClass
+     */
+    protected $configuracion;
 
     /**
      * Wsfe constructor.
@@ -100,7 +107,7 @@ class Wsfe extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
 
         return $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
     }
@@ -117,7 +124,7 @@ class Wsfe extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
 
         return $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
     }
@@ -134,7 +141,7 @@ class Wsfe extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
 
         return $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
     }

@@ -11,13 +11,30 @@ declare(strict_types=1);
 namespace Multinexo\Afip;
 
 use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
 use Multinexo\Afip\Traits\General;
+use Multinexo\Afip\WSAA\Wsaa;
 
 class Autenticacion
 {
-    use TraitAutenticacion, General;
+    use AuthenticateTrait, General;
+
     public $configuracion;
+
+    /** @var Wsaa */
+    protected $wsaa;
+
+    /** @var string */
+    protected $ws;
+
+    /** @var self */
+    protected $autenticacion;
+
+    /** @var \stdClass */
+    protected $authRequest;
+
+    /** @var \stdClass */
+    protected $client;
 
     /**
      * Autenticacion constructor.

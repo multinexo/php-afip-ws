@@ -12,6 +12,8 @@ namespace Multinexo\Afip\WSMTXCA;
 
 class WsParametros
 {
+    protected $resultado;
+
     /**
      * WsParametros constructor.
      */
@@ -23,11 +25,10 @@ class WsParametros
     // TODO: Analizar si se utiliza esta funcion
 
     /**
-     * @param $serviceName
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $client
+     * @param \stdClass $authRequest
      */
-    public function consultar($serviceName, $client, $authRequest)
+    public function consultar(string $serviceName, $client, $authRequest)
     {
         $service = 'consultar' . $serviceName;
         $array = 'array' . $serviceName;
@@ -41,8 +42,7 @@ class WsParametros
     /**
      * Consultar Tipos de Comprobantes.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarTiposComprobante($client, $authRequest)
     {
@@ -58,8 +58,7 @@ class WsParametros
     /**
      * Consultar Tipos de Documento.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarTiposDocumento($client, $authRequest)
     {
@@ -75,8 +74,7 @@ class WsParametros
     /**
      * Consultar Alicuotas IVA.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarAlicuotasIVA($client, $authRequest)
     {
@@ -88,8 +86,7 @@ class WsParametros
     /**
      * Consultar Condiciones IVA.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarCondicionesIVA($client, $authRequest)
     {
@@ -105,8 +102,7 @@ class WsParametros
     /**
      * Consultar Monedas.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarMonedas($client, $authRequest)
     {
@@ -122,9 +118,8 @@ class WsParametros
     /**
      * Consultar Cotizacion de Moneda.
      *
-     * @param $client
-     * @param $authRequest
-     * @param $codMon
+     * @param \stdClass $authRequest
+     * @param string $codMon
      */
     public function consultarCotizacionMoneda($client, $authRequest, $codMon)
     {
@@ -141,8 +136,7 @@ class WsParametros
     /**
      * Consultar Unidades de Medida.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarUnidadesMedida($client, $authRequest)
     {
@@ -158,8 +152,7 @@ class WsParametros
     /**
      * Consultar Puntos de Venta.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarPuntosVenta($client, $authRequest)
     {
@@ -175,8 +168,7 @@ class WsParametros
     /**
      * Consultar Puntosde Venta CAE.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarPuntosVentaCAE($client, $authRequest)
     {
@@ -192,8 +184,7 @@ class WsParametros
     /**
      * Consultar Puntos de Venta CAEA.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarPuntosVentaCAEA($client, $authRequest)
     {
@@ -209,8 +200,7 @@ class WsParametros
     /**
      * Consultar Tipos Tributo.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      */
     public function consultarTiposTributo($client, $authRequest)
     {

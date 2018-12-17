@@ -20,11 +20,11 @@ class ManejadorResultados
     /**
      * Recupera información de eventos.
      *
-     * @param $resultado
+     * @param \stdClass $resultado
      *
-     * @return array con eventos o null si no existen
+     * @return \stdClass con eventos o null si no existen
      */
-    public function obtenerEventos($resultado): array
+    public function obtenerEventos($resultado): \stdClass
     {
         return isset($resultado->Events) ? $resultado->Events : null;
     }
@@ -32,12 +32,12 @@ class ManejadorResultados
     /**
      * Recupera detalle de observaciones del comprobante.
      *
-     * @param $path
-     * @param $name
+     * @param \stdClass $path
+     * @param string $name
      *
-     * @return array con observaciones o null si no existen
+     * @return array|null con observaciones o null si no existen
      */
-    public function obtenerObservaciones($path, $name): array
+    public function obtenerObservaciones($path, $name): ?array
     {
         return $path->{$name} ?? null;
     }
@@ -45,7 +45,7 @@ class ManejadorResultados
     /**
      * Recupera información de errores detectados lanzandolo en una excepción.
      *
-     * @param $resultado
+     * @param \stdClass $resultado
      *
      * @throws WsException
      */
