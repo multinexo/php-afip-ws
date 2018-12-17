@@ -12,6 +12,9 @@ namespace Multinexo\Afip\WSFE;
 
 class WsParametros
 {
+    /** @var ManejadorResultados */
+    protected $resultado;
+
     /**
      * WsParametros constructor.
      */
@@ -23,15 +26,14 @@ class WsParametros
     /**
      * Recupera la cotizacion de la moneda consultada y su fecha.
      *
-     * @param $client
-     * @param $monId       string(3): Código de moneda de la que se solicita cotización
+     * @param string $monId : Código de moneda de la que se solicita cotización
      *
-     * @return : Retorna la última cotización de la base de datos aduanera de la moneda ingresada.
-     *           * MonCotiz double(4+6) Cotización de la moneda
-     *           * MonId string(3) Código de moneda
-     *           * FchCotiz string(8) Fecha de la cotización. Formato yyyymmdd
+     * @return \stdClass Retorna la última cotización de la base de datos aduanera de la moneda ingresada.
+     *                   * MonCotiz double(4+6) Cotización de la moneda
+     *                   * MonId string(3) Código de moneda
+     *                   * FchCotiz string(8) Fecha de la cotización. Formato yyyymmdd
      */
-    public function FEParamGetCotizacion($client, $authRequest, $monId)
+    public function FEParamGetCotizacion($client, $authRequest, $monId): \stdClass
     {
         $resultado = $client->FEParamGetCotizacion([
             'Auth' => $authRequest,
@@ -47,8 +49,6 @@ class WsParametros
      * Recupera el listado de puntos de venta registrados y su estado:
      * Permite consultar los puntos de venta para ambos tipos de Código de Autorización (CAE y CAEA) gestionados
      * previamente por la CUIT emisora.
-     *
-     * @param $client
      *
      * @return array PtoVenta: Detalle de los tipos puntos de venta electrónicos:
      *               * Nro int(4) Punto de venta
@@ -72,8 +72,6 @@ class WsParametros
      * Recupera el listado de Tipos de Comprobantes utilizables en servicio de autorización.
      * Permite consultar los tipos de comprobantes habilitados en este WS.
      *
-     * @param $client
-     *
      * @return array CbteTipo: Detalle de los tipos de comprobantes; esta compuesto por los siguientes campos:
      *               * Id int(3)  Código  de comprobante
      *               * Desc string(250) Descripción
@@ -94,8 +92,6 @@ class WsParametros
     /**
      * Recupera el listado de identificadores para el campo Concepto.
      *
-     * @param $client
-     *
      * @return array ConceptoTipo: Detalle de los tipos de conceptos; esta compuesto por los siguientes campos:
      *               * Id int(3)  Código  de concepto
      *               * Desc string(250) Descripción
@@ -115,8 +111,6 @@ class WsParametros
 
     /**
      * Recupera el listado de Tipos de Documentos utilizables en servicio de autorización.
-     *
-     * @param $client
      *
      * @return array DocTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
@@ -140,8 +134,6 @@ class WsParametros
      * Recupera el listado de Tipos de Iva utilizables en servicio de autorización:
      * Se obtiene la totalidad de alícuotas de IVA posibles de uso en el presente WS, detallando código y descripción.
      *
-     * @param $client
-     *
      * @return array IvaTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
      *               * Id int(2) Tipo de IVA
@@ -163,8 +155,6 @@ class WsParametros
     /**
      * Recupera el listado de monedas utilizables en servicio de autorización.
      *
-     * @param $client
-     *
      * @return array Moneda: Retorna el universo de tipos de documentos disponibles en el presente WS;
      *               esta compuesto por los siguientes campos:
      *               * Id string(3) Código de moneda
@@ -184,11 +174,9 @@ class WsParametros
     }
 
     /**
-     *Recupera el listado de identificadores para los campos Opcionales
+     * Recupera el listado de identificadores para los campos Opcionales
      * Permite consultar los códigos y descripciones de los tipos de datos Opcionales que se  encuentran habilitados
      * para ser usados en el WS.
-     *
-     * @param $client
      *
      * @return array OpcionalTipo: Detalle de los tipos de datos opcionales; esta compuesto por los siguientes campos:
      *               * Id string(4) Identificador de campo  opcional
@@ -208,9 +196,7 @@ class WsParametros
     }
 
     /**
-     *Recupera el listado de los diferentes paises que pueden ser utilizados en el servicio de autorizacion.
-     *
-     * @param $client
+     * Recupera el listado de los diferentes paises que pueden ser utilizados en el servicio de autorizacion.
      *
      * @return array PaisTipo: Lista de paises; esta compuesto por los siguientes campos:
      *               * Id string(4) Código de país
@@ -229,8 +215,6 @@ class WsParametros
 
     /**
      *Recupera el listado de los diferente tributos que pueden ser utilizados en el servicio de autorizacion.
-     *
-     * @param $client
      *
      * @return array TributoTipo: Detalle de los tipos de tributos; esta compuesto por los siguientes campos:
      *               * Id string(2) Código de Tributo

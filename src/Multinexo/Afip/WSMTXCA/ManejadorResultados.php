@@ -20,7 +20,7 @@ class ManejadorResultados
     /**
      * Recupera información de errores detectados lanzandolo en una excepción.
      *
-     * @param $resultado
+     * @param \Exception $resultado
      *
      * @throws WsException
      */
@@ -48,7 +48,7 @@ class ManejadorResultados
     /**
      * Recupera información de eventos.
      *
-     * @param $resultado
+     * @param \stdClass $resultado
      */
     public function obtenerEventos($resultado)
     {
@@ -57,11 +57,8 @@ class ManejadorResultados
 
     /**
      * Recupera detalle de observaciones del comprobante.
-     *
-     * @param $path
-     * @param $name
      */
-    public function obtenerObservaciones($path, $name)
+    public function obtenerObservaciones(string $path, string $name)
     {
         return $path->{$name} ?? null;
     }

@@ -15,7 +15,7 @@ namespace Multinexo\Afip\Traits;
  */
 trait General
 {
-    public function getAliasWsName($ws)
+    public function getAliasWsName(string $ws): string
     {
         switch ($ws) {
             case 'padron-puc-ws-consulta-nivel3':
@@ -28,7 +28,7 @@ trait General
         return $alias;
     }
 
-    public function getOriginalWsName($ws)
+    public function getOriginalWsName(string $ws): string
     {
         switch ($ws) {
             case 'wspn3':

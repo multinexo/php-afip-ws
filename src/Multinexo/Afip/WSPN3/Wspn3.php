@@ -10,47 +10,58 @@ declare(strict_types=1);
 
 namespace Multinexo\Afip\WSPN3;
 
-use App\Helpers\GeneralHelper;
+use Multinexo\Afip\Autenticacion as claseAutenticacion;
 use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
 use Multinexo\Afip\Traits\Validaciones;
+use Multinexo\Afip\WSAA\Wsaa;
 
 /**
  * Class Wspn3.
  */
 class Wspn3 extends WsFuncionesInternas
 {
-    use Validaciones;
-    use TraitAutenticacion;
+    use Validaciones, AuthenticateTrait;
 
     /**
      * @var string
      */
     protected $ws;
+
     /**
-     * @var
+     * @var Wsaa
      */
-    public $wsaa;
+    protected $wsaa;
+
     /**
-     * @var
+     * @var claseAutenticacion;
      */
     protected $autenticacion;
+
     /**
-     * @var
+     * @var \stdClass
      */
     public $client;
+
     /**
-     * @var
+     * @var \stdClass
      */
     protected $authRequest;
+
     /**
-     * @var
-     */
-    protected $validaciones;
-    /**
-     * @var
+     * @var \stdClass
      */
     public $datos;
+
+    /**
+     * @var ManejadorResultados
+     */
+    public $resultado;
+
+    /**
+     * @var \stdClass
+     */
+    protected $configuracion;
 
     /**
      * Wspn3 constructor.
@@ -58,9 +69,7 @@ class Wspn3 extends WsFuncionesInternas
     public function __construct()
     {
         $this->ws = 'wspn3';
-
         $this->resultado = new ManejadorResultados();
-
     }
 
     public function consultarDatosPersona($cuit)
@@ -78,8 +87,6 @@ class Wspn3 extends WsFuncionesInternas
 
     public function getResumeWspn3Information($data)
     {
-        $helper = new GeneralHelper();
-
         $parsed_data = [
             'legal_name' => $this->getLegalName($data),
             'description' => $this->getDescription($data),
@@ -94,10 +101,7 @@ class Wspn3 extends WsFuncionesInternas
         return json_decode(json_encode($clear_data));
     }
 
-    /**
-     * @param $array
-     */
-    private static function flushNullFromArray($array)
+    private static function flushNullFromArray(array $array)
     {
         foreach ($array as $k => $item) {
             if (!$item) {

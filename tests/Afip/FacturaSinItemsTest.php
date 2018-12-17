@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Tests;
+namespace Tests\Afip;
 
 use Multinexo\Afip\Models\FacturaSinItems;
 
@@ -19,7 +19,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     /**
      * FacturaSinItemsTest constructor.
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->factura = new FacturaSinItems();
         $this->factura->setearConfiguracion($this->getConf());
@@ -281,9 +281,9 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function getConf()
     {
-        $base_path = __DIR__ . '/../../../..';
+        $base_path = __DIR__ . '/../../../php-afip-ws';
 
-        $dirAfip =  $base_path  . '/Documents/AFIP';
+        $dirAfip = $base_path . '/Documents/AFIP';
 
         return [
             'dir' => [

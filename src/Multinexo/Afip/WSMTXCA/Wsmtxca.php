@@ -10,51 +10,58 @@ declare(strict_types=1);
 
 namespace Multinexo\Afip\WSMTXCA;
 
-use Illuminate\Support\Facades\Log;
+use Multinexo\Afip\Autenticacion as claseAutenticacion;
 use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as TraitAutenticacion;
+use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
 use Multinexo\Afip\Traits\Validaciones;
+use Multinexo\Afip\WSAA\Wsaa;
 
 /**
  * Class Wsmtxca.
  */
 class Wsmtxca extends WsFuncionesInternas
 {
-    use Validaciones;
-    use TraitAutenticacion;
+    use Validaciones, AuthenticateTrait;
 
     /**
      * @var string
      */
     protected $ws;
+
     /**
-     * @var
+     * @var claseAutenticacion
      */
     protected $autenticacion;
+
     /**
-     * @var
+     * @var Wsaa
      */
     protected $wsaa;
+
     /**
-     * @var
+     * @var \stdClass
      */
     public $client;
+
     /**
-     * @var
+     * @var \stdClass
      */
     protected $authRequest;
+
     /**
      * @var ManejadorResultados
      */
     public $resultado;
+
     /**
-     * @var
+     * @var \stdClass
      */
     public $datos;
+
     /**
-     * @var
+     * @var \stdClass
      */
-    public $config;
+    protected $configuracion;
 
     /**
      * Wsmtxca constructor.
@@ -95,8 +102,6 @@ class Wsmtxca extends WsFuncionesInternas
         $this->datos = $this->parseFacturaArray($this->datos);
         $this->datos->numeroComprobante = $ultimoComprobante + 1;
 
-        Log::debug((array) $this->datos);
-
         return $this->wsAutorizarComprobante($this->client, $this->authRequest, $this->datos);
     }
 
@@ -112,7 +117,7 @@ class Wsmtxca extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
 
         return $this->wsConsultarCAEA($this->client, $this->authRequest, $this->datos);
     }
@@ -145,7 +150,7 @@ class Wsmtxca extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
         $result = $this->wsConsultarCAEAEntreFechas($this->client, $this->authRequest, $this->datos);
 
         return isset($result->CAEAResponse) ? $result->CAEAResponse : null;
@@ -163,7 +168,7 @@ class Wsmtxca extends WsFuncionesInternas
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
 
         return $this->wsConsultarComprobante($this->client, $this->authRequest, $this->datos);
     }

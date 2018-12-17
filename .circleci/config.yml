@@ -3,55 +3,62 @@
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
 version: 2
+
 jobs:
-  lint:
-    build:
-      docker:
-        # specify the version you desire here
-        - image: circleci/php:7.1-apache-jessie-node-browsers
+  build:
+    docker:
+    - image: circleci/php:7.1-apache-jessie-node-browsers
 
-      steps:
-        - checkout
+    steps:
+    - checkout
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y libxml2-dev
+    - run: sudo apt-get clean -y
+    - run: sudo docker-php-ext-install soap
 
-        # Download and cache dependencies
-        - restore_cache:
-            keys:
-            - v1-dependencies-{{ checksum "composer.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-        - run: composer install -n --prefer-dist
-        - save_cache:
-            paths:
-              - ./vendor
-            key: v1-dependencies-{{ checksum "composer.lock" }}
-        # composer ci!
-        - run: composer ci
-  test:
-    build:
-      docker:
-        # specify the version you desire here
-        - image: circleci/php:7.1-apache-jessie-node-browsers
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "composer.lock" }}
+        - v1-dependencies-
 
-      steps:
-        - checkout
+    - run: composer install -n --prefer-dist
 
-        # Download and cache dependencies
-        - restore_cache:
-            keys:
-            - v1-dependencies-{{ checksum "composer.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-        - run: composer install -n --prefer-dist
-        - save_cache:
-            paths:
-              - ./vendor
-            key: v1-dependencies-{{ checksum "composer.lock" }}
-        # run tests!
-        - run: ./vendor/bin/phpunit
+    - save_cache:
+        paths:
+        - ./vendor
+        key: v1-dependencies-{{ checksum "composer.lock" }}
 
+    - run: composer ci
+    - run: composer phpstan
+#  test:
+#    docker:
+#    - image: circleci/php:7.1-apache-jessie-node-browsers
+#
+#    steps:
+#    - checkout
+#    - run: sudo apt-get update
+#    - run: sudo apt-get install -y libxml2-dev
+#    - run: sudo apt-get clean -y
+#    - run: sudo docker-php-ext-install soap
+#
+#    - restore_cache:
+#        keys:
+#        - v1-dependencies-{{ checksum "composer.lock" }}
+#        - v1-dependencies-
+#
+#    - run: composer install -n --prefer-dist
+#
+#    - save_cache:
+#        paths:
+#        - ./vendor
+#        key: v1-dependencies-{{ checksum "composer.lock" }}
+#
+#    - run: composer coverage
 workflows:
   version: 2
-  build-test-deploy:
+  build_and_test:
     jobs:
-      - lint
-      - test
+    - build
+#    - test:
+#        requires:
+#        - build

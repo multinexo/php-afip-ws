@@ -15,7 +15,7 @@ use Multinexo\Afip\Exceptions\WsException;
 class WsFuncionesInternas
 {
     /**
-     * @var
+     * @var ManejadorResultados
      */
     public $resultado;
 
@@ -24,12 +24,9 @@ class WsFuncionesInternas
      * Permite consultar los datos de un comprobante previamente autorizado, ya sea del tipo Código de Autorización CAE
      * ó CAEA.
      *
-     * @param $client
-     * @param $authRequest
-     *
-     * @return:
+     * @param \stdClass $authRequest
      */
-    public function wsConsultarComprobante($client, $authRequest, $data)
+    public function wsConsultarComprobante($client, $authRequest, $data): string
     {
         $resultado = $client->consultarComprobante(
             [
@@ -53,12 +50,9 @@ class WsFuncionesInternas
      * Permite consultar la información correspondiente a CAEA s que hayan tenido vigencia en algún momento dentro de un
      * rango de fechas determinado.
      *
-     * @param $client
-     * @param $authRequest
-     *
-     * @return:
+     * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEAEntreFechas($client, $authRequest, $data)
+    public function wsConsultarCAEAEntreFechas($client, $authRequest, $data): \stdClass
     {
         $resultado = $client->consultarCAEAEntreFechas(
             [
@@ -77,12 +71,9 @@ class WsFuncionesInternas
      * Consultar un CAEA previamente otorgado
      * Permite consultar la información correspondiente a un CAEA previamente otorgado.
      *
-     * @param $client
-     * @param $authRequest
-     *
-     * @return:
+     * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEA($client, $authRequest, $data)
+    public function wsConsultarCAEA($client, $authRequest, $data): string
     {
         $resultado = $client->consultarCAEA(
             [
@@ -99,20 +90,19 @@ class WsFuncionesInternas
     /**
      * SolicitarCAEA.
      *
-     * @param $client
-     * @param $authRequest
-     * @param $data
+     * @param \stdClass $authRequest
+     * @param \stdClass $data
      *
-     * @return: Retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
-     *          * cuit: Cuit Emisora del comprobante.
-     *          * codigoTipoComprobante: Especifica el tipo de  comprobante.
-     *          * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
-     *          * numeroComprobante: Indica el número del  comprobante aprobado.
-     *          * fechaEmision: Fecha de emisión del  comprobante.
-     *          * CAE: CAE asignado al  comprobante  autorizado.
-     *          * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado.
+     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     *                * cuit: Cuit Emisora del comprobante.
+     *                * codigoTipoComprobante: Especifica el tipo de  comprobante.
+     *                * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
+     *                * numeroComprobante: Indica el número del  comprobante aprobado.
+     *                * fechaEmision: Fecha de emisión del  comprobante.
+     *                * CAE: CAE asignado al  comprobante  autorizado.
+     *                * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsSolicitarCAEA($client, $authRequest, $data)
+    public function wsSolicitarCAEA($client, $authRequest, $data): string
     {
         $resultado = $client->solicitarCAEA(
             [
@@ -132,20 +122,19 @@ class WsFuncionesInternas
     /**
      * Autorizar Comprobante CAE.
      *
-     * @param $client
-     * @param $authRequest
-     * @param $cbte
+     * @param \stdClass $authRequest
+     * @param string $cbte
      *
-     * @return: Retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
-     *          * cuit: Cuit Emisora del comprobante.
-     *          * codigoTipoComprobante: Especifica el tipo de  comprobante.
-     *          * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
-     *          * numeroComprobante: Indica el número del  comprobante aprobado.
-     *          * fechaEmision: Fecha de emisión del  comprobante.
-     *          * CAE: CAE asignado al  comprobante  autorizado.
-     *          * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado.
+     * @return \stdClass retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     *                   * cuit: Cuit Emisora del comprobante.
+     *                   * codigoTipoComprobante: Especifica el tipo de  comprobante.
+     *                   * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
+     *                   * numeroComprobante: Indica el número del  comprobante aprobado.
+     *                   * fechaEmision: Fecha de emisión del  comprobante.
+     *                   * CAE: CAE asignado al  comprobante  autorizado.
+     *                   * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsAutorizarComprobante($client, $authRequest, $cbte)
+    public function wsAutorizarComprobante($client, $authRequest, $cbte): \stdClass
     {
         $resultado = $client->autorizarComprobante(
             [
@@ -167,11 +156,10 @@ class WsFuncionesInternas
      * Permite consultar el último número decomprobante autorizado para undeterminado punto de venta y tipo de
      * comprobante, tanto para comprobantes con código de autorización CAE como CAEA.
      *
-     * @param $client
-     * @param $authRequest
-     * @param int(2) $cbteTipo : Tipo de comprobante que se desea consultar
-     * @param int(4) $ptoVta : Punto de venta para el cual se requiera conocer el último número de
-     *                       comprobante autorizado
+     * @param \stdClass $authRequest
+     * @param int $cbteTipo : Tipo de comprobante que se desea consultar
+     * @param int $ptoVta : Punto de venta para el cual se requiera conocer el último número de
+     *                    comprobante autorizado
      */
     public function wsConsultarUltimoComprobanteAutorizado($client, $authRequest, $cbteTipo, $ptoVta)
     {
@@ -192,16 +180,14 @@ class WsFuncionesInternas
     /**
      * Metodo dummy para verificacion de funcionamiento.
      *
-     * @param $client
-     *
-     * @return: Retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
-     *          * AppServer string(2) Servidor de aplicaciones
-     *          * DbServer string(2) Servidor de base de datos
-     *          * AuthServer string(2) Servidor de autenticación
+     * @return \stdClass retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     *                   * AppServer string(2) Servidor de aplicaciones
+     *                   * DbServer string(2) Servidor de base de datos
+     *                   * AuthServer string(2) Servidor de autenticación
      *
      * @throws WsException
      */
-    public function Dummy($client)
+    public function Dummy($client): \stdClass
     {
         $result = $client->Dummy();
 
@@ -213,13 +199,13 @@ class WsFuncionesInternas
     }
 
     /**
-     * @param $result
+     * @param \stdClass $result
      */
     // TODO: Exception
     public function checkSoapFault($result)
     {
         if (is_soap_fault($result)) {
-            dump(
+            var_dump(
                 [
                     'SoapErrors' => [
                         'Code' => $result->faultcode,
@@ -237,7 +223,7 @@ class WsFuncionesInternas
      * Permite adaptar los datos enviados en el array de comprobante a los campos definidos por el ws de la AFIP
      * para la generacion de comprobantes con items.
      *
-     * @param $factura
+     * @param \stdClass $factura
      *
      * @return array|mixed
      */
@@ -332,9 +318,8 @@ class WsFuncionesInternas
     // TODO: Testar funciones
 
     /**
-     * @param $client
-     * @param $authRequest
-     * @param $cbte
+     * @param \stdClass $authRequest
+     * @param string $cbte
      */
     public function wsInformarComprobanteCAEA($client, $authRequest, $cbte)
     {
@@ -344,25 +329,13 @@ class WsFuncionesInternas
                 'comprobanteCAEARequest' => $cbte,
             ]);
         $this->checkSoapFault($result);
-        $errors = $this->resultado->obtenerErrores1($result);
-        if (!$errors) {
-            $observations = [
-                'path' => $result,
-                'name' => 'arrayObservaciones',
-            ];
-            $events = ['path' => $result];
-            $this->resultado->procesar($observations, $events);
-        } else {
-            dump(['Errors' => $errors]);
-        }
 
         return $result->comprobante;
     }
 
     /**
-     * @param $client
-     * @param $authRequest
-     * @param $caea
+     * @param \stdClass $authRequest
+     * @param string $caea
      */
     public function wsInformarCAEANoUtilizado($client, $authRequest, $caea)
     {
@@ -372,26 +345,14 @@ class WsFuncionesInternas
                 'CAEA' => $caea,
             ]);
         $this->checkSoapFault($result);
-        $errors = $this->resultado->obtenerErrores1($result);
-        if (!$errors) {
-            $observations = [
-                'path' => $result,
-                'name' => 'arrayObservaciones',
-            ];
-            $events = ['path' => $result];
-            $this->resultado->procesar($observations, $events);
-        } else {
-            dump(['Errors' => $errors]);
-        }
 
         return $result->comprobante;
     }
 
     /**
-     * @param $client
-     * @param $authRequest
-     * @param $caea
-     * @param $ptoVta
+     * @param \stdClass $authRequest
+     * @param string $caea
+     * @param string $ptoVta
      */
     public function wsInformarCAEANoUtilizadoPtoVta($client, $authRequest, $caea, $ptoVta)
     {
@@ -402,25 +363,13 @@ class WsFuncionesInternas
                 'numeroPuntoVenta' => $ptoVta,
             ]);
         $this->checkSoapFault($result);
-        $errors = $this->resultado->obtenerErrores1($result);
-        if (!$errors) {
-            $observations = [
-                'path' => $result,
-                'name' => 'arrayObservaciones',
-            ];
-            $events = ['path' => $result];
-            $this->resultado->procesar($observations, $events);
-        } else {
-            dump(['Errors' => $errors]);
-        }
 
         return $result->comprobante;
     }
 
     /**
-     * @param $client
-     * @param $authRequest
-     * @param $caea
+     * @param \stdClass $authRequest
+     * @param string $caea
      */
     public function wsConsultarPtosVtaCAEANoInformados($client, $authRequest, $caea)
     {
@@ -430,17 +379,6 @@ class WsFuncionesInternas
                 'CAEA' => $caea,
             ]);
         $this->checkSoapFault($result);
-        $errors = $this->resultado->obtenerErrores1($result);
-        if (!$errors) {
-            $observations = [
-                'path' => $result,
-                'name' => 'arrayObservaciones',
-            ];
-            $events = ['path' => $result];
-            $this->resultado->procesar($observations, $events);
-        } else {
-            dump(['Errors' => $errors]);
-        }
 
         return $result->arrayPuntosVenta;
     }
