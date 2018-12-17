@@ -14,7 +14,65 @@ composer require multinexo/php-afip-ws
 ## Ejemplo
 
 ```php
-	// @todo: make an example
+    // Factura con items
+    $this->factura = new FacturaConItems();
+    
+    // Factura sin items
+    $this->factura = new FacturaSinItems();
+
+    $this->factura->datos = $data;
+    $this->factura->setearConfiguracion(my_config.php);
+    $result = $this->factura->crearComprobante();
+   
+    print_r($result);
+    
+    // Datos a enviar
+     $data = [
+        'cantidadRegistros' => 1,
+        'puntoVenta' => 3,
+        'codigoComprobante' => 6, (Factura B - code_afip)
+        'numeroComprobante' => 9562,
+        'codigoConcepto' => 1,
+        'codigoDocumento' => 21,
+        'numeroDocumento' => 20275968579,
+        'codigoMoneda' => 'PES',
+        'cotizacionMoneda' => 1,
+        'importeGravado' => 21.00,
+        'importeNoGravado' => 10.50,
+        'importeExento' => 13.00,
+        'importeOtrosTributos' => 17.00,
+        'importeSubtotal' => 18.00,
+        'importeIVA' => 10.00,
+        'importeTotal' => 28.00,
+        'fechaServicioDesde' => null,
+        'fechaServicioHasta' => null,
+        'fechaVencimientoPago' => null,
+        'arraySubtotalesIVA' => [],
+        'arrayComprobantesAsociados' => null,
+     ];
+      
+    // Factura sin items
+    $data['fechaEmision'] = date('Ymd');
+               
+    // Factura con items
+    $data['fechaEmision'] = date('Y-m-d');
+    $data['codigoTipoAutorizacion'] = null;
+    $data['observaciones'] = null;
+    $data['arrayItems'] = ['item' => $items];
+    
+    $items[] = [
+        'unidadesMtx' => 1,
+        'codigoMtx' => 4532, (code_detail)
+        'codigo' => 4532, (code_detail)
+        'descripcion' => 'descripcion',
+        'cantidad' => 2,
+        'codigoUnidadMedida' => 7,
+        'precioUnitario' => 43.00,
+        'importeBonificacion' => 0.00,
+        'codigoCondicionIVA' => 5,
+        'importeIVA' => 10.50,
+        'importeItem' => 49.00,
+    ];
 ```
 ## Obtención de certificado CRT
 **Una aclaración importante**, hay dos modos para usar los Web Services (WS),
