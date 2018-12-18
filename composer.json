@@ -44,12 +44,12 @@
     ]
   },
   "autoload-dev": {
-    "psr-0": {
-      "Multinexo\\AfipTest\\": "tests"
+    "psr-4": {
+      "Tests\\": "tests/"
     }
   },
   "scripts": {
-      "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-double-spaces\" \"composer ci-php-cs-fixer\"",
+      "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-double-spaces\" \"composer ci-php-cs-fixer\" \"composer phpstan\"",
       "ci-double-spaces": [
           "sh vendor/reyesoft/ci/tools/find-double-spaces.sh app",
           "sh vendor/reyesoft/ci/tools/find-double-spaces.sh tests"

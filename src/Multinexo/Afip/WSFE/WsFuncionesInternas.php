@@ -15,20 +15,19 @@ use Multinexo\Afip\Exceptions\WsException;
 class WsFuncionesInternas
 {
     /**
-     * @var
+     * @var ManejadorResultados
      */
-    public $resultado;
+    protected $resultado;
 
     /**
      * Método  de autorización de comprobantes  electrónicos por  CAE
      * Solicitud de Código de Autorización Electrónico (CAE).
      *
-     * @param $client
-     * @param array $authRequest :
-     *                           $token: Token devuelto por el WSAA
-     *                           $sign: Sign devuelto por el WSAA
-     *                           $cuit: Cuit contribuyente (representado o Emisora)
-     * @param array $data : Contiene información del comprobante
+     * @param \stdClass $authRequest :
+     *                               $token: Token devuelto por el WSAA
+     *                               $sign: Sign devuelto por el WSAA
+     *                               $cuit: Cuit contribuyente (representado o Emisora)
+     * @param \stdClass $data : Contiene información del comprobante
      *
      * @throws WsException
      */
@@ -55,21 +54,20 @@ class WsFuncionesInternas
      * Retorna el ultimo comprobante autorizado para el tipo de comprobante / cuit / punto de venta ingresado / Tipo de
      * Emisión.
      *
-     * @param $client
-     * @param array $authRequest :
-     *                           $token: Token devuelto por el WSAA
-     *                           $sign: Sign devuelto por el WSAA
-     *                           $cuit: Cuit contribuyente (representado o Emisora)
-     * @param $cbteTipo
-     * @param $ptoVta
+     * @param \stdClass $authRequest :
+     *                               $token: Token devuelto por el WSAA
+     *                               $sign: Sign devuelto por el WSAA
+     *                               $cuit: Cuit contribuyente (representado o Emisora)
+     * @param string $cbteTipo
+     * @param string $ptoVta
      *
-     * @return : Retorna el último número de comprobante registrado para el punto de venta y tipo de comprobante
-     *           enviado.
-     *           * PtoVta int(4): Punto  de venta
-     *           * CbteTipo int(3): Tipo de comprobante
-     *           * CbteNro long(8): Número de comprobante
+     * @return \stdClass retorna el último número de comprobante registrado para el punto de venta y tipo de comprobante
+     *                   enviado.
+     *                   * PtoVta int(4): Punto  de venta
+     *                   * CbteTipo int(3): Tipo de comprobante
+     *                   * CbteNro long(8): Número de comprobante
      */
-    public function FECompUltimoAutorizado($client, $authRequest, $cbteTipo, $ptoVta)
+    public function FECompUltimoAutorizado($client, $authRequest, $cbteTipo, $ptoVta): \stdClass
     {
         $resultado = $client->FECompUltimoAutorizado([
             'Auth' => $authRequest,
@@ -85,8 +83,6 @@ class WsFuncionesInternas
     /**
      * Este  método  permite  consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado
      * para un periodo/orden.
-     *
-     * @param $client
      */
     public function FECAEAConsultar($client, $authRequest, $data)
     {
@@ -104,8 +100,6 @@ class WsFuncionesInternas
     /**
      * Solicitud de Código de Autorización Electrónico Anticipado (CAEA)
      * Podrá ser solicitado dentro de los 5 (cinco) días corridos anteriores al comienzo de cada quincena.
-     *
-     * @param $client
      */
     public function FECAEASolicitar($client, $authRequest, $data)
     {
@@ -124,8 +118,6 @@ class WsFuncionesInternas
     /**
      * Consulta Comprobante emitido y su código:
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
-     *
-     * @param $client
      */
     public function FECompConsultar($client, $authRequest, $data)
     {
@@ -147,14 +139,12 @@ class WsFuncionesInternas
     /**
      * Metodo dummy para verificacion de funcionamiento.
      *
-     * @param $client
-     *
-     * @return: Retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
-     *          * AppServer string(2) Servidor de aplicaciones
-     *          * DbServer string(2) Servidor de base de datos
-     *          * AuthServer string(2) Servidor de autenticación
+     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     *                * AppServer string(2) Servidor de aplicaciones
+     *                * DbServer string(2) Servidor de base de datos
+     *                * AuthServer string(2) Servidor de autenticación
      */
-    public function FEDummy($client)
+    public function FEDummy($client): string
     {
         $result = $client->FEDummy();
 
@@ -166,8 +156,8 @@ class WsFuncionesInternas
     }
 
     /**
-     * @param $wsdlPath
-     * @param $url
+     * @param string $wsdlPath
+     * @param string $url
      */
     public function connectToSoapClient($wsdlPath, $url): \SoapClient
     {
@@ -186,7 +176,7 @@ class WsFuncionesInternas
      * Permite adaptar los datos enviados en el array de comprobante a los campos definidos por el ws de la AFIP
      * para la generacion de comprobantes sin items.
      *
-     * @param $factura
+     * @param \stdClass $factura
      *
      * @return array|mixed
      */
@@ -282,8 +272,8 @@ class WsFuncionesInternas
      * Permite informar para cada CAEA otorgado, la totalidad de los comprobantes emitidos y asociados a cada CAEA.
      * Rendición de comprobantes asociados a un CAEA.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
+     * @param \stdClass $data
      */
     public function FECAEARegInformativo($client, $authRequest, $data)
     {
@@ -302,11 +292,10 @@ class WsFuncionesInternas
      * Permite consultar mediante un CAEA, cuales fueron los puntos de venta que fueron notificados  como  sin
      * movimiento.
      *
-     * @param $client
-     * @param $authRequest
-     * @param string(14) $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
-     *                         puntos de venta
-     * @param int(4) $ptoVta : Punto de venta vinculado al CAEA informado
+     * @param \stdClass $authRequest
+     * @param string $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                     puntos de venta
+     * @param int $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoConsultar($client, $authRequest, $caea, $ptoVta)
     {
@@ -326,11 +315,10 @@ class WsFuncionesInternas
      * Permite informar a la administración cuales fueron los CAEA’s otorgados que no sufrieron movimiento alguno
      * para un determinado punto de venta.
      *
-     * @param $client
-     * @param $authRequest
-     * @param string(14) $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
-     *                         puntos de venta
-     * @param int(4) $ptoVta : Punto de venta vinculado al CAEA informado
+     * @param \stdClass $authRequest
+     * @param string $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
+     *                     puntos de venta
+     * @param int $ptoVta : Punto de venta vinculado al CAEA informado
      */
     public function FECAEASinMovimientoInformar($client, $authRequest, $caea, $ptoVta)
     {
@@ -349,13 +337,12 @@ class WsFuncionesInternas
      * Retorna la cantidad maxima de registros que puede tener una invocacion al metodo FECAESolicitar /
      * FECAEARegInformativo.
      *
-     * @param $client
-     * @param $authRequest
+     * @param \stdClass $authRequest
      *
-     * @return int(4): Cantidad máxima de registros que se pueden incluir en un Request de solicitud de CAE e Informar
-     *                 CAEA
+     * @return int Cantidad máxima de registros que se pueden incluir en un Request de solicitud de CAE e Informar
+     *             CAEA
      */
-    public function FECompTotXRequest($client, $authRequest)
+    public function FECompTotXRequest($client, $authRequest): int
     {
         $resultado = $client->FECompTotXRequest([
             'Auth' => $authRequest,

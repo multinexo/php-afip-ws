@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Tests;
+namespace Tests\Afip;
 
 /**
  * This class doesn't do much yet..

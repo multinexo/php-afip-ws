@@ -11,11 +11,12 @@ declare(strict_types=1);
 namespace Multinexo\Afip\WSPN3;
 
 use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Afip\WSMTXCA\ManejadorResultados;
 
 class WsFuncionesInternas
 {
     /**
-     * @var
+     * @var ManejadorResultados
      */
     public $resultado;
 

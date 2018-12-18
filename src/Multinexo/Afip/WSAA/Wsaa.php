@@ -22,17 +22,18 @@ use Multinexo\Afip\Traits\General;
 class Wsaa
 {
     use General;
+
     /**
-     * @var
+     * @var \stdClass
      */
     public $configuracion;
 
     /**
      * Crea un pedido de ticket de acceso (Access Request Ticket (TRA)).
      *
-     * @param $service : Receive the service name (wsfe, wsbfe, wsfex, wsctg, etc.)
+     * @param string $service : Receive the service name (wsfe, wsbfe, wsfex, wsctg, etc.)
      */
-    public function createTRA($service): void
+    public function createTRA(string $service): void
     {
         $TRA = new \SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
@@ -51,11 +52,9 @@ class Wsaa
      * la clave privada. Genera un archivo intermedio y finalmente ajusta la cabecera MIME dejando el CMS final
      * requerido por WSAA.
      *
-     * @param $service
-     *
      * @throws WsException
      */
-    public function signTRA($service): string
+    public function signTRA(string $service): string
     {
         $configuracion = $this->configuracion;
         $dir = $configuracion->dir;
@@ -70,7 +69,7 @@ class Wsaa
                 $configuracion->passPhrase,
             ],
             [],
-            !PKCS7_DETACHED
+            0
         );
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
@@ -95,13 +94,13 @@ class Wsaa
     /**
      * Conecta con el servidor remoto y ejecuta el metodo remoto LoginCMS retornando un Ticket de Acceso (TA).
      *
-     * @param $CMS : Recibe un CMS (Cryptographic Message Syntax)
+     * @param string $CMS : Recibe un CMS (Cryptographic Message Syntax)
      *
      * @return mixed: Ticket de Acceso generado por AFIP en formato xml
      *
      * @throws WsException
      */
-    public function callWSAA($CMS)
+    public function callWSAA(string $CMS)
     {
         $client = new \SoapClient($this->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $this->configuracion->proxyPort,
@@ -127,11 +126,9 @@ class Wsaa
     /**
      * Permite autenticarse al ws.
      *
-     * @param $service
-     *
      * @throws WsException
      */
-    public function authenticate($service)
+    public function authenticate(string $service)
     {
         //        ini_set("soap.wsdl_cache_enabled", "0");
         $dir = $this->configuracion->dir;
@@ -166,12 +163,9 @@ class Wsaa
     /**
      * Permite obtener un atributo de un archivo con formato xml.
      *
-     * @param $path
-     * @param array $nodes
-     *
      * @return bool|\SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getXmlAttribute($path, $nodes = [])
+    public function getXmlAttribute(string $path, array $nodes = [])
     {
         $TaXml = simplexml_load_file($path);
         foreach ($nodes as $node) {
@@ -188,11 +182,9 @@ class Wsaa
     /**
      * Chequea si necesita renovar el Ticket de Acceso para el ws.
      *
-     * @param $service
-     *
      * @throws WsException
      */
-    public function checkTARenovation($service): bool
+    public function checkTARenovation(string $service): bool
     {
         $path = $this->configuracion->dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml';
 

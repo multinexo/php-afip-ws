@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Tests;
+namespace Tests\Afip;
 
 use Multinexo\Afip\WSPN3\Wspn3;
 
@@ -19,13 +19,13 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
     /**
      * FacturaSinItemsTest constructor.
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->wspn3 = new Wspn3();
         $this->wspn3->setearConfiguracion($this->getConf());
     }
 
-    public function testConsultarDatosPersona()
+    public function testConsultarDatosPersona(): void
     {
         $cuitContribuyente = '30561785402';
         $result = $this->wspn3->consultarDatosPersona($cuitContribuyente);
@@ -34,7 +34,7 @@ class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
 
     public function getConf()
     {
-        $base_path = __DIR__ . '/../../../..';
+        $base_path = __DIR__ . '/../../../php-afip-ws';
         $filename = '7320828c9153b2a9848d6bc45d3544236b22fc48';
         $wsurl = 'https://awshomo.afip.gov.ar/padron-puc-ws/services/';
 

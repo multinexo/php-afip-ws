@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Tests;
+namespace Tests\Afip;
 
 use Multinexo\Afip\Models\FacturaConItems;
 
@@ -19,7 +19,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
     /**
      * FacturaConItemsTest constructor.
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->factura = new FacturaConItems();
         $this->factura->setearConfiguracion($this->getConf());
@@ -104,7 +104,6 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             $arrayOtrosTributos);
 
         $result = $this->factura->crearComprobante();
-        dump($result);
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
@@ -497,7 +496,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
     public function getConf()
     {
         // @todo
-        $base_path = __DIR__ . '/../../../..';
+        $base_path = __DIR__ . '/../../../php-afip-ws';
         $dirAfip = $base_path . '/storage/Afip/4c15dc21c91634c1b301de6236eb08ead86be4ae';
 
         return [
@@ -507,7 +506,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
             'archivos' => [
                 'certificado' => $dirAfip . '/4c15dc21c91634c1b301de6236eb08ead86be4ae.crt',
-                'clavePrivada' =>  $base_path . '/storage/Afip/privateKey',
+                'clavePrivada' => $base_path . '/storage/Afip/privateKey',
             ],
 
             'cuit' => 20327936221,
