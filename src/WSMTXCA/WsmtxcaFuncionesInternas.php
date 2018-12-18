@@ -8,11 +8,11 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSMTXCA;
+namespace Multinexo\WSMTXCA;
 
-use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Exceptions\WsException;
 
-class WsFuncionesInternas
+trait WsmtxcaFuncionesInternas
 {
     /**
      * @var ManejadorResultados

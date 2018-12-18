@@ -8,20 +8,20 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSPN3;
+namespace Multinexo\WSPN3;
 
-use Multinexo\Afip\Autenticacion as claseAutenticacion;
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
-use Multinexo\Afip\Traits\Validaciones;
-use Multinexo\Afip\WSAA\Wsaa;
+use Multinexo\Auth\AuthenticateTrait;
+use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Traits\Validaciones;
+use Multinexo\WSAA\Wsaa;
 
 /**
  * Class Wspn3.
  */
-class Wspn3 extends WsFuncionesInternas
+class Wspn3
 {
-    use Validaciones, AuthenticateTrait;
+    use Validaciones, AuthenticateTrait, Wspn3FuncionesInternas;
 
     /**
      * @var string
@@ -34,7 +34,7 @@ class Wspn3 extends WsFuncionesInternas
     protected $wsaa;
 
     /**
-     * @var claseAutenticacion;
+     * @var Authentication
      */
     protected $autenticacion;
 

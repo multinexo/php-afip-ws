@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Afip;
 
-use Multinexo\Afip\Models\FacturaSinItems;
+use Multinexo\WSFE\Wsfe;
 
 class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,7 +21,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->factura = new FacturaSinItems();
+        $this->factura = new Wsfe();
         $this->factura->setearConfiguracion($this->getConf());
     }
 
@@ -29,7 +29,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->factura->datos = $this->getDatosFactura(1, 200.00, 0, 0, 200.00, 0, null);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->CAE);
     }
 
@@ -37,7 +37,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->factura->datos = $this->getDatosFactura(11, 200.00, 200, 0, 0.00, 0, null);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->CAE);
     }
 
@@ -59,7 +59,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         ];
         $this->factura->datos = $this->getDatosFactura(2, 200.00, 0, 0, 200.00, 0, $arrayComprobantesAsociados);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->CAE);
     }
 
@@ -85,7 +85,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         ];
         $this->factura->datos = $this->getDatosFactura(11, 20.00, 10, 10, 0, 0, null, $arrayOtrosTributos);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->CAE);
     }
 
@@ -108,13 +108,13 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
         $this->factura->datos = $this->getDatosFactura(1, 176.25, 150, 0, 0, 26.25, null, null, $arraySubtotalesIVA);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->CAE);
     }
 
     public function testCrearFacturaSinItemsConArrayOpcionales(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Exceptions\WsException::class);
         $this->expectExceptionMessageRegExp('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
 
         $arrayOpcionales = [
@@ -131,21 +131,21 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->factura->datos = $this->getDatosFactura(1, 200.00, 0, 0, 200.00, 0, null, null, null, $arrayOpcionales);
-        $this->factura->crearComprobante();
+        $this->factura->createInvoice();
     }
 
     public function testCrearFacturaSinItemsConErroresServidor(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Exceptions\WsException::class);
 
         $this->factura->datos = $this->getDatosFactura(1, 220.00, 0, 0, 200.00, 0);
 
-        $this->factura->crearComprobante();
+        $this->factura->createInvoice();
     }
 
     public function testCrearFacturaSinItemsConErroresValidacion(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
+        $this->expectException(\Multinexo\Exceptions\ValidationException::class);
 
         $arrayComprobantesAsociados = [
             'comprobanteAsociado' => [
@@ -162,7 +162,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $this->factura->datos = $this->getDatosFactura(1, 200.00, 0, 0, 200.00, 'error', $arrayComprobantesAsociados);
-        $this->factura->crearComprobante();
+        $this->factura->createInvoice();
     }
 
     public function getDatosFactura(
@@ -213,33 +213,33 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
             'numeroComprobante' => 20,
             'puntoVenta' => 3,
         ];
-        $result = $this->factura->consultarComprobante();
+        $result = $this->factura->getInvoice();
 
         $this->assertNotEmpty($result);
     }
 
     public function testConsultarFacturaConErrorServidor(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Exceptions\WsException::class);
 
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
             'numeroComprobante' => 9999,
             'puntoVenta' => 3,
         ];
-        $this->factura->consultarComprobante();
+        $this->factura->getInvoice();
     }
 
     public function testConsultarFacturaConErrorValidacion(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\ValidationException::class);
+        $this->expectException(\Multinexo\Exceptions\ValidationException::class);
 
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
             'numeroComprobante' => 'test',
             'puntoVenta' => 1,
         ];
-        $this->factura->consultarComprobante();
+        $this->factura->getInvoice();
     }
 
     public function testConsultarCaeaPorPeriodo(): void
@@ -249,7 +249,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
             'orden' => 2,
         ];
 
-        $result = $this->factura->consultarCAEAPorPeriodo();
+        $result = $this->factura->getCAEA();
         $this->assertNotEmpty($result);
     }
 
@@ -265,7 +265,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testSolicitarCaeaErrorVencido(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Exceptions\WsException::class);
         $this->expectExceptionMessage(
             '{"Err":{"Code":15007,"Msg":"El <Periodo> 201603 se encuentra vencido para solicitar CAEA."}}'
         );
@@ -275,7 +275,7 @@ class FacturaSinItemsTest extends \PHPUnit\Framework\TestCase
             'orden' => 2,
         ];
 
-        $result = $this->factura->solicitarCAEA();
+        $result = $this->factura->requestCAEA();
         $this->assertNotEmpty($result);
     }
 

@@ -8,8 +8,15 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Exceptions;
+namespace Multinexo\Models;
 
-class Handler
+interface InvoiceInterface
 {
+    public function createInvoice();
+
+    public function getCAEA();
+
+    public function requestCAEA();
+
+    public function getInvoice();
 }

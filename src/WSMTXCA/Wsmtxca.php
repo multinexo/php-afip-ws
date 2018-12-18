@@ -8,20 +8,21 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSMTXCA;
+namespace Multinexo\WSMTXCA;
 
-use Multinexo\Afip\Autenticacion as claseAutenticacion;
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
-use Multinexo\Afip\Traits\Validaciones;
-use Multinexo\Afip\WSAA\Wsaa;
+use Multinexo\Auth\AuthenticateTrait;
+use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Models\Invoice;
+use Multinexo\Traits\Validaciones;
+use Multinexo\WSAA\Wsaa;
 
 /**
- * Class Wsmtxca.
+ * Class Wsmtxca (Invoice with items).
  */
-class Wsmtxca extends WsFuncionesInternas
+class Wsmtxca extends Invoice
 {
-    use Validaciones, AuthenticateTrait;
+    use Validaciones, AuthenticateTrait, WsmtxcaFuncionesInternas;
 
     /**
      * @var string
@@ -29,7 +30,7 @@ class Wsmtxca extends WsFuncionesInternas
     protected $ws;
 
     /**
-     * @var claseAutenticacion
+     * @var Authentication
      */
     protected $autenticacion;
 
@@ -77,7 +78,7 @@ class Wsmtxca extends WsFuncionesInternas
      *
      * @throws WsException
      */
-    public function crearComprobante()
+    public function createInvoice()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -109,9 +110,9 @@ class Wsmtxca extends WsFuncionesInternas
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado.
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function consultarCAEA()
+    public function getCAEA()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -127,7 +128,7 @@ class Wsmtxca extends WsFuncionesInternas
      *
      * @throws WsException
      */
-    public function solicitarCAEA()
+    public function requestCAEA()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -142,7 +143,7 @@ class Wsmtxca extends WsFuncionesInternas
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado entre un rango de fechas.
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
     public function consultarCAEAEntreFechas()
     {
@@ -160,9 +161,9 @@ class Wsmtxca extends WsFuncionesInternas
      * Permite consultar un comprobante con items ya emitido.
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function consultarComprobante()
+    public function getInvoice()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');

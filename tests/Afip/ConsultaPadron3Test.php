@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Afip;
 
-use Multinexo\Afip\WSPN3\Wspn3;
+use Multinexo\WSPN3\Wspn3;
 
 class ConsultaPadron3Test extends \PHPUnit\Framework\TestCase
 {

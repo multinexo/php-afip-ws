@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSAA;
+namespace Multinexo\WSAA;
 
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\General;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Traits\General;
 
 /**
  * Class wsaa

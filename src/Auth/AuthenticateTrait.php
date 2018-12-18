@@ -8,28 +8,25 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Traits;
+namespace Multinexo\Auth;
 
-use Multinexo\Afip\Autenticacion as claseAutenticacion;
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\WSAA\Wsaa;
+use Multinexo\Exceptions\WsException;
+use Multinexo\WSAA\Wsaa;
 
 /**
- * Class Autenticacion.
+ * Class Authentication.
  */
-trait Autenticacion
+trait AuthenticateTrait
 {
     /**
      * Setea la configuracion, en caso de enviarse un array con datos de configuracion esta reemplaza a la definida por
      * defecto.
      *
-     * @param array $newConf
-     *
      * @return $this
      */
-    public function setearConfiguracion($newConf = [])
+    public function setearConfiguracion(array $newConf = [])
     {
-        $defConf = include __DIR__ . '/../../../config/config.php';
+        $defConf = include __DIR__ . '/../../config/config.php';
         $conf = array_replace_recursive($defConf, $newConf);
         $this->configuracion = json_decode(json_encode($conf));
 
@@ -48,7 +45,7 @@ trait Autenticacion
         $this->wsaa = new Wsaa();
         $this->wsaa->configuracion = $this->configuracion;
         $this->wsaa->checkTARenovation($this->ws);
-        $this->autenticacion = new claseAutenticacion();
+        $this->autenticacion = new Authentication();
         $this->autenticacion->configuracion = $this->configuracion;
         $this->client = $this->autenticacion->getClient($this->ws);
         $this->authRequest = $this->autenticacion->getCredentials($this->ws);

@@ -8,10 +8,8 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Models;
+namespace Multinexo\Exceptions;
 
-use Multinexo\Afip\WSFE\Wsfe;
-
-class FacturaSinItems extends Wsfe
+class ValidationException extends \Exception
 {
 }

@@ -8,20 +8,21 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSFE;
+namespace Multinexo\WSFE;
 
-use Multinexo\Afip\Autenticacion as claseAutenticacion;
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
-use Multinexo\Afip\Traits\Validaciones;
-use Multinexo\Afip\WSAA\Wsaa;
+use Multinexo\Auth\AuthenticateTrait;
+use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Models\Invoice;
+use Multinexo\Traits\Validaciones;
+use Multinexo\WSAA\Wsaa;
 
 /**
- * Class Wsfe.
+ * Class Wsfe (Invoice without items).
  */
-class Wsfe extends WsFuncionesInternas
+class Wsfe extends Invoice
 {
-    use Validaciones, AuthenticateTrait;
+    use Validaciones, AuthenticateTrait, WsfeFuncionesInternas;
 
     /**
      * @var string
@@ -34,7 +35,7 @@ class Wsfe extends WsFuncionesInternas
     protected $wsaa;
 
     /**
-     * @var claseAutenticacion
+     * @var Authentication
      */
     protected $autenticacion;
 
@@ -72,7 +73,7 @@ class Wsfe extends WsFuncionesInternas
      *
      * @throws WsException
      */
-    public function crearComprobante()
+    public function createInvoice()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -99,9 +100,9 @@ class Wsfe extends WsFuncionesInternas
      * para un periodo/orden.
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function consultarCAEAPorPeriodo()
+    public function getCAEA()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -116,9 +117,9 @@ class Wsfe extends WsFuncionesInternas
      * Permite solicitar Código de Autorización Electrónico Anticipado (CAEA).
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function solicitarCAEA()
+    public function requestCAEA()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -133,9 +134,9 @@ class Wsfe extends WsFuncionesInternas
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
      *
      * @throws WsException
-     * @throws \Multinexo\Afip\Exceptions\ValidationException
+     * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function consultarComprobante()
+    public function getInvoice()
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');

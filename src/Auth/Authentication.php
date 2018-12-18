@@ -8,14 +8,13 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip;
+namespace Multinexo\Auth;
 
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\Traits\Autenticacion as AuthenticateTrait;
-use Multinexo\Afip\Traits\General;
-use Multinexo\Afip\WSAA\Wsaa;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Traits\General;
+use Multinexo\WSAA\Wsaa;
 
-class Autenticacion
+class Authentication
 {
     use AuthenticateTrait, General;
 
@@ -37,7 +36,7 @@ class Autenticacion
     protected $client;
 
     /**
-     * Autenticacion constructor.
+     * Authentication constructor.
      */
     public function __construct()
     {
@@ -46,7 +45,7 @@ class Autenticacion
     public function getClient($ws)
     {
         $ta = $this->configuracion->dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $ws . '.xml';
-        $wsdl = __DIR__ . '/' . strtoupper($ws) . '/' . $ws . '.wsdl';
+        $wsdl = __DIR__ . 'Authentication.php/' . $ws . '.wsdl';
 
         foreach ([$ta, $wsdl] as $item) {
             if (!file_exists($item)) {
