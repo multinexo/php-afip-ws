@@ -8,12 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSPN3;
+namespace Multinexo\WSPN3;
 
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\WSMTXCA\ManejadorResultados;
+use Multinexo\Exceptions\WsException;
+use Multinexo\WSMTXCA\ManejadorResultados;
 
-class WsFuncionesInternas
+trait Wspn3FuncionesInternas
 {
     /**
      * @var ManejadorResultados

@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSMTXCA;
+namespace Multinexo\WSMTXCA;
 
 class WsParametros
 {

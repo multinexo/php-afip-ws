@@ -8,15 +8,16 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Traits;
+namespace Multinexo\Traits;
 
-use Multinexo\Afip\Exceptions\ValidationException;
-use Multinexo\Afip\Exceptions\WsException;
-use Multinexo\Afip\WSFE\WsFuncionesInternas as WsfeFunc;
-use Multinexo\Afip\WSFE\WsParametros as FeSinItemsParam;
-use Multinexo\Afip\WSMTXCA\WsFuncionesInternas as WsmtxcaFunc;
-use Multinexo\Afip\WSMTXCA\WsParametros as FeConItemsParam;
-use Multinexo\Afip\WSPN3\WsFuncionesInternas as Wspn3Func;
+use Multinexo\Exceptions\ValidationException;
+use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipWebService;
+use Multinexo\WSFE\Wsfe;
+use Multinexo\WSFE\WsParametros as FeSinItemsParam;
+use Multinexo\WSMTXCA\Wsmtxca;
+use Multinexo\WSMTXCA\WsParametros as FeConItemsParam;
+use Multinexo\WSPN3\Wspn3;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
 
@@ -37,7 +38,7 @@ trait Validaciones
 
                 $wsReglas = [];
                 $codComprobantes = $this->codComprobantes();
-                $puntosVenta = $this->puntosVentaValidos();
+                $puntosVenta = (new AfipWebService($this->ws))->getAvailablePosNumbers();
 
                 $codDocumento = $this->codDocumento();
                 $codMonedas = $this->codMonedas();
@@ -178,7 +179,7 @@ trait Validaciones
      */
     public function getErrorMessages(): array
     {
-        $errorMessagesEs = [
+        return [
             'notEmpty' => 'Campo {{name}} obligatorio',
             'date' => '{{name}} debe tener una fecha valida. Ejemplo de formato: {{format}}\'',
             'intVal' => '',
@@ -199,11 +200,6 @@ trait Validaciones
             'numeroComprobante' => 'Campo Numero de Comprobante: Debe debe estar comprendido entre 1 y 99999999.',
             'puntoVenta.notEmpty' => 'Punto de venta: es obligatorio',
             'puntoVenta' => 'Punto de venta: Debe debe estar comprendido entre 1 y 9998.',
-        ];
-
-        return [
-            //            'notEmpty' => "The field '{{name}}' is required",
-            //            'in' => "The field '{{name}}' must be one of the values: {{haystack}}",
         ];
     }
 
@@ -300,100 +296,6 @@ trait Validaciones
                 return $o->codigo;
             }, $codigos->arrayTiposComprobante->codigoDescripcion);
         }
-
-        return $codigos;
-    }
-
-    /**
-     * Retorna array con los puntos de venta válidos.
-     *
-     * @return array|mixed
-     */
-    public function puntosVentaValidos()
-    {
-        $codigos = [];
-        if ($this->ws == 'wsfe') {
-            $result = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
-            if (empty((array) $result['ResultGet'])) {
-                return [];
-            }
-
-            if (\count($result['ResultGet']->PtoVenta) > 1) {
-                $puntosVenta = $result['ResultGet']->PtoVenta;
-            } else {
-                $puntosVenta = $result['ResultGet'];
-            }
-
-            foreach ($puntosVenta as $puntoVenta) {
-                if ($puntoVenta->Bloqueado == 'N') {
-                    $codigos[] = $puntoVenta->Nro;
-                }
-            }
-        } elseif ($this->ws == 'wsmtxca') {
-            $result = (new FeConItemsParam())->consultarPuntosVenta($this->client, $this->authRequest);
-
-            if (empty((array) $result->arrayPuntosVenta)) {
-                return [];
-            }
-
-            foreach ($result->arrayPuntosVenta as $puntoVenta) {
-                if ($puntoVenta->bloqueado == 'No') {
-                    $codigos[] = $puntoVenta->numeroPuntoVenta;
-                }
-            }
-        }
-
-        return $codigos;
-    }
-
-    /**
-     * Retorna array con los puntos de venta CAE válidos.
-     *
-     * @return array|mixed
-     */
-    public function puntosVentaCAEValidos()
-    {
-        $codigos = [];
-        if ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarPuntosVentaCAE($this->client, $this->authRequest);
-            if (empty((array) $codigos->arrayPuntosVenta)) {
-                return [];
-            }
-            $codigos = array_map(function ($o) {
-                return $o->codigo;
-            }, $codigos->arrayPuntosVenta->puntoVenta);
-        }
-        //elseif ($this->ws == 'wsfe') {
-        //  // Todo: arreglar
-        //  $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
-        //  $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
-        //}
-
-        return $codigos;
-    }
-
-    /**
-     * Retorna array con los puntos de venta CAEA válidos.
-     *
-     * @return array|mixed
-     */
-    public function puntosVentaCAEAValidos()
-    {
-        $codigos = [];
-        if ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarPuntosVentaCAEA($this->client, $this->authRequest);
-            if (empty((array) $codigos->arrayPuntosVenta)) {
-                return [];
-            }
-            $codigos = array_map(function ($o) {
-                return $o->codigo;
-            }, $codigos->arrayPuntosVenta->puntoVenta);
-        }
-        //elseif ($this->ws == 'wsfe') {
-        //            // Todo: arreglar
-        //            $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
-        //            $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
-        //}
 
         return $codigos;
     }
@@ -503,15 +405,15 @@ trait Validaciones
     {
         switch ($ws) {
             case 'wsmtxca':
-                $wsStatus = (new WsmtxcaFunc())->Dummy($cliente);
+                $wsStatus = (new Wsmtxca())->Dummy($cliente);
                 break;
 
             case 'wsfe':
-                $wsStatus = (new WsfeFunc())->FEDummy($cliente);
+                $wsStatus = (new Wsfe())->FEDummy($cliente);
                 break;
 
             case 'wspn3':
-                $wsStatus = (new Wspn3Func())->wsDummy($cliente);
+                $wsStatus = (new Wspn3())->wsDummy($cliente);
                 break;
 
             default:
@@ -519,50 +421,5 @@ trait Validaciones
         }
 
         return $wsStatus;
-    }
-
-    public function checkServerStatus(string $ws, $cliente)
-    {
-        $serverStatus = $this->getServerStatus($ws, $cliente);
-
-        switch ($ws) {
-            case 'wsmtxca':
-                if ($serverStatus->appserver == 'OK'
-                    && $serverStatus->authserver == 'OK'
-                    && $serverStatus->dbserver == 'OK'
-                ) {
-                    $status = true;
-                } else {
-                    $status = false;
-                }
-                break;
-
-            case 'wsfe':
-                if ($serverStatus->AppServer == 'OK'
-                    && $serverStatus->DbServer == 'OK'
-                    && $serverStatus->AuthServer == 'OK'
-                ) {
-                    $status = true;
-                } else {
-                    $status = false;
-                }
-                break;
-
-            case 'wspn3':
-                if ($serverStatus->appserver == 'OK'
-                    && $serverStatus->authserver == 'OK'
-                    && $serverStatus->dbserver == 'OK'
-                ) {
-                    $status = true;
-                } else {
-                    $status = false;
-                }
-                break;
-
-            default:
-                throw new WsException('Error en la verificación del servicio');
-        }
-
-        return $status;
     }
 }

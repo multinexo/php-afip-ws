@@ -8,11 +8,11 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSFE;
+namespace Multinexo\WSFE;
 
-use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Exceptions\WsException;
 
-class WsFuncionesInternas
+trait WsfeFuncionesInternas
 {
     /**
      * @var ManejadorResultados

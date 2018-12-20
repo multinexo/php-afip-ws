@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Afip;
 
-use Multinexo\Afip\Models\FacturaConItems;
+use Multinexo\WSMTXCA\Wsmtxca;
 
 class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,7 +21,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->factura = new FacturaConItems();
+        $this->factura = new Wsmtxca();
         $this->factura->setearConfiguracion($this->getConf());
     }
 
@@ -103,7 +103,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             $arrayComprobantesAsociados,
             $arrayOtrosTributos);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
@@ -185,7 +185,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             $arrayComprobantesAsociados,
             $arrayOtrosTributos);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
@@ -236,7 +236,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
         $this->factura->datos = $this->getDatosFactura(1, 182.25, 150, null, 150, 0, $arrayItems, $arraySubtotalesIVA);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
@@ -275,13 +275,13 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
 
         $this->factura->datos = $this->getDatosFactura(6, 150, 150, null, 150, 0, $arrayItems);
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
     public function testCrearComprobanteConItemsConArrayCompAsoc(): void
     {
-        $this->expectException(\Multinexo\Afip\Exceptions\WsException::class);
+        $this->expectException(\Multinexo\Exceptions\WsException::class);
         $this->expectExceptionMessage('Para la CUIT, Tipo de Comprobante y Punto de Ventas requeridos ' .
             'no se registran comprobantes en las bases del Organismo');
 
@@ -345,7 +345,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
         $this->factura->datos = $this->getDatosFactura(
             2, 115.75, 100, null, 100, 0, $arrayItems, $arraySubtotalesIVA, $arrayComprobantesAsociados
         );
-        $this->factura->crearComprobante();
+        $this->factura->createInvoice();
     }
 
     public function testCrearComprobanteConItemsConArrayTrib(): void
@@ -402,7 +402,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             1, 115.75, 100, 15.75, 100, 0, $arrayItems, null, null, $arrayOtrosTributos
         );
 
-        $result = $this->factura->crearComprobante();
+        $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
@@ -413,7 +413,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             'numeroComprobante' => 20,
             'puntoVenta' => 1,
         ];
-        $result = $this->factura->consultarComprobante();
+        $result = $this->factura->getInvoice();
         $this->assertNotEmpty($result->codigoAutorizacion);
     }
 
@@ -435,7 +435,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             'orden' => 1,
         ];
 
-        $result = $this->factura->solicitarCAEA();
+        $result = $this->factura->getCAEA();
         $this->assertNotEmpty($result);
     }
 
@@ -445,7 +445,7 @@ class FacturaConItemsTest extends \PHPUnit\Framework\TestCase
             'caea' => 26119315562071,
         ];
 
-        $result = $this->factura->consultarCAEA();
+        $result = $this->factura->requestCAEA();
         $this->assertNotEmpty($result->CAEA);
     }
 

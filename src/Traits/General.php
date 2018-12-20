@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Traits;
+namespace Multinexo\Traits;
 
 /**
  * Class General.

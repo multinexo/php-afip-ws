@@ -8,10 +8,8 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\Models;
+namespace Multinexo\Exceptions;
 
-use Multinexo\Afip\WSMTXCA\Wsmtxca;
-
-class FacturaConItems extends Wsmtxca
+class WsException extends \Exception
 {
 }

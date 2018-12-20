@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSFE;
+namespace Multinexo\WSFE;
 
 class WsParametros
 {

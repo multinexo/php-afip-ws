@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Afip\WSPN3;
+namespace Multinexo\WSPN3;
 
-use Multinexo\Afip\Exceptions\WsException;
+use Multinexo\Exceptions\WsException;
 
 /**
  * Class ManejadorResultados.
