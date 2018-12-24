@@ -26,6 +26,7 @@
   },
   "require": {
     "php": ">=7.1",
+    "ext-soap": "*",
     "respect/validation": "^1.0"
   },
   "require-dev": {
