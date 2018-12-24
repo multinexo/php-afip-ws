@@ -26,8 +26,8 @@
   },
   "require": {
     "php": ">=7.1",
-    "respect/validation": "^1.0",
-    "ext-soap": "*"
+    "ext-soap": "*",
+    "respect/validation": "^1.0"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "2.10.0",
