@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Copyright (C) 1997-2017 Reyesoft <info@reyesoft.com>.
-## This file is part of Multinexo. Multinexo can not be copied and/or
+## This file is part of php-afip-ws. php-afip-ws can not be copied and/or
 ## distributed without the express permission of Reyesoft
 
 ./vendor/bin/php-cs-fixer fix \

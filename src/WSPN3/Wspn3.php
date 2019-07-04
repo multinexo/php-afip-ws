@@ -21,7 +21,7 @@ use Multinexo\WSAA\Wsaa;
  */
 class Wspn3
 {
-    use Validaciones, AuthenticateTrait, Wspn3FuncionesInternas;
+    use Validaciones, AuthenticateTrait;
 
     /**
      * @var string
@@ -72,7 +72,7 @@ class Wspn3
         $this->resultado = new ManejadorResultados();
     }
 
-    public function consultarDatosPersona($cuit)
+    public function consultarDatosPersona(string $cuit)
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -173,5 +173,33 @@ class Wspn3
         }
 
         return $responsibility;
+    }
+
+    public function wsGet($client, $authRequest, $contribuyente)
+    {
+        $resultado = $client->get(
+            $contribuyente,
+            $authRequest->token,
+            $authRequest->sign
+        );
+
+        $this->resultado->procesar($resultado);
+
+        $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
+
+        return json_decode(json_encode($resultado));
+    }
+
+    public function wsDummy($client)
+    {
+        $resultado = $client->dummy();
+
+        if (is_soap_fault($resultado)) {
+            throw new WsException($resultado->getMessage(), 500);
+        }
+
+        $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
+
+        return json_decode(json_encode($resultado));
     }
 }

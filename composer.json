@@ -30,10 +30,11 @@
     "respect/validation": "^1.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "3.2.2",
-    "reyesoft/ci": "1.0.5",
+    "squizlabs/php_codesniffer": "3.3.1",
+    "reyesoft/ci": "1.0.9",
     "codedungeon/phpunit-result-printer": "0.19.10",
-    "phpunit/phpunit": "^7.1"
+    "sebastian/phpcpd": "4.1.0",
+    "phpunit/phpunit": "7.5.9"
   },
   "autoload": {
     "psr-4": {
@@ -49,22 +50,33 @@
     }
   },
   "scripts": {
-      "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-double-spaces\" \"composer ci-php-cs-fixer\" \"composer phpstan\"",
-      "ci-double-spaces": [
-          "sh vendor/reyesoft/ci/tools/find-double-spaces.sh app",
-          "sh vendor/reyesoft/ci/tools/find-double-spaces.sh tests"
-      ],
-      "ci-php-cs-fixer": "sh vendor/reyesoft/ci/php/scripts/php-cs-fixer.sh",
-      "phpstan": [
-          "@phpstan-src",
-          "@phpstan-tests"
-      ],
-      "phpstan-src": "./vendor/bin/phpstan analyse -l 7 -c resources/rules/phpstan.src.neon src",
-      "phpstan-tests": "./vendor/bin/phpstan analyse -l 7 -c resources/rules/phpstan.tests.neon tests",
-      "coverage": [
-          "ulimit -Sn 50000",
-          "phpdbg -d memory_limit=-1 -qrr ./vendor/bin/phpunit",
-          "php ./vendor/reyesoft/ci/tools/coverage-checker.php ./bootstrap/cache/clover.xml 46"
-      ]
+    "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-php-cpd\" \"composer ci-double-spaces\" \"composer phpstan\" \"composer ci-php-csniffer\" \"composer ci-php-cs-fixer\" \"composer ci-php-cpd\"",
+    "ci-line": [
+      "@ci-php-cpd",
+      "@ci-double-spaces",
+      "@phpstan",
+      "@ci-php-csniffer",
+      "@ci-php-cs-fixer",
+      "@ci-php-mnd",
+      "@php-cpd"
+    ],
+    "ci-php-cpd": "sh resources/ci/php-cpd.sh",
+    "ci-double-spaces": "sh resources/ci/tools/find-double-spaces.sh app",
+    "ci-php-csniffer": "sh resources/ci/php-csniffer.sh",
+    "ci-php-csniffer-fix": "sh resources/ci/php-csniffer-fix.sh",
+    "ci-php-cs-fixer": "sh resources/ci/php-cs-fixer.sh",
+    "ci-php-md": "sh resources/ci/php-md.sh",
+    "ci-php-mnd": "sh resources/ci/php-mnd.sh",
+    "phpstan": [
+      "@phpstan-src",
+      "@phpstan-tests"
+    ],
+    "phpstan-src": "./vendor/bin/phpstan analyse -l 7 -c resources/rules/phpstan.src.neon src",
+    "phpstan-tests": "./vendor/bin/phpstan analyse -l 7 -c resources/rules/phpstan.tests.neon tests",
+    "coverage": [
+      "ulimit -Sn 50000",
+      "phpdbg -d memory_limit=-1 -qrr ./vendor/bin/phpunit",
+      "php ./vendor/reyesoft/ci/tools/coverage-checker.php resources/.tmp/clover.xml 29"
+    ]
   }
 }

@@ -12,11 +12,10 @@ namespace Multinexo\Traits;
 
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Exceptions\WsException;
-use Multinexo\Models\AfipWebService;
 use Multinexo\WSFE\Wsfe;
-use Multinexo\WSFE\WsParametros as FeSinItemsParam;
+use Multinexo\WSFE\WsParametros as WsfeParameters;
 use Multinexo\WSMTXCA\Wsmtxca;
-use Multinexo\WSMTXCA\WsParametros as FeConItemsParam;
+use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
 use Multinexo\WSPN3\Wspn3;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
@@ -38,8 +37,7 @@ trait Validaciones
 
                 $wsReglas = [];
                 $codComprobantes = $this->codComprobantes();
-                $puntosVenta = (new AfipWebService($this->ws))->getAvailablePosNumbers();
-
+                $puntosVenta = $this->getAvailablePosNumbers();
                 $codDocumento = $this->codDocumento();
                 $codMonedas = $this->codMonedas();
 
@@ -210,6 +208,10 @@ trait Validaciones
      */
     public function validarDatosArray(array $array, string $regla): void
     {
+        if (empty($array)) {
+            return;
+        }
+
         // TODO: Los items tienen que ir si o si en el caso de fe wsmtxca
         foreach (reset($array) as $dato) {
             $this->validarDatos($dato, $this->getRules($regla));
@@ -221,39 +223,37 @@ trait Validaciones
      *
      * @throws ValidationException
      */
-    public function validarDatosFactura(): void
+    public function validateDataInvoice(): void
     {
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         if (property_exists($this->datos, 'arrayOtrosTributos')) {
-            $this->validarDatosArray($this->datos['arrayOtrosTributos'], 'tributos');
+            $this->validarDatosArray((array) $this->datos->arrayOtrosTributos, 'tributos');
         }
 
         if (property_exists($this->datos, 'arraySubtotalesIVA')) {
-            $this->validarDatosArray($this->datos['arraySubtotalesIVA'], 'iva');
+            $this->validarDatosArray((array) $this->datos->arraySubtotalesIVA, 'iva');
         }
 
         if (property_exists($this->datos, 'arrayComprobantesAsociados')) {
-            $this->validarDatosArray($this->datos['arrayComprobantesAsociados'], 'comprobantesAsociados');
+            $this->validarDatosArray((array) $this->datos->arrayComprobantesAsociados, 'comprobantesAsociados');
         }
 
         if ($this->ws == 'wsfe') {
             if (property_exists($this->datos, 'arrayOpcionales')) {
-                $this->validarDatosArray($this->datos['arrayOpcionales'], 'opcionales');
+                $this->validarDatosArray((array) $this->datos->arrayOpcionales, 'opcionales');
             }
         } elseif ($this->ws == 'wsmtxca') {
-            $this->validarDatosArray($this->datos['arrayItems'], 'items');
+            $this->validarDatosArray((array) $this->datos->arrayItems, 'items');
         }
     }
 
     /**
      * Valida que los datos ingresados cumplan con determinadas reglas.
      *
-     * @param object $reglas
-     *
      * @throws ValidationException
      */
-    public function validarDatos(array $datos, $reglas): void
+    public function validarDatos($datos, $reglas): void
     {
         $validaciones = [];
 
@@ -273,6 +273,7 @@ trait Validaciones
             foreach ($erroresTr as $error) {
                 $errors[] = $error;
             }
+
             throw new ValidationException($errores);
         }
     }
@@ -286,12 +287,12 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposCbte($this->client, $this->authRequest);
+            $codigos = (new WsfeParameters())->FEParamGetTiposCbte($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
-            }, $codigos['CbteTipo']);
+            }, $codigos->CbteTipo);
         } elseif ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarTiposComprobante($this->client, $this->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarTiposComprobante($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayTiposComprobante->codigoDescripcion);
@@ -309,12 +310,12 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposDoc($this->client, $this->authRequest);
+            $codigos = (array) (new WsfeParameters())->FEParamGetTiposDoc($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos['DocTipo']);
         } elseif ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarTiposDocumento($this->client, $this->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarTiposDocumento($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayTiposDocumento->codigoDescripcion);
@@ -332,12 +333,12 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposMonedas($this->client, $this->authRequest);
+            $codigos = (new WsfeParameters())->FEParamGetTiposMonedas($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
-            }, $codigos['Moneda']);
+            }, $codigos->Moneda);
         } elseif ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarMonedas($this->client, $this->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarMonedas($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayMonedas->codigoDescripcion);
@@ -355,12 +356,12 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposIva($this->client, $this->authRequest);
+            $codigos = (new WsfeParameters())->FEParamGetTiposIva($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
-            }, $codigos['IvaTipo']);
+            }, $codigos->IvaTipo);
         } elseif ($this->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarAlicuotasIVA($this->client, $this->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarAlicuotasIVA($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayAlicuotasIVA->codigoDescripcion);
@@ -376,10 +377,10 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposOpcional($this->client, $this->authRequest);
+            $codigos = (new WsfeParameters())->FEParamGetTiposOpcional($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
-            }, $codigos['OpcionalTipo']);
+            }, $codigos->OpcionalTipo);
         }
 
         return $codigos;
@@ -392,10 +393,10 @@ trait Validaciones
     {
         $codigos = [];
         if ($this->ws == 'wsfe') {
-            $codigos = (new FeSinItemsParam())->FEParamGetTiposTributos($this->client, $this->authRequest);
+            $codigos = (new WsfeParameters())->FEParamGetTiposTributos($this->client, $this->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->Id;
-            }, $codigos['TributoTipo']);
+            }, $codigos->TributoTipo);
         }
 
         return $codigos;
@@ -421,5 +422,42 @@ trait Validaciones
         }
 
         return $wsStatus;
+    }
+
+    public function getAvailablePosNumbers()
+    {
+        $codigos = [];
+        if ($this->ws == 'wsfe') {
+            $result = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
+            if (empty((array) $result->ResultGet)) {
+                return [];
+            }
+
+            if (count($result->ResultGet->PtoVenta) > 1) {
+                $puntosVenta = $result->ResultGet->PtoVenta;
+            } else {
+                $puntosVenta = $result->ResultGet;
+            }
+
+            foreach ($puntosVenta as $puntoVenta) {
+                if ($puntoVenta->Bloqueado == 'N') {
+                    $codigos[] = $puntoVenta->Nro;
+                }
+            }
+        } elseif ($this->ws == 'wsmtxca') {
+            $result = (new WsmtxcaParameters())->consultarPuntosVenta($this->client, $this->authRequest);
+
+            if (empty((array) $result->arrayPuntosVenta)) {
+                return [];
+            }
+
+            foreach ($result->arrayPuntosVenta as $puntoVenta) {
+                if ($puntoVenta->bloqueado == 'No') {
+                    $codigos[] = $puntoVenta->numeroPuntoVenta;
+                }
+            }
+        }
+
+        return $codigos;
     }
 }

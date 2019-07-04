@@ -10,63 +10,16 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
-use Multinexo\Auth\AuthenticateTrait;
-use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\Invoice;
-use Multinexo\Traits\Validaciones;
-use Multinexo\WSAA\Wsaa;
 
 /**
  * Class Wsmtxca (Invoice with items).
  */
 class Wsmtxca extends Invoice
 {
-    use Validaciones, AuthenticateTrait, WsmtxcaFuncionesInternas;
+    use WsmtxcaFuncionesInternas;
 
-    /**
-     * @var string
-     */
-    protected $ws;
-
-    /**
-     * @var Authentication
-     */
-    protected $autenticacion;
-
-    /**
-     * @var Wsaa
-     */
-    protected $wsaa;
-
-    /**
-     * @var \stdClass
-     */
-    public $client;
-
-    /**
-     * @var \stdClass
-     */
-    protected $authRequest;
-
-    /**
-     * @var ManejadorResultados
-     */
-    public $resultado;
-
-    /**
-     * @var \stdClass
-     */
-    public $datos;
-
-    /**
-     * @var \stdClass
-     */
-    protected $configuracion;
-
-    /**
-     * Wsmtxca constructor.
-     */
     public function __construct()
     {
         $this->ws = 'wsmtxca';
@@ -84,7 +37,7 @@ class Wsmtxca extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatosFactura();
+        $this->validateDataInvoice();
 
         try {
             $ultimoComprobante = $this->wsConsultarUltimoComprobanteAutorizado(

@@ -45,7 +45,7 @@ class Authentication
     public function getClient($ws)
     {
         $ta = $this->configuracion->dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $ws . '.xml';
-        $wsdl = __DIR__ . 'Authentication.php/' . $ws . '.wsdl';
+        $wsdl = dirname(__DIR__) . '/' . strtoupper($ws) . '/' . $ws . '.wsdl';
 
         foreach ([$ta, $wsdl] as $item) {
             if (!file_exists($item)) {
