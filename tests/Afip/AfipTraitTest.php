@@ -10,33 +10,21 @@ declare(strict_types=1);
 
 namespace Tests\Afip;
 
+use Multinexo\Models\AfipConfig;
+
 trait AfipTraitTest
 {
-    private function getConf(string $cuit = '30615459190'): array
+    private function getConfig(string $cuit = '30615459190'): AfipConfig
     {
         $base_path = getcwd();
-        $wsurl = 'https://awshomo.afip.gov.ar/padron-puc-ws/services/';
 
-        return [
-            'dir' => [
-                'xml_generados' => $base_path . '/tests/resources/' . sha1($cuit) . '/xml_generated/',
-            ],
-            'archivos' => [
-                'wsaaWsdl' => $base_path . '/src/WSAA/wsaa.wsdl',
-                'certificado' => $base_path . '/tests/resources/certificate-testing.crt',
-                'clavePrivada' => $base_path . '/tests/resources/privateKey',
-            ],
-            'cuit' => $cuit,
-            'passPhrase' => '12345678',
-            'proxyHost' => '10.20.152.113',
-            'proxyPort' => '80',
-            'url' => [
-                'wsaa' => 'https://wsaahomo.afip.gov.ar/ws/services/LoginCms',
-                'wsmtxca' => 'https://fwshomo.afip.gov.ar/wsmtxca/services/MTXCAService',
-                'wsfe' => 'https://wswhomo.afip.gov.ar/wsfev1/service.asmx',
-                'wspn3' => $wsurl . 'select.ContribuyenteNivel3SelectServiceImpl',
-                'padron-puc-ws-consulta-nivel4' => $wsurl . 'select.ContribuyenteNivel4SelectServiceImpl',
-            ],
-        ];
+        $config = new AfipConfig();
+        $config->setSandbox(true);
+        $config->setCuit($cuit);
+        $config->setXmlFolder($base_path . '/tests/resources/' . sha1($cuit) . '/xml_generated/');
+        $config->setCertificateFilename($base_path . '/tests/resources/certificate-testing.crt');
+        $config->setPrivateKeyFilename($base_path . '/tests/resources/privateKey');
+
+        return $config;
     }
 }

@@ -22,7 +22,7 @@ class WsmtxcaTest extends TestCase
     protected function setUp(): void
     {
         $this->factura = new Wsmtxca();
-        $this->factura->setearConfiguracion($this->getConf('20305423174'));
+        $this->factura->setearConfiguracion($this->getConfig('20305423174'));
     }
 
     //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)

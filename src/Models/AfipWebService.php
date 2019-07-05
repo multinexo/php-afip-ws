@@ -51,6 +51,31 @@ class AfipWebService
         $this->ws = $ws;
     }
 
+    public static function setConfig(AfipConfig $afipConfig = null): array
+    {
+        $newConf = [
+            'cuit' => $afipConfig->cuit ?? null,
+            'dir' => [
+                'xml_generados' => $afipConfig->xml_generated_directory ?? null,
+            ],
+            'archivos' => [
+                'certificado' => $afipConfig->certificate_path ?? null,
+                'clavePrivada' => $afipConfig->privateKey_path ?? null,
+            ],
+        ];
+
+        $defConf = include getcwd() . '/config/config.php';
+        $conf = array_replace_recursive($defConf, $newConf);
+
+        $mode_sandbox = $afipConfig->sandbox ?? false;
+        if (!$mode_sandbox) {
+            $conf['url'] = $defConf['url_production'];
+        }
+        unset($conf['url_production']);
+
+        return $conf;
+    }
+
     public function isWsOkOrFail(string $ws): bool
     {
         $serverStatus = $this->getServerStatus($ws, $this->service->client);

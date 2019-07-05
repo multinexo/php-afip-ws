@@ -24,7 +24,7 @@ class WsfeTest extends TestCase
     protected function setUp(): void
     {
         $this->factura = new Wsfe();
-        $this->factura->setearConfiguracion($this->getConf('20305423174'));
+        $this->factura->setearConfiguracion($this->getConfig('20305423174'));
     }
 
     public function testCreateInvoiceWithoutItems(): void

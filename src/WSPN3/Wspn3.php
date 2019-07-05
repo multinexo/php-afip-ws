@@ -13,6 +13,7 @@ namespace Multinexo\WSPN3;
 use Multinexo\Auth\AuthenticateTrait;
 use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
 use Multinexo\Traits\Validaciones;
 use Multinexo\WSAA\Wsaa;
 
@@ -66,8 +67,11 @@ class Wspn3
     /**
      * Wspn3 constructor.
      */
-    public function __construct()
+    public function __construct(AfipConfig $afipConfig = null)
     {
+        if ($afipConfig !== null) {
+            $this->setearConfiguracion($afipConfig);
+        }
         $this->ws = 'wspn3';
         $this->resultado = new ManejadorResultados();
     }

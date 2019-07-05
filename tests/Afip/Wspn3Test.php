@@ -19,8 +19,7 @@ class Wspn3Test extends TestCase
 
     public function testConsultPersonData(): void
     {
-        $wspn3 = new Wspn3();
-        $wspn3->setearConfiguracion($this->getConf());
+        $wspn3 = new Wspn3($this->getConfig());
         $result = $wspn3->consultarDatosPersona('30561785402');
         $this->assertNotEmpty($result);
     }
