@@ -46,7 +46,7 @@ class AfipWebService
      */
     protected $configuracion;
 
-    public function __construct($ws)
+    public function __construct(string $ws)
     {
         $this->ws = $ws;
     }
@@ -60,7 +60,7 @@ class AfipWebService
             ],
             'archivos' => [
                 'certificado' => $afipConfig->certificate_path ?? null,
-                'clavePrivada' => $afipConfig->privateKey_path ?? null,
+                'clavePrivada' => $afipConfig->privatekey_path ?? null,
             ],
         ];
 
@@ -102,7 +102,7 @@ class AfipWebService
     public function getPosNumbers(): array
     {
         $codigos = [];
-        if ($this->ws == 'wsfe') {
+        if ($this->ws === 'wsfe') {
             $result = (new WsfeParameters())->FEParamGetPtosVenta($this->service->client, $this->service->authRequest);
             if (empty((array) $result['ResultGet'])) {
                 return [];
@@ -117,7 +117,7 @@ class AfipWebService
             foreach ($puntosVenta as $puntoVenta) {
                 $codigos[] = $puntoVenta->Nro;
             }
-        } elseif ($this->service->ws == 'wsmtxca') {
+        } elseif ($this->service->ws === 'wsmtxca') {
             $result = (new WsmtxcaParameters())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
 
             if (empty((array) $result->arrayPuntosVenta)) {

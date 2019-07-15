@@ -25,7 +25,7 @@ class AfipConfig
     public $certificate_path;
 
     /* @var string */
-    public $privateKey_path;
+    public $privatekey_path;
 
     public function setSandbox(bool $value = null): void
     {
@@ -47,8 +47,8 @@ class AfipConfig
         $this->certificate_path = $certificate_path;
     }
 
-    public function setPrivateKeyFilename(string $privateKey_path): void
+    public function setPrivateKeyFilename(string $privatekey_path): void
     {
-        $this->privateKey_path = $privateKey_path;
+        $this->privatekey_path = $privatekey_path;
     }
 }
