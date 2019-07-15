@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Multinexo\Exceptions;
 
-class WsException extends \Exception
+use Exception;
+
+class WsException extends Exception
 {
 }

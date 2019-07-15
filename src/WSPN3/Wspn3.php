@@ -13,6 +13,7 @@ namespace Multinexo\WSPN3;
 use Multinexo\Auth\AuthenticateTrait;
 use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
 use Multinexo\Traits\Validaciones;
 use Multinexo\WSAA\Wsaa;
 
@@ -21,7 +22,7 @@ use Multinexo\WSAA\Wsaa;
  */
 class Wspn3
 {
-    use Validaciones, AuthenticateTrait, Wspn3FuncionesInternas;
+    use Validaciones, AuthenticateTrait;
 
     /**
      * @var string
@@ -66,13 +67,16 @@ class Wspn3
     /**
      * Wspn3 constructor.
      */
-    public function __construct()
+    public function __construct(AfipConfig $afipConfig = null)
     {
+        if ($afipConfig !== null) {
+            $this->setearConfiguracion($afipConfig);
+        }
         $this->ws = 'wspn3';
         $this->resultado = new ManejadorResultados();
     }
 
-    public function consultarDatosPersona($cuit)
+    public function consultarDatosPersona(string $cuit)
     {
         if (!$this->getAutenticacion()) {
             throw new WsException('Error de autenticacion');
@@ -173,5 +177,33 @@ class Wspn3
         }
 
         return $responsibility;
+    }
+
+    public function wsGet($client, $authRequest, $contribuyente)
+    {
+        $resultado = $client->get(
+            $contribuyente,
+            $authRequest->token,
+            $authRequest->sign
+        );
+
+        $this->resultado->procesar($resultado);
+
+        $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
+
+        return json_decode(json_encode($resultado));
+    }
+
+    public function wsDummy($client)
+    {
+        $resultado = $client->dummy();
+
+        if (is_soap_fault($resultado)) {
+            throw new WsException($resultado->getMessage(), 500);
+        }
+
+        $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
+
+        return json_decode(json_encode($resultado));
     }
 }

@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Multinexo\Auth;
 
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
+use Multinexo\Models\AfipWebService;
 use Multinexo\WSAA\Wsaa;
 
 /**
@@ -21,16 +23,11 @@ trait AuthenticateTrait
     /**
      * Setea la configuracion, en caso de enviarse un array con datos de configuracion esta reemplaza a la definida por
      * defecto.
-     *
-     * @return $this
      */
-    public function setearConfiguracion(array $newConf = [])
+    public function setearConfiguracion(AfipConfig $newConf = null): void
     {
-        $defConf = include __DIR__ . '/../../config/config.php';
-        $conf = array_replace_recursive($defConf, $newConf);
+        $conf = AfipWebService::setConfig($newConf);
         $this->configuracion = json_decode(json_encode($conf));
-
-        return $this;
     }
 
     // TODO: analizar lo que devuelve

@@ -71,6 +71,7 @@ class Wsaa
             [],
             0
         );
+
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
@@ -194,7 +195,7 @@ class Wsaa
 
         $expirationTime = $this->getXmlAttribute($path, ['header', 'expirationTime']);
 
-        if (strtotime($expirationTime) < strtotime(date('Y-m-d h:m:i'))) {
+        if (strtotime((string) $expirationTime) < strtotime(date('Y-m-d h:m:i'))) {
             $this->authenticate($service);
 
             return true;

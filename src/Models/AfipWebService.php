@@ -12,10 +12,8 @@ namespace Multinexo\Models;
 
 use Multinexo\Exceptions\WsException;
 use Multinexo\Traits\Validaciones;
-use Multinexo\WSFE\Wsfe;
-use Multinexo\WSFE\WsParametros as FeSinItemsParam;
-use Multinexo\WSMTXCA\Wsmtxca;
-use Multinexo\WSMTXCA\WsParametros as FeConItemsParam;
+use Multinexo\WSFE\WsParametros as WsfeParameters;
+use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
 
 class AfipWebService
 {
@@ -48,24 +46,34 @@ class AfipWebService
      */
     protected $configuracion;
 
-    public function __construct(string $ws, array $config = [])
+    public function __construct(string $ws)
     {
-        $service = $this->getClass($ws);
-        $service->setearConfiguracion($config);
-        $service->getAutenticacion();
-        $this->service = $service;
         $this->ws = $ws;
     }
 
-    private function getClass(string $ws)
+    public static function setConfig(AfipConfig $afipConfig = null): array
     {
-        if ($ws === 'wsfe') {
-            return new Wsfe();
-        } elseif ($ws === 'wsmtxca') {
-            return new Wsmtxca();
-        } else {
-            throw new \Exception('El Web Service de la AFIP no es válido.');
+        $newConf = [
+            'cuit' => $afipConfig->cuit ?? null,
+            'dir' => [
+                'xml_generados' => $afipConfig->xml_generated_directory ?? null,
+            ],
+            'archivos' => [
+                'certificado' => $afipConfig->certificate_path ?? null,
+                'clavePrivada' => $afipConfig->privatekey_path ?? null,
+            ],
+        ];
+
+        $defConf = include getcwd() . '/config/config.php';
+        $conf = array_replace_recursive($defConf, $newConf);
+
+        $mode_sandbox = $afipConfig->sandbox ?? false;
+        if (!$mode_sandbox) {
+            $conf['url'] = $defConf['url_production'];
         }
+        unset($conf['url_production']);
+
+        return $conf;
     }
 
     public function isWsOkOrFail(string $ws): bool
@@ -94,8 +102,8 @@ class AfipWebService
     public function getPosNumbers(): array
     {
         $codigos = [];
-        if ($this->service->ws == 'wsfe') {
-            $result = (new FeSinItemsParam())->FEParamGetPtosVenta($this->service->client, $this->service->authRequest);
+        if ($this->ws === 'wsfe') {
+            $result = (new WsfeParameters())->FEParamGetPtosVenta($this->service->client, $this->service->authRequest);
             if (empty((array) $result['ResultGet'])) {
                 return [];
             }
@@ -109,8 +117,8 @@ class AfipWebService
             foreach ($puntosVenta as $puntoVenta) {
                 $codigos[] = $puntoVenta->Nro;
             }
-        } elseif ($this->service->ws == 'wsmtxca') {
-            $result = (new FeConItemsParam())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
+        } elseif ($this->service->ws === 'wsmtxca') {
+            $result = (new WsmtxcaParameters())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
 
             if (empty((array) $result->arrayPuntosVenta)) {
                 return [];
@@ -124,48 +132,11 @@ class AfipWebService
         return $codigos;
     }
 
-    public function getAvailablePosNumbers(): array
-    {
-        $codigos = [];
-        if ($this->service->ws == 'wsfe') {
-            $result = (new FeSinItemsParam())->FEParamGetPtosVenta($this->service->client, $this->service->authRequest);
-            if (empty((array) $result['ResultGet'])) {
-                return [];
-            }
-
-            if (\count($result['ResultGet']->PtoVenta) > 1) {
-                $puntosVenta = $result['ResultGet']->PtoVenta;
-            } else {
-                $puntosVenta = $result['ResultGet'];
-            }
-
-            foreach ($puntosVenta as $puntoVenta) {
-                if ($puntoVenta->Bloqueado === 'N') {
-                    $codigos[] = $puntoVenta->Nro;
-                }
-            }
-        } elseif ($this->service->ws == 'wsmtxca') {
-            $result = (new FeConItemsParam())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
-
-            if (empty((array) $result->arrayPuntosVenta)) {
-                return [];
-            }
-
-            foreach ($result->arrayPuntosVenta as $puntoVenta) {
-                if ($puntoVenta->bloqueado == 'No') {
-                    $codigos[] = $puntoVenta->numeroPuntoVenta;
-                }
-            }
-        }
-
-        return $codigos;
-    }
-
     public function getAvailableCAEPosNumbers(): array
     {
         $codigos = [];
         if ($this->service->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarPuntosVentaCAE($this->service->client, $this->service->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarPuntosVentaCAE($this->service->client, $this->service->authRequest);
             if (empty((array) $codigos->arrayPuntosVenta)) {
                 return [];
             }
@@ -175,7 +146,7 @@ class AfipWebService
         }
         //elseif ($this->ws == 'wsfe') {
         //  // Todo: arreglar
-        //  $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
+        //  $codigos = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
         //  $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
         //}
 
@@ -186,7 +157,7 @@ class AfipWebService
     {
         $codigos = [];
         if ($this->service->ws == 'wsmtxca') {
-            $codigos = (new FeConItemsParam())->consultarPuntosVentaCAEA($this->service->client, $this->service->authRequest);
+            $codigos = (new WsmtxcaParameters())->consultarPuntosVentaCAEA($this->service->client, $this->service->authRequest);
             if (empty((array) $codigos->arrayPuntosVenta)) {
                 return [];
             }
@@ -196,7 +167,7 @@ class AfipWebService
         }
         //elseif ($this->ws == 'wsfe') {
         //            // Todo: arreglar
-        //            $codigos = (new FeSinItemsParam())->FEParamGetPtosVenta($this->client, $this->authRequest);
+        //            $codigos = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
         //            $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
         //}
 

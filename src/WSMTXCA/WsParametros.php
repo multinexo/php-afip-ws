@@ -151,8 +151,6 @@ class WsParametros
 
     /**
      * Consultar Puntos de Venta.
-     *
-     * @param \stdClass $authRequest
      */
     public function consultarPuntosVenta($client, $authRequest)
     {
