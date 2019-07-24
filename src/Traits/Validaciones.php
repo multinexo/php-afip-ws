@@ -30,74 +30,13 @@ trait Validaciones
      */
     public function getRules(string $tipoRegla)
     {
-        $reglas = [];
-
+        $rules = [];
         switch ($tipoRegla) {
             case 'fe':
-
-                $wsReglas = [];
-                $codComprobantes = $this->codComprobantes();
-                $puntosVenta = $this->getAvailablePosNumbers();
-                $codDocumento = $this->codDocumento();
-                $codMonedas = $this->codMonedas();
-
-                $reglasFeGenerales = [
-                    'periodo' => v::notEmpty()->date('Ym'),
-                    'orden' => v::notEmpty()->intVal()->between(1, 2)->length(1, 1),
-                    'codigoComprobante' => v::in($codComprobantes),
-                    'puntoVenta' => v::in($puntosVenta), // fe s/item?
-                    'cantidadRegistros' => v::notEmpty()->intVal()->between(1, 9999),
-                    'codigoConcepto' => v::in(['1', '2', '3']),
-                    'codigoDocumento' => v::in($codDocumento),
-                    'numeroDocumento' => v::intVal()->length(1, 11),
-                    'codigoMoneda' => v::in($codMonedas),
-                    'importeGravado' => v::floatVal()->between(0, 9999999999999.99),
-                    'importeNoGravado' => v::floatVal()->between(0, 9999999999999.99),
-                    'importeExento' => v::floatVal()->between(0, 9999999999999.99),
-                    'importeSubtotal' => v::floatVal()->between(0, 9999999999999.99),
-                    'importeIVA' => v::floatVal()->between(0, 9999999999999.99),
-                    'importeTotal' => v::floatVal()->between(0, 9999999999999.99),
-                    'caea' => v::intVal()->length(14, 14),
-                ];
-
-                if ($this->ws == 'wsfe') {
-                    $wsReglas = [
-                        'cotizacionMoneda' => v::notEmpty()->between(0, 9999999999.999999),
-                        'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
-                        'fechaEmision' => v::optional(v::date('Ymd')),
-                        'fechaServicioDesde' => v::optional(v::date('Ymd')),
-                        'fechaServicioHasta' => v::optional(v::date('Ymd')),
-                        'fechaVencimientoPago' => v::optional(v::date('Ymd')),
-                        'arrayComprobantesAsociados' => v::optional(v::objectType()),
-                        'arrayOtrosTributos' => v::optional(v::objectType()),
-                        'arraySubtotalesIVA' => v::optional(v::objectType()),
-                        'arrayOpcionales' => v::optional(v::objectType()),
-                        'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
-                    ];
-                } elseif ($this->ws == 'wsmtxca') {
-                    $wsReglas = [
-                        'cotizacionMoneda' => v::notEmpty()->between(0, 9999.999999),
-                        'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
-                        'fechaEmision' => v::optional(v::date('Y-m-d')),
-                        'fechaServicioDesde' => v::optional(v::date('Y-m-d')),
-                        'fechaServicioHasta' => v::optional(v::date('Y-m-d')),
-                        'fechaVencimientoPago' => v::optional(v::date('Y-m-d')),
-                        'codigoTipoAutorizacion' => v::optional(v::in(['A', 'E'])),
-                        'observaciones' => v::optional(v::stringType()->length(0, 2000)),
-                        'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
-                        'arrayItems' => v::notEmpty()->objectType(),
-                        'arraySubtotalesIVA' => v::optional(v::objectType()),
-                        'arrayComprobantesAsociados' => v::optional(v::objectType()),
-                        'arrayOtrosTributos' => v::optional(v::objectType()),
-                        'fechaDesde' => v::optional(v::date('Y-m-d')),
-                        'fechaHasta' => v::optional(v::date('Y-m-d')),
-                    ];
-                }
-                $reglas = array_merge($reglasFeGenerales, $wsReglas);
+                $rules = $this->getRulesForElectronicInvoice();
                 break;
             case 'items':
-
-                $reglas = [
+                $rules = [
                     'unidadesMtx' => v::optional(v::notEmpty()->intVal()->length(1, 6)),
                     'codigoMtx' => v::optional(v::notEmpty()->stringType()->length(1, 14)),
                     'codigo' => v::optional(v::notEmpty()->stringType()->length(1, 50)),
@@ -112,34 +51,29 @@ trait Validaciones
                 ];
                 break;
             case 'iva':
-
                 $codIva = $this->codIva();
-                $reglas = [
+                $rules = [
                     'codigoIva' => v::in($codIva),
                     'importe' => v::floatVal()->between(0, 9999999999999.99),
                 ];
 
                 if ($this->ws == 'wsfe') {
                     $regla = ['baseImponible' => v::floatVal()->between(0, 9999999999999.99)];
-                    $reglas = array_merge($reglas, $regla);
+                    $rules = array_merge($rules, $regla);
                 }
-
                 break;
             case 'comprobantesAsociados':
-
                 $codComprobantes = $this->codComprobantes();
-                $reglas = [
+                $rules = [
                     'codigoComprobante' => v::in($codComprobantes),
                     'puntoVenta' => v::notEmpty()->intVal()->between(1, 9999)->length(1, 4),
                     'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
                 ];
-
                 break;
             case 'tributos':
-
                 if ($this->ws == 'wsfe') {
                     $codTributos = $this->codTributos();
-                    $reglas = [
+                    $rules = [
                         'codigoTributo' => v::in($codTributos),
                         'descripcion' => v::notEmpty()->stringType()->length(1, 80),
                         'baseImponible' => v::notEmpty()->floatVal()->between(0, 99999999999.99),
@@ -148,28 +82,88 @@ trait Validaciones
                     ];
                 } elseif ($this->ws == 'wsmtxca') {
                     $codComprobantes = $this->codComprobantes();
-                    $reglas = [
+                    $rules = [
                         'codigoComprobante' => v::in($codComprobantes),
                         'descripcion' => v::notEmpty()->stringType()->length(1, 25),
                         'baseImponible' => v::floatVal()->between(0, 9999999999999.99),
                         'importe' => v::floatVal()->between(0, 9999999999999.99),
                     ];
                 }
-
                 break;
             case 'opcionales':
-
                 $codOpcionales = $this->codOpcionales();
-                $reglas = [
+                $rules = [
                     'codigoOpcional' => v::in($codOpcionales),
                     'valor' => v::notEmpty()->stringType()->length(1, 250),
                 ];
-
                 break;
-            default:
         }
 
-        return (object) $reglas;
+        return (object) $rules;
+    }
+
+    private function getRulesForElectronicInvoice(): array
+    {
+        $wsReglas = [];
+        $codComprobantes = $this->codComprobantes();
+        $puntosVenta = $this->getAvailablePosNumbers();
+        $codDocumento = $this->codDocumento();
+        $codMonedas = $this->codMonedas();
+
+        $reglasFeGenerales = [
+            'periodo' => v::notEmpty()->date('Ym'),
+            'orden' => v::notEmpty()->intVal()->between(1, 2)->length(1, 1),
+            'codigoComprobante' => v::in($codComprobantes),
+            'puntoVenta' => v::in($puntosVenta), // fe s/item?
+            'cantidadRegistros' => v::notEmpty()->intVal()->between(1, 9999),
+            'codigoConcepto' => v::in(['1', '2', '3']),
+            'codigoDocumento' => v::in($codDocumento),
+            'numeroDocumento' => v::intVal()->length(1, 11),
+            'codigoMoneda' => v::in($codMonedas),
+            'importeGravado' => v::floatVal()->between(0, 9999999999999.99),
+            'importeNoGravado' => v::floatVal()->between(0, 9999999999999.99),
+            'importeExento' => v::floatVal()->between(0, 9999999999999.99),
+            'importeSubtotal' => v::floatVal()->between(0, 9999999999999.99),
+            'importeIVA' => v::floatVal()->between(0, 9999999999999.99),
+            'importeTotal' => v::floatVal()->between(0, 9999999999999.99),
+            'caea' => v::intVal()->length(14, 14),
+        ];
+
+        if ($this->ws == 'wsfe') {
+            $wsReglas = [
+                'cotizacionMoneda' => v::notEmpty()->between(0, 9999999999.999999),
+                'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
+                'fechaEmision' => v::optional(v::date('Ymd')),
+                'fechaServicioDesde' => v::optional(v::date('Ymd')),
+                'fechaServicioHasta' => v::optional(v::date('Ymd')),
+                'fechaVencimientoPago' => v::optional(v::date('Ymd')),
+                'arrayComprobantesAsociados' => v::optional(v::objectType()),
+                'arrayOtrosTributos' => v::optional(v::objectType()),
+                'arraySubtotalesIVA' => v::optional(v::objectType()),
+                'arrayOpcionales' => v::optional(v::objectType()),
+                'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
+            ];
+        } elseif ($this->ws == 'wsmtxca') {
+            $wsReglas = [
+                'cotizacionMoneda' => v::notEmpty()->between(0, 9999.999999),
+                'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
+                'fechaEmision' => v::optional(v::date('Y-m-d')),
+                'fechaServicioDesde' => v::optional(v::date('Y-m-d')),
+                'fechaServicioHasta' => v::optional(v::date('Y-m-d')),
+                'fechaVencimientoPago' => v::optional(v::date('Y-m-d')),
+                'codigoTipoAutorizacion' => v::optional(v::in(['A', 'E'])),
+                'observaciones' => v::optional(v::stringType()->length(0, 2000)),
+                'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
+                'arrayItems' => v::notEmpty()->objectType(),
+                'arraySubtotalesIVA' => v::optional(v::objectType()),
+                'arrayComprobantesAsociados' => v::optional(v::objectType()),
+                'arrayOtrosTributos' => v::optional(v::objectType()),
+                'fechaDesde' => v::optional(v::date('Y-m-d')),
+                'fechaHasta' => v::optional(v::date('Y-m-d')),
+            ];
+        }
+
+        return array_merge($reglasFeGenerales, $wsReglas);
     }
 
     /**

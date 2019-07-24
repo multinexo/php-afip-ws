@@ -8,9 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\WSFE;
-
-use Multinexo\Exceptions\WsException;
+namespace Multinexo\Exceptions;
 
 /**
  * Class ManejadorResultados.
@@ -26,7 +24,7 @@ class ManejadorResultados
      */
     public function obtenerEventos($resultado): \stdClass
     {
-        return isset($resultado->Events) ? $resultado->Events : null;
+        return $resultado->Events ?? $resultado->evento ?? null;
     }
 
     /**
@@ -45,14 +43,26 @@ class ManejadorResultados
     /**
      * Recupera información de errores detectados lanzandolo en una excepción.
      *
-     * @param \stdClass $resultado
-     *
      * @throws WsException
      */
     public function procesar($resultado): void
     {
-        $errores = isset(reset($resultado)->Errors) ? reset($resultado)->Errors : null;
-        if ($errores) {
+        if (isset($resultado->Errors)) {
+            $errores = reset($resultado->Errors);
+        } else {
+            //Porque el error viene de otra forma si existe message
+            if (!property_exists($resultado, 'message')) {
+                $errores = isset($resultado->arrayErrores) ?
+                    (isset($resultado->arrayErrores->codigoDescripcion) ?
+                        $resultado->arrayErrores->codigoDescripcion
+                        : $resultado->arrayErrores)
+                    : null;
+            } else {
+                $errores = $resultado->getMessage();
+            }
+        }
+
+        if (!empty($errores)) {
             throw new WsException($errores);
         }
     }

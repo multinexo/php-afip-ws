@@ -31,16 +31,6 @@ class WsmtxcaTest extends TestCase
         $this->assertTrue(true);
 
         return;
-        //@@@@@@@@@@@DETAILS
-        //###CodigoCondicionIva
-        //1 (No Gravado) | 2 (Exento) | 3 (0%) | 4 (10.50%) | 5 (21%) | 6 (27%)
-        //Tabla taxes
-        //###CodigoUnidadMedida
-        //7 (unidad)
-        //Tabla measures
-        //@@@@@@@@@@DOCUMENT
-        //###CodigoComprobante
-        //1 (FACTURA A) | 6 (FACTURA B) | 11 (FACTURA C)
 
         $arrayItems = [
             'item' => [
@@ -92,7 +82,6 @@ class WsmtxcaTest extends TestCase
 
         //$arraySubtotalesIVA = $arraySubtotalesIVA;
         $arrayComprobantesAsociados = null;
-        $arrayOtrosTributos = null;
 
         $this->factura->datos = $this->getDatosFactura(
             $codigoComprobante,
@@ -103,8 +92,7 @@ class WsmtxcaTest extends TestCase
             $importeNoGravado,
             $arrayItems,
             $arraySubtotalesIVA,
-            $arrayComprobantesAsociados,
-            $arrayOtrosTributos);
+            $arrayComprobantesAsociados);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -116,16 +104,6 @@ class WsmtxcaTest extends TestCase
         $this->assertTrue(true);
 
         return;
-        //@@@@@@@@@@@DETAILS
-        //###CodigoCondicionIva
-        //1 (No Gravado) | 2 (Exento) | 3 (0%) | 4 (10.50%) | 5 (21%) | 6 (27%)
-        //Tabla taxes
-        //###CodigoUnidadMedida
-        //7 (unidad)
-        //Tabla measures
-        //@@@@@@@@@@DOCUMENT
-        //###CodigoComprobante
-        //1 (FACTURA A) | 6 (FACTURA B) | 11 (FACTURA C)
 
         $arrayItems = [
             'item' => [
@@ -177,7 +155,6 @@ class WsmtxcaTest extends TestCase
 
         //$arraySubtotalesIVA = $arraySubtotalesIVA;
         $arrayComprobantesAsociados = null;
-        $arrayOtrosTributos = null;
 
         $this->factura->datos = $this->getDatosFactura(
             $codigoComprobante,
@@ -188,8 +165,7 @@ class WsmtxcaTest extends TestCase
             $importeNoGravado,
             $arrayItems,
             $arraySubtotalesIVA,
-            $arrayComprobantesAsociados,
-            $arrayOtrosTributos);
+            $arrayComprobantesAsociados);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -417,9 +393,18 @@ class WsmtxcaTest extends TestCase
         ];
 
         $this->factura->datos = $this->getDatosFactura(
-            1, 115.75, 100, 15.75, 100, 0, $arrayItems, null, null, $arrayOtrosTributos
+            1,
+            115.75,
+            100,
+            15.75,
+            100,
+            0,
+            $arrayItems,
+            null,
+            null
         );
 
+        $this->factura->datos->arrayOtrosTributos = $arrayOtrosTributos;
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
@@ -488,8 +473,7 @@ class WsmtxcaTest extends TestCase
         $importeNoGravado,
         $arrayItems,
         $arraySubtotalesIVA = null,
-        $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null
+        $arrayComprobantesAsociados = null
     ) {
         $comprobante = [
             'cantidadRegistros' => 1,
@@ -517,7 +501,7 @@ class WsmtxcaTest extends TestCase
             'arrayItems' => $arrayItems,
             'arraySubtotalesIVA' => $arraySubtotalesIVA,
             'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
-            'arrayOtrosTributos' => $arrayOtrosTributos,
+            'arrayOtrosTributos' => null,
         ];
 
         return json_decode(json_encode($comprobante));

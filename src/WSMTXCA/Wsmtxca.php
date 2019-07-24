@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\Invoice;
 

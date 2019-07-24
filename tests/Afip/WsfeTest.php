@@ -156,8 +156,8 @@ class WsfeTest extends TestCase
             26.25,
             0,
             null,
-            null,
-            $arraySubtotalesIVA);
+            null);
+        $this->factura->datos->arraySubtotalesIVA = json_decode(json_encode($arraySubtotalesIVA));
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -198,9 +198,8 @@ class WsfeTest extends TestCase
             0,
             0,
             null,
-            null,
-            null,
-            $arrayOpcionales);
+            null);
+        $this->factura->datos->arrayOpcionales = $arrayOpcionales;
         $this->factura->createInvoice();
     }
 
@@ -360,9 +359,7 @@ class WsfeTest extends TestCase
         $importeIVA,
         $importTribute = 0,
         $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null,
-        $arraySubtotalesIVA = null,
-        $arrayOpcionales = null)
+        $arrayOtrosTributos = null)
     {
         $comprobante = [
             'cantidadRegistros' => 1,
@@ -387,8 +384,8 @@ class WsfeTest extends TestCase
             'fechaVencimientoPago' => '20160316',
             'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
             'arrayOtrosTributos' => $arrayOtrosTributos,
-            'arraySubtotalesIVA' => $arraySubtotalesIVA,
-            'arrayOpcionales' => $arrayOpcionales,
+            'arraySubtotalesIVA' => null,
+            'arrayOpcionales' => null,
         ];
 
         return json_decode(json_encode($comprobante));

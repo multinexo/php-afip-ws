@@ -34,6 +34,7 @@
     "reyesoft/ci": "1.0.9",
     "codedungeon/phpunit-result-printer": "0.19.10",
     "sebastian/phpcpd": "4.1.0",
+    "php-mock/php-mock": "2.1.2",
     "phpunit/phpunit": "7.5.9"
   },
   "autoload": {
@@ -50,7 +51,7 @@
     }
   },
   "scripts": {
-    "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-php-cpd\" \"composer ci-double-spaces\" \"composer phpstan\" \"composer ci-php-csniffer\" \"composer ci-php-cs-fixer\" \"composer ci-php-cpd\"",
+    "ci": "bash vendor/reyesoft/ci/parallel.bash -s \"composer ci-php-cpd\" \"composer ci-double-spaces\" \"composer phpstan\" \"composer ci-php-csniffer\" \"composer ci-php-cs-fixer\" \"composer ci-php-md\" \"composer ci-php-cpd\"",
     "ci-line": [
       "@ci-php-cpd",
       "@ci-double-spaces",

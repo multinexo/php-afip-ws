@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Multinexo\WSFE;
 
+use Multinexo\Exceptions\ManejadorResultados;
+
 class WsParametros
 {
     /** @var ManejadorResultados */

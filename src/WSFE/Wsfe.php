@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSFE;
 
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\Invoice;
 use Multinexo\WSAA\Wsaa;
@@ -274,7 +275,7 @@ class Wsfe extends Invoice
             $importeGravado = $factura->importeGravado;
         }
 
-        $comprobante = [
+        $document = [
             'FeCabReq' => [
                 'CantReg' => $factura->cantidadRegistros,
                 'PtoVta' => $factura->puntoVenta,
@@ -300,23 +301,29 @@ class Wsfe extends Invoice
             ],
         ];
 
-        $comprobante = json_decode(json_encode($comprobante));
+        $document = json_decode(json_encode($document));
+        $this->getDataDocument($factura, $document);
 
-        if (isset($factura->arrayComprobantesAsociados)) {
+        $this->datos = $document;
+    }
+
+    private function getDataDocument(\stdClass $invoice, \stdClass &$document): void
+    {
+        if (isset($invoice->arrayComprobantesAsociados)) {
             $arrayComprobantesAsociados = [];
-            foreach ($factura->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
+            foreach ($invoice->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
                 $arrayComprobantesAsociados[] = [
                     'Tipo' => $comprobantesAsociado->codigoComprobante,
                     'PtoVta' => $comprobantesAsociado->puntoVenta,
                     'Nro' => $comprobantesAsociado->numeroComprobante,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'CbtesAsoc'} = $arrayComprobantesAsociados;
+            $document->FeDetReq->FECAEDetRequest->{'CbtesAsoc'} = $arrayComprobantesAsociados;
         }
 
-        if (isset($factura->arrayOtrosTributos)) {
+        if (isset($invoice->arrayOtrosTributos)) {
             $arrayOtrosTributos = [];
-            foreach ($factura->arrayOtrosTributos->otroTributo as $tributo) {
+            foreach ($invoice->arrayOtrosTributos->otroTributo as $tributo) {
                 $arrayOtrosTributos[] = [
                     'Id' => $tributo->codigoTributo,
                     'Desc' => $tributo->descripcion,
@@ -325,33 +332,31 @@ class Wsfe extends Invoice
                     'Importe' => $tributo->importe,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Tributos'} = $arrayOtrosTributos;
+            $document->FeDetReq->FECAEDetRequest->{'Tributos'} = $arrayOtrosTributos;
         }
 
-        if (isset($factura->arraySubtotalesIVA)) {
+        if (isset($invoice->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
-            foreach ($factura->arraySubtotalesIVA->subtotalIVA as $iva) {
+            foreach ($invoice->arraySubtotalesIVA->subtotalIVA as $iva) {
                 $arraySubtotalesIVA[] = [
                     'Id' => $iva->codigoIva,
                     'BaseImp' => $iva->baseImponible,
                     'Importe' => $iva->importe,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Iva'} = $arraySubtotalesIVA;
+            $document->FeDetReq->FECAEDetRequest->{'Iva'} = $arraySubtotalesIVA;
         }
 
-        if (isset($factura->arrayOpcionales)) {
+        if (isset($invoice->arrayOpcionales)) {
             $arrayOpcionales = [];
-            foreach ($factura->arrayOpcionales->Opcional as $opcion) {
+            foreach ($invoice->arrayOpcionales->Opcional as $opcion) {
                 $arrayOpcionales[] = [
                     'Id' => $opcion->codigoOpcional,
                     'Valor' => $opcion->valor,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Opcionales'} = $arrayOpcionales;
+            $document->FeDetReq->FECAEDetRequest->{'Opcionales'} = $arrayOpcionales;
         }
-
-        $this->datos = $comprobante;
     }
 
     /*/

@@ -12,6 +12,7 @@ namespace Multinexo\WSPN3;
 
 use Multinexo\Auth\AuthenticateTrait;
 use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Traits\Validaciones;

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 
 trait WsmtxcaFuncionesInternas
@@ -213,7 +214,6 @@ trait WsmtxcaFuncionesInternas
                         'Detail' => $result->detail,
                     ],
                 ]);
-            exit();
         }
 
         return $result;
@@ -273,6 +273,13 @@ trait WsmtxcaFuncionesInternas
 
         $comprobante = json_decode(json_encode($comprobante));
 
+        $this->setDocument($factura, $comprobante);
+
+        return json_decode(json_encode($comprobante));
+    }
+
+    private function setDocument(\stdClass $factura, \stdClass &$comprobante): void
+    {
         if (isset($factura->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
             foreach ($factura->arraySubtotalesIVA->subtotalIVA as $iva) {
@@ -309,8 +316,6 @@ trait WsmtxcaFuncionesInternas
 
             $comprobante->{'arrayOtrosTributos'} = $arrayOtrosTributos;
         }
-
-        return json_decode(json_encode($comprobante));
     }
 
     /*/

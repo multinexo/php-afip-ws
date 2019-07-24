@@ -30,35 +30,35 @@ jobs:
 
       - run: composer ci
       - run: composer phpstan
-#  test:
-#    docker:
-#    - image: circleci/php:7.1-apache-jessie-node-browsers
-#
-#    steps:
-#    - checkout
-#    - run: sudo apt-get update
-#    - run: sudo apt-get install -y libxml2-dev
-#    - run: sudo apt-get clean -y
-#    - run: sudo docker-php-ext-install soap
-#
-#    - restore_cache:
-#        keys:
-#        - v1-dependencies-{{ checksum "composer.lock" }}
-#        - v1-dependencies-
-#
-#    - run: composer install -n --prefer-dist
-#
-#    - save_cache:
-#        paths:
-#        - ./vendor
-#        key: v1-dependencies-{{ checksum "composer.lock" }}
-#
-#    - run: composer coverage
+  test:
+    docker:
+    - image: circleci/php:7.1-apache-jessie-node-browsers
+
+    steps:
+    - checkout
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y libxml2-dev
+    - run: sudo apt-get clean -y
+    - run: sudo docker-php-ext-install soap
+
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "composer.lock" }}
+        - v1-dependencies-
+
+    - run: composer install -n --prefer-dist
+
+    - save_cache:
+        paths:
+        - ./vendor
+        key: v1-dependencies-{{ checksum "composer.lock" }}
+
+    - run: composer coverage
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-#    - test:
-#        requires:
-#        - build
+    - test:
+        requires:
+        - build
