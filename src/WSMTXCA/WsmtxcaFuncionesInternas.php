@@ -74,7 +74,7 @@ trait WsmtxcaFuncionesInternas
      *
      * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEA($client, $authRequest, $data): string
+    public function wsConsultarCAEA($client, $authRequest, $data): \stdClass
     {
         $resultado = $client->consultarCAEA(
             [
@@ -103,7 +103,7 @@ trait WsmtxcaFuncionesInternas
      *                * CAE: CAE asignado al  comprobante  autorizado.
      *                * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsSolicitarCAEA($client, $authRequest, $data): string
+    public function wsSolicitarCAEA($client, $authRequest, $data): \stdClass
     {
         $resultado = $client->solicitarCAEA(
             [
@@ -113,6 +113,7 @@ trait WsmtxcaFuncionesInternas
                     'orden' => $data->orden,
                 ],
             ]);
+
         $this->checkSoapFault($resultado);
 
         $this->resultado->procesar($resultado);

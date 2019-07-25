@@ -25,18 +25,6 @@ trait AfipTraitTest
         $config->setCertificateFilename($base_path . '/tests/resources/certificate-testing.crt');
         $config->setPrivateKeyFilename($base_path . '/tests/resources/privateKey');
 
-        self::createFileIfNotExists($config);
-
         return $config;
-    }
-
-    private static function createFileIfNotExists(AfipConfig $config): void
-    {
-        if (!file_exists($config->certificate_path)) {
-            touch($config->certificate_path);
-        }
-        if (!file_exists($config->privatekey_path)) {
-            touch($config->privatekey_path);
-        }
     }
 }

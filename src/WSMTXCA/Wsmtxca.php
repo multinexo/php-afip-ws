@@ -12,6 +12,7 @@ namespace Multinexo\WSMTXCA;
 
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 
 /**
@@ -21,8 +22,12 @@ class Wsmtxca extends Invoice
 {
     use WsmtxcaFuncionesInternas;
 
-    public function __construct()
+    public function __construct(AfipConfig $afipConfig = null)
     {
+        if (isset($afipConfig)) {
+            $this->setearConfiguracion($afipConfig);
+        }
+
         $this->ws = 'wsmtxca';
         $this->resultado = new ManejadorResultados();
     }
@@ -72,7 +77,7 @@ class Wsmtxca extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->wsConsultarCAEA($this->client, $this->authRequest, $this->datos);
     }
@@ -88,8 +93,6 @@ class Wsmtxca extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        //todo: verificar validación
-        //        $this->validarDatos($this->datos,  $this->getRules('fe'));
         return $this->wsSolicitarCAEA($this->client, $this->authRequest, $this->datos);
     }
 
@@ -105,7 +108,7 @@ class Wsmtxca extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
         $result = $this->wsConsultarCAEAEntreFechas($this->client, $this->authRequest, $this->datos);
 
         return isset($result->CAEAResponse) ? $result->CAEAResponse : null;
@@ -123,7 +126,7 @@ class Wsmtxca extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->wsConsultarComprobante($this->client, $this->authRequest, $this->datos);
     }

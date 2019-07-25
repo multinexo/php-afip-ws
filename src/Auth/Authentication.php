@@ -11,12 +11,11 @@ declare(strict_types=1);
 namespace Multinexo\Auth;
 
 use Multinexo\Exceptions\WsException;
-use Multinexo\Traits\General;
 use Multinexo\WSAA\Wsaa;
 
 class Authentication
 {
-    use AuthenticateTrait, General;
+    use AuthenticateTrait;
 
     public $configuracion;
 
@@ -74,19 +73,19 @@ class Authentication
         $token = $TA->credentials->token;
         $sign = $TA->credentials->sign;
         $authRequest = '';
-        if ($ws == 'wsmtxca') {
+        if ($ws === 'wsmtxca') {
             $authRequest = [
                 'token' => $token,
                 'sign' => $sign,
                 'cuitRepresentada' => $this->configuracion->cuit,
             ];
-        } elseif ($ws == 'wsfe') {
+        } elseif ($ws === 'wsfe') {
             $authRequest = [
                 'Token' => $token,
                 'Sign' => $sign,
                 'Cuit' => $this->configuracion->cuit,
             ];
-        } elseif ($ws == 'wspn3') {
+        } elseif ($ws === 'wspn3') {
             $authRequest = new \stdClass();
             $authRequest->token = (string) $token;
             $authRequest->sign = (string) $sign;

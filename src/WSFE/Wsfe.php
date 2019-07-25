@@ -12,6 +12,7 @@ namespace Multinexo\WSFE;
 
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\WSAA\Wsaa;
 
@@ -20,8 +21,12 @@ use Multinexo\WSAA\Wsaa;
  */
 class Wsfe extends Invoice
 {
-    public function __construct()
+    public function __construct(AfipConfig $afipConfig = null)
     {
+        if (isset($afipConfig)) {
+            $this->setearConfiguracion($afipConfig);
+        }
+
         $this->ws = 'wsfe';
         $this->resultado = new ManejadorResultados();
     }
@@ -66,7 +71,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
     }
@@ -83,7 +88,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
     }
@@ -100,7 +105,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
     }
@@ -126,8 +131,8 @@ class Wsfe extends Invoice
 
         $this->resultado->procesar($resultado);
 
-        if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado == 'R') {
-            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones;
+        if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado === 'R') {
+            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg;
             throw new WsException($observaciones);
         }
 
@@ -196,7 +201,7 @@ class Wsfe extends Invoice
         ]);
 
         // TODO: Function ("FECAEASolicitar") is not a valid method for this service
-        $this->resultado->procesar($resultado);
+        $this->resultado->procesar($resultado->FECAEASolicitarResult);
 
         return $resultado->FECAEASolicitarResult;
     }
@@ -216,8 +221,7 @@ class Wsfe extends Invoice
             ],
         ]);
 
-        // TODO: Function ("FECAEASolicitar") is not a valid method for this service
-        $this->resultado->procesar($resultado);
+        $this->resultado->procesar($resultado->FECompConsultarResult);
 
         return $resultado->FECompConsultarResult->ResultGet;
     }
@@ -225,12 +229,12 @@ class Wsfe extends Invoice
     /**
      * Metodo dummy para verificacion de funcionamiento.
      *
-     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     * retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
      *                * AppServer string(2) Servidor de aplicaciones
      *                * DbServer string(2) Servidor de base de datos
      *                * AuthServer string(2) Servidor de autenticación
      */
-    public function FEDummy($client): string
+    public function FEDummy($client)
     {
         $result = $client->FEDummy();
 

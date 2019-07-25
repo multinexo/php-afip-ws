@@ -1,2 +1,4 @@
 *
 !.gitignore
+!certificate-testing.crt
+!privateKey

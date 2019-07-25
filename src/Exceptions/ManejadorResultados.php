@@ -48,13 +48,13 @@ class ManejadorResultados
     public function procesar($resultado): void
     {
         if (isset($resultado->Errors)) {
-            $errores = reset($resultado->Errors);
+            $errores = reset($resultado->Errors)->Msg;
         } else {
             //Porque el error viene de otra forma si existe message
             if (!property_exists($resultado, 'message')) {
                 $errores = isset($resultado->arrayErrores) ?
                     (isset($resultado->arrayErrores->codigoDescripcion) ?
-                        $resultado->arrayErrores->codigoDescripcion
+                        $resultado->arrayErrores->codigoDescripcion->descripcion
                         : $resultado->arrayErrores)
                     : null;
             } else {
