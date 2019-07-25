@@ -77,7 +77,7 @@
     "coverage": [
       "ulimit -Sn 50000",
       "phpdbg -d memory_limit=-1 -qrr ./vendor/bin/phpunit",
-      "php ./vendor/reyesoft/ci/tools/coverage-checker.php resources/.tmp/clover.xml 48"
+      "php ./vendor/reyesoft/ci/tools/coverage-checker.php resources/.tmp/clover.xml 54"
     ]
   }
 }
