@@ -11,36 +11,24 @@ declare(strict_types=1);
 namespace Tests\Afip;
 
 use Multinexo\WSMTXCA\Wsmtxca;
-use PHPUnit\Framework\TestCase;
+use Tests\TestAfipCase;
 
-class WsmtxcaTest extends TestCase
+class WsmtxcaTest extends TestAfipCase
 {
-    use AfipTraitTest;
-
+    /** @var Wsmtxca */
     private $factura;
 
     protected function setUp(): void
     {
-        $this->factura = new Wsmtxca();
-        $this->factura->setearConfiguracion($this->getConfig('20305423174'));
+        parent::setUp();
+        $this->factura = new Wsmtxca($this->getConfig('20305423174'));
     }
 
-    //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)
-    public function testMonotributistaMonotributista(): void
+    public function testCreateInvoiceWithItemsOfMonotributeToMonotribute(): void
     {
         $this->assertTrue(true);
 
         return;
-        //@@@@@@@@@@@DETAILS
-        //###CodigoCondicionIva
-        //1 (No Gravado) | 2 (Exento) | 3 (0%) | 4 (10.50%) | 5 (21%) | 6 (27%)
-        //Tabla taxes
-        //###CodigoUnidadMedida
-        //7 (unidad)
-        //Tabla measures
-        //@@@@@@@@@@DOCUMENT
-        //###CodigoComprobante
-        //1 (FACTURA A) | 6 (FACTURA B) | 11 (FACTURA C)
 
         $arrayItems = [
             'item' => [
@@ -90,10 +78,6 @@ class WsmtxcaTest extends TestCase
         $importeSubtotal = 100;
         $importeNoGravado = 0;
 
-        //$arraySubtotalesIVA = $arraySubtotalesIVA;
-        $arrayComprobantesAsociados = null;
-        $arrayOtrosTributos = null;
-
         $this->factura->datos = $this->getDatosFactura(
             $codigoComprobante,
             $importeTotal,
@@ -102,30 +86,18 @@ class WsmtxcaTest extends TestCase
             $importeSubtotal,
             $importeNoGravado,
             $arrayItems,
-            $arraySubtotalesIVA,
-            $arrayComprobantesAsociados,
-            $arrayOtrosTributos);
+            $arraySubtotalesIVA);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
     //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)
-    public function testsMonotributistaResponsableInscripto(): void
+    public function testCreateInvoiceWithItemsOfMonotributeToResponsableInscript(): void
     {
         $this->assertTrue(true);
 
         return;
-        //@@@@@@@@@@@DETAILS
-        //###CodigoCondicionIva
-        //1 (No Gravado) | 2 (Exento) | 3 (0%) | 4 (10.50%) | 5 (21%) | 6 (27%)
-        //Tabla taxes
-        //###CodigoUnidadMedida
-        //7 (unidad)
-        //Tabla measures
-        //@@@@@@@@@@DOCUMENT
-        //###CodigoComprobante
-        //1 (FACTURA A) | 6 (FACTURA B) | 11 (FACTURA C)
 
         $arrayItems = [
             'item' => [
@@ -175,10 +147,6 @@ class WsmtxcaTest extends TestCase
         $importeSubtotal = 100;
         $importeNoGravado = 0;
 
-        //$arraySubtotalesIVA = $arraySubtotalesIVA;
-        $arrayComprobantesAsociados = null;
-        $arrayOtrosTributos = null;
-
         $this->factura->datos = $this->getDatosFactura(
             $codigoComprobante,
             $importeTotal,
@@ -187,15 +155,13 @@ class WsmtxcaTest extends TestCase
             $importeSubtotal,
             $importeNoGravado,
             $arrayItems,
-            $arraySubtotalesIVA,
-            $arrayComprobantesAsociados,
-            $arrayOtrosTributos);
+            $arraySubtotalesIVA);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
 
-    public function testCrearFacturaConItemsConArrayIva(): void
+    public function testCreateInvoiceWithItemsWithIvaInArray(): void
     {
         $this->assertTrue(true);
 
@@ -230,6 +196,7 @@ class WsmtxcaTest extends TestCase
                 ],
             ],
         ];
+
         $arraySubtotalesIVA = [
             'subtotalIVA' => [
                 [
@@ -243,7 +210,15 @@ class WsmtxcaTest extends TestCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(1, 182.25, 150, null, 150, 0, $arrayItems, $arraySubtotalesIVA);
+        $this->factura->datos = $this->getDatosFactura(
+            1,
+            182.25,
+            150,
+            null,
+            150,
+            0,
+            $arrayItems,
+            $arraySubtotalesIVA);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -285,7 +260,14 @@ class WsmtxcaTest extends TestCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(6, 150, 150, null, 150, 0, $arrayItems);
+        $this->factura->datos = $this->getDatosFactura(
+            6,
+            150,
+            150,
+            null,
+            150,
+            0,
+            $arrayItems);
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -358,7 +340,15 @@ class WsmtxcaTest extends TestCase
         ];
 
         $this->factura->datos = $this->getDatosFactura(
-            2, 115.75, 100, null, 100, 0, $arrayItems, $arraySubtotalesIVA, $arrayComprobantesAsociados
+            2,
+            115.75,
+            100,
+            null,
+            100,
+            0,
+            $arrayItems,
+            $arraySubtotalesIVA,
+            $arrayComprobantesAsociados
         );
         $this->factura->createInvoice();
     }
@@ -417,9 +407,18 @@ class WsmtxcaTest extends TestCase
         ];
 
         $this->factura->datos = $this->getDatosFactura(
-            1, 115.75, 100, 15.75, 100, 0, $arrayItems, null, null, $arrayOtrosTributos
+            1,
+            115.75,
+            100,
+            15.75,
+            100,
+            0,
+            $arrayItems,
+            null,
+            null
         );
 
+        $this->factura->datos->arrayOtrosTributos = $arrayOtrosTributos;
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
     }
@@ -438,44 +437,30 @@ class WsmtxcaTest extends TestCase
         $this->assertNotEmpty($result->codigoAutorizacion);
     }
 
-    public function testConsultarCaeaEntreFechas(): void
+    public function testConsultCAEABetweenDates(): int
     {
-        $this->assertTrue(true);
-
-        return;
         $this->factura->datos = (object) [
-            'fechaDesde' => '2015-05-30',
-            'fechaHasta' => '2016-05-30',
+            'fechaDesde' => date('Y-m-d', strtotime(date('Y-m-d') . '- 5 month')),
+            'fechaHasta' => date('Y-m-d'),
         ];
 
         $result = $this->factura->consultarCAEAEntreFechas();
         $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result->CAEA);
+
+        return $result->CAEA;
     }
 
-    public function testSolicitarCaea(): void
+    /**
+     * @depends testConsultCAEABetweenDates
+     */
+    public function testSolicitCAEA(int $caea): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->factura->datos = (object) [
-            'periodo' => '201604',
-            'orden' => 1,
+            'caea' => $caea,
         ];
 
         $result = $this->factura->getCAEA();
-        $this->assertNotEmpty($result);
-    }
-
-    public function testConsultarCaea(): void
-    {
-        $this->assertTrue(true);
-
-        return;
-        $this->factura->datos = (object) [
-            'caea' => 26119315562071,
-        ];
-
-        $result = $this->factura->requestCAEA();
         $this->assertNotEmpty($result->CAEA);
     }
 
@@ -488,8 +473,7 @@ class WsmtxcaTest extends TestCase
         $importeNoGravado,
         $arrayItems,
         $arraySubtotalesIVA = null,
-        $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null
+        $arrayComprobantesAsociados = null
     ) {
         $comprobante = [
             'cantidadRegistros' => 1,
@@ -498,7 +482,7 @@ class WsmtxcaTest extends TestCase
             'numeroComprobante' => null,
             'codigoConcepto' => 1,
             'codigoDocumento' => 80,
-            'numeroDocumento' => 20327936221,
+            'numeroDocumento' => 20305423174,
             'fechaEmision' => date('Y-m-d'),
             'codigoMoneda' => 'PES',
             'cotizacionMoneda' => 1,
@@ -517,7 +501,7 @@ class WsmtxcaTest extends TestCase
             'arrayItems' => $arrayItems,
             'arraySubtotalesIVA' => $arraySubtotalesIVA,
             'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
-            'arrayOtrosTributos' => $arrayOtrosTributos,
+            'arrayOtrosTributos' => null,
         ];
 
         return json_decode(json_encode($comprobante));

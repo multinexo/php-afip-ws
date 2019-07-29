@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 
 trait WsmtxcaFuncionesInternas
@@ -73,7 +74,7 @@ trait WsmtxcaFuncionesInternas
      *
      * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEA($client, $authRequest, $data): string
+    public function wsConsultarCAEA($client, $authRequest, $data): \stdClass
     {
         $resultado = $client->consultarCAEA(
             [
@@ -102,7 +103,7 @@ trait WsmtxcaFuncionesInternas
      *                * CAE: CAE asignado al  comprobante  autorizado.
      *                * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsSolicitarCAEA($client, $authRequest, $data): string
+    public function wsSolicitarCAEA($client, $authRequest, $data): \stdClass
     {
         $resultado = $client->solicitarCAEA(
             [
@@ -112,6 +113,7 @@ trait WsmtxcaFuncionesInternas
                     'orden' => $data->orden,
                 ],
             ]);
+
         $this->checkSoapFault($resultado);
 
         $this->resultado->procesar($resultado);
@@ -213,7 +215,6 @@ trait WsmtxcaFuncionesInternas
                         'Detail' => $result->detail,
                     ],
                 ]);
-            exit();
         }
 
         return $result;
@@ -273,6 +274,13 @@ trait WsmtxcaFuncionesInternas
 
         $comprobante = json_decode(json_encode($comprobante));
 
+        $this->setDocument($factura, $comprobante);
+
+        return json_decode(json_encode($comprobante));
+    }
+
+    private function setDocument(\stdClass $factura, \stdClass &$comprobante): void
+    {
         if (isset($factura->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
             foreach ($factura->arraySubtotalesIVA->subtotalIVA as $iva) {
@@ -309,8 +317,6 @@ trait WsmtxcaFuncionesInternas
 
             $comprobante->{'arrayOtrosTributos'} = $arrayOtrosTributos;
         }
-
-        return json_decode(json_encode($comprobante));
     }
 
     /*/

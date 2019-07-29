@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Multinexo\WSAA;
 
 use Multinexo\Exceptions\WsException;
-use Multinexo\Traits\General;
+use Multinexo\Models\GeneralHelper;
 
 /**
  * Class wsaa
@@ -21,8 +21,6 @@ use Multinexo\Traits\General;
  */
 class Wsaa
 {
-    use General;
-
     /**
      * @var \stdClass
      */
@@ -43,7 +41,7 @@ class Wsaa
         $TRA->header->addChild('uniqueId', date('U'));
         $TRA->header->addChild('generationTime', date('c', date('U') - 60));
         $TRA->header->addChild('expirationTime', date('c', date('U') + 60));
-        $TRA->addChild('service', $this->getOriginalWsName($service));
+        $TRA->addChild('service', GeneralHelper::getOriginalWsName($service));
         $TRA->asXML($this->configuracion->dir->xml_generados . 'TRA-' . $service . '.xml');
     }
 

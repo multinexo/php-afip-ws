@@ -12,9 +12,10 @@ namespace Multinexo\WSPN3;
 
 use Multinexo\Auth\AuthenticateTrait;
 use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Traits\Validaciones;
+use Multinexo\Models\Validaciones;
 use Multinexo\WSAA\Wsaa;
 
 /**
@@ -121,9 +122,9 @@ class Wspn3
         $typePerson = $data->persona->tipoPersona;
 
         $legal_name = null;
-        if ($typePerson == 'F') {
+        if ($typePerson === 'F') {
             $legal_name = $data->persona->apellido . ', ' . $data->persona->nombre;
-        } elseif ($typePerson == 'J') {
+        } elseif ($typePerson === 'J') {
             $legal_name = $data->persona->razonSocial;
         }
 
@@ -194,7 +195,7 @@ class Wspn3
         return json_decode(json_encode($resultado));
     }
 
-    public function wsDummy($client)
+    public function wsDummy($client): \stdClass
     {
         $resultado = $client->dummy();
 

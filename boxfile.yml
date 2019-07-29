@@ -19,6 +19,7 @@ run.config:
     extensions:
       - curl
       - fileinfo
+      - soap
       - gd
       - json
       - mbstring

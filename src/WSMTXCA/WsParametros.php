@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\Exceptions\ManejadorResultados;
+
 class WsParametros
 {
     protected $resultado;

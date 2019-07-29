@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Multinexo\Models;
 
 use Multinexo\Auth\AuthenticateTrait;
-use Multinexo\Traits\Validaciones;
 
 abstract class Invoice implements InvoiceInterface
 {
@@ -29,7 +28,7 @@ abstract class Invoice implements InvoiceInterface
 
     protected $autenticacion;
 
-    protected $configuracion;
+    public $configuracion;
 
     use Validaciones, AuthenticateTrait;
 }

@@ -11,14 +11,14 @@ declare(strict_types=1);
 namespace Multinexo\Models;
 
 use Multinexo\Exceptions\WsException;
-use Multinexo\Traits\Validaciones;
+use Multinexo\WSFE\Wsfe;
 use Multinexo\WSFE\WsParametros as WsfeParameters;
+use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
+use Multinexo\WSPN3\Wspn3;
 
 class AfipWebService
 {
-    use Validaciones;
-
     protected $service;
 
     /**
@@ -76,11 +76,11 @@ class AfipWebService
         return $conf;
     }
 
-    public function isWsOkOrFail(string $ws): bool
+    public function isWsOkOrFail(): bool
     {
-        $serverStatus = $this->getServerStatus($ws, $this->service->client);
+        $serverStatus = $this->getServerStatus();
 
-        switch ($ws) {
+        switch ($this->ws) {
             case 'wsmtxca':
                 return $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
@@ -94,6 +94,22 @@ class AfipWebService
                 return $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
                     && $serverStatus->dbserver === 'OK';
+            default:
+                throw new WsException('Error en la verificación del servicio');
+        }
+    }
+
+    private function getServerStatus(): \stdClass
+    {
+        $cliente = $this->service->client;
+
+        switch ($this->ws) {
+            case 'wsmtxca':
+                return (new Wsmtxca())->Dummy($cliente);
+            case 'wsfe':
+                return (new Wsfe())->FEDummy($cliente);
+            case 'wspn3':
+                return (new Wspn3())->wsDummy($cliente);
             default:
                 throw new WsException('Error en la verificación del servicio');
         }
@@ -135,7 +151,7 @@ class AfipWebService
     public function getAvailableCAEPosNumbers(): array
     {
         $codigos = [];
-        if ($this->service->ws == 'wsmtxca') {
+        if ($this->service->ws === 'wsmtxca') {
             $codigos = (new WsmtxcaParameters())->consultarPuntosVentaCAE($this->service->client, $this->service->authRequest);
             if (empty((array) $codigos->arrayPuntosVenta)) {
                 return [];
@@ -144,7 +160,7 @@ class AfipWebService
                 return $o->codigo;
             }, $codigos->arrayPuntosVenta->puntoVenta);
         }
-        //elseif ($this->ws == 'wsfe') {
+        //elseif ($this->ws === 'wsfe') {
         //  // Todo: arreglar
         //  $codigos = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
         //  $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);
@@ -156,7 +172,7 @@ class AfipWebService
     public function getAvailableCAEAPosNumbers(): array
     {
         $codigos = [];
-        if ($this->service->ws == 'wsmtxca') {
+        if ($this->service->ws === 'wsmtxca') {
             $codigos = (new WsmtxcaParameters())->consultarPuntosVentaCAEA($this->service->client, $this->service->authRequest);
             if (empty((array) $codigos->arrayPuntosVenta)) {
                 return [];
@@ -165,7 +181,7 @@ class AfipWebService
                 return $o->codigo;
             }, $codigos->arrayPuntosVenta->puntoVenta);
         }
-        //elseif ($this->ws == 'wsfe') {
+        //elseif ($this->ws === 'wsfe') {
         //            // Todo: arreglar
         //            $codigos = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
         //            $codigos = array_map(function($o){return $o->Id;}, $codigos->DocTipo);

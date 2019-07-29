@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Multinexo\WSFE;
 
+use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\WSAA\Wsaa;
 
@@ -19,8 +21,12 @@ use Multinexo\WSAA\Wsaa;
  */
 class Wsfe extends Invoice
 {
-    public function __construct()
+    public function __construct(AfipConfig $afipConfig = null)
     {
+        if (isset($afipConfig)) {
+            $this->setearConfiguracion($afipConfig);
+        }
+
         $this->ws = 'wsfe';
         $this->resultado = new ManejadorResultados();
     }
@@ -65,7 +71,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
     }
@@ -82,7 +88,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
     }
@@ -99,7 +105,7 @@ class Wsfe extends Invoice
             throw new WsException('Error de autenticacion');
         }
 
-        $this->validarDatos((array) $this->datos, $this->getRules('fe'));
+        $this->validarDatos($this->datos, $this->getRules('fe'));
 
         return $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
     }
@@ -125,8 +131,8 @@ class Wsfe extends Invoice
 
         $this->resultado->procesar($resultado);
 
-        if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado == 'R') {
-            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones;
+        if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado === 'R') {
+            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg;
             throw new WsException($observaciones);
         }
 
@@ -195,7 +201,7 @@ class Wsfe extends Invoice
         ]);
 
         // TODO: Function ("FECAEASolicitar") is not a valid method for this service
-        $this->resultado->procesar($resultado);
+        $this->resultado->procesar($resultado->FECAEASolicitarResult);
 
         return $resultado->FECAEASolicitarResult;
     }
@@ -215,8 +221,7 @@ class Wsfe extends Invoice
             ],
         ]);
 
-        // TODO: Function ("FECAEASolicitar") is not a valid method for this service
-        $this->resultado->procesar($resultado);
+        $this->resultado->procesar($resultado->FECompConsultarResult);
 
         return $resultado->FECompConsultarResult->ResultGet;
     }
@@ -224,12 +229,12 @@ class Wsfe extends Invoice
     /**
      * Metodo dummy para verificacion de funcionamiento.
      *
-     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     * retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
      *                * AppServer string(2) Servidor de aplicaciones
      *                * DbServer string(2) Servidor de base de datos
      *                * AuthServer string(2) Servidor de autenticación
      */
-    public function FEDummy($client): string
+    public function FEDummy($client)
     {
         $result = $client->FEDummy();
 
@@ -274,7 +279,7 @@ class Wsfe extends Invoice
             $importeGravado = $factura->importeGravado;
         }
 
-        $comprobante = [
+        $document = [
             'FeCabReq' => [
                 'CantReg' => $factura->cantidadRegistros,
                 'PtoVta' => $factura->puntoVenta,
@@ -300,23 +305,29 @@ class Wsfe extends Invoice
             ],
         ];
 
-        $comprobante = json_decode(json_encode($comprobante));
+        $document = json_decode(json_encode($document));
+        $this->getDataDocument($factura, $document);
 
-        if (isset($factura->arrayComprobantesAsociados)) {
+        $this->datos = $document;
+    }
+
+    private function getDataDocument(\stdClass $invoice, \stdClass &$document): void
+    {
+        if (isset($invoice->arrayComprobantesAsociados)) {
             $arrayComprobantesAsociados = [];
-            foreach ($factura->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
+            foreach ($invoice->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
                 $arrayComprobantesAsociados[] = [
                     'Tipo' => $comprobantesAsociado->codigoComprobante,
                     'PtoVta' => $comprobantesAsociado->puntoVenta,
                     'Nro' => $comprobantesAsociado->numeroComprobante,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'CbtesAsoc'} = $arrayComprobantesAsociados;
+            $document->FeDetReq->FECAEDetRequest->{'CbtesAsoc'} = $arrayComprobantesAsociados;
         }
 
-        if (isset($factura->arrayOtrosTributos)) {
+        if (isset($invoice->arrayOtrosTributos)) {
             $arrayOtrosTributos = [];
-            foreach ($factura->arrayOtrosTributos->otroTributo as $tributo) {
+            foreach ($invoice->arrayOtrosTributos->otroTributo as $tributo) {
                 $arrayOtrosTributos[] = [
                     'Id' => $tributo->codigoTributo,
                     'Desc' => $tributo->descripcion,
@@ -325,33 +336,31 @@ class Wsfe extends Invoice
                     'Importe' => $tributo->importe,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Tributos'} = $arrayOtrosTributos;
+            $document->FeDetReq->FECAEDetRequest->{'Tributos'} = $arrayOtrosTributos;
         }
 
-        if (isset($factura->arraySubtotalesIVA)) {
+        if (isset($invoice->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
-            foreach ($factura->arraySubtotalesIVA->subtotalIVA as $iva) {
+            foreach ($invoice->arraySubtotalesIVA->subtotalIVA as $iva) {
                 $arraySubtotalesIVA[] = [
                     'Id' => $iva->codigoIva,
                     'BaseImp' => $iva->baseImponible,
                     'Importe' => $iva->importe,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Iva'} = $arraySubtotalesIVA;
+            $document->FeDetReq->FECAEDetRequest->{'Iva'} = $arraySubtotalesIVA;
         }
 
-        if (isset($factura->arrayOpcionales)) {
+        if (isset($invoice->arrayOpcionales)) {
             $arrayOpcionales = [];
-            foreach ($factura->arrayOpcionales->Opcional as $opcion) {
+            foreach ($invoice->arrayOpcionales->Opcional as $opcion) {
                 $arrayOpcionales[] = [
                     'Id' => $opcion->codigoOpcional,
                     'Valor' => $opcion->valor,
                 ];
             }
-            $comprobante->FeDetReq->FECAEDetRequest->{'Opcionales'} = $arrayOpcionales;
+            $document->FeDetReq->FECAEDetRequest->{'Opcionales'} = $arrayOpcionales;
         }
-
-        $this->datos = $comprobante;
     }
 
     /*/

@@ -8,12 +8,9 @@
 
 declare(strict_types=1);
 
-namespace Multinexo\Traits;
+namespace Multinexo\Models;
 
-/**
- * Class General.
- */
-trait General
+class GeneralHelper
 {
     public function getAliasWsName(string $ws): string
     {
@@ -28,7 +25,7 @@ trait General
         return $alias;
     }
 
-    public function getOriginalWsName(string $ws): string
+    public static function getOriginalWsName(string $ws): string
     {
         switch ($ws) {
             case 'wspn3':

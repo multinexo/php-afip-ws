@@ -14,7 +14,7 @@ use Multinexo\Models\AfipConfig;
 
 trait AfipTraitTest
 {
-    private function getConfig(string $cuit = '30615459190'): AfipConfig
+    protected function getConfig(string $cuit = '30615459190'): AfipConfig
     {
         $base_path = getcwd();
 

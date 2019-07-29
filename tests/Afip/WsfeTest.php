@@ -13,18 +13,17 @@ namespace Tests\Afip;
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Exceptions\WsException;
 use Multinexo\WSFE\Wsfe;
-use PHPUnit\Framework\TestCase;
+use Tests\TestAfipCase;
 
-class WsfeTest extends TestCase
+class WsfeTest extends TestAfipCase
 {
-    use AfipTraitTest;
-
+    /** @var Wsfe */
     private $factura;
 
     protected function setUp(): void
     {
-        $this->factura = new Wsfe();
-        $this->factura->setearConfiguracion($this->getConfig('20305423174'));
+        parent::setUp();
+        $this->factura = new Wsfe($this->getConfig('20305423174'));
     }
 
     public function testCreateInvoiceWithoutItems(): void
@@ -156,8 +155,8 @@ class WsfeTest extends TestCase
             26.25,
             0,
             null,
-            null,
-            $arraySubtotalesIVA);
+            null);
+        $this->factura->datos->arraySubtotalesIVA = json_decode(json_encode($arraySubtotalesIVA));
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -168,11 +167,6 @@ class WsfeTest extends TestCase
 
     public function testCreateInvoiceWithoutItemsWithOptionalData(): void
     {
-        /* @todo fix exceptions messages */
-        $this->assertTrue(true);
-
-        return;
-
         $this->expectException(WsException::class);
         $this->expectExceptionMessageRegExp('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
 
@@ -198,18 +192,13 @@ class WsfeTest extends TestCase
             0,
             0,
             null,
-            null,
-            null,
-            $arrayOpcionales);
+            null);
+        $this->factura->datos->arrayOpcionales = json_decode(json_encode($arrayOpcionales));
         $this->factura->createInvoice();
     }
 
     public function testCreateInvoiceWithoutItemsWithErrorServer(): void
     {
-        $this->assertTrue(true);
-
-        return;
-
         $this->expectException(WsException::class);
 
         $this->factura->datos = self::getInvoiceData(
@@ -225,10 +214,6 @@ class WsfeTest extends TestCase
 
     public function testCreateInvoiceWithoutItemsWithValidationErrors(): void
     {
-        $this->assertTrue(true);
-
-        return;
-
         $this->expectException(ValidationException::class);
 
         $arrayComprobantesAsociados = [
@@ -253,6 +238,7 @@ class WsfeTest extends TestCase
             200.00,
             'error',
             $arrayComprobantesAsociados);
+
         $this->factura->createInvoice();
     }
 
@@ -261,10 +247,6 @@ class WsfeTest extends TestCase
      */
     public function testConsultInvoice(int $cbte_nro): void
     {
-        $this->assertTrue(true);
-
-        return;
-
         $this->factura->datos = (object) [
             'codigoComprobante' => 1,
             'numeroComprobante' => $cbte_nro,
@@ -276,9 +258,6 @@ class WsfeTest extends TestCase
 
     public function testConsultInvoiceWithErrorServer(): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->expectException(WsException::class);
 
         $this->factura->datos = (object) [
@@ -291,9 +270,6 @@ class WsfeTest extends TestCase
 
     public function testConsultInvoiceWithValidationError(): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->expectException(ValidationException::class);
 
         $this->factura->datos = (object) [
@@ -306,9 +282,6 @@ class WsfeTest extends TestCase
 
     public function testConsultCAEAPerPeriod(): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->factura->datos = (object) [
             'periodo' => '201603',
             'orden' => 2,
@@ -320,32 +293,27 @@ class WsfeTest extends TestCase
 
     public function testSolicitCAEA(): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->factura->datos = (object) [
             'periodo' => '201604',
             'orden' => 1,
         ];
 
-        $result = $this->factura->solicitarCAEA();
+        $result = $this->factura->getCAEA();
         $this->assertNotEmpty($result);
     }
 
     public function testSolicitCAEAExpired(): void
     {
-        $this->assertTrue(true);
-
-        return;
         $this->expectException(WsException::class);
         $this->expectExceptionMessage(
-            '{"Err":{"Code":15007,"Msg":"El <Periodo> 201603 se encuentra vencido para solicitar CAEA."}}'
+            'Fecha de envío podrá ser desde 5 días corridos anteriores al inicio hasta el último dia de cada quincena.'
+            . ' Del 3/11/2016 hasta 3/31/2016'
         );
 
-        $this->factura->datos = json_decode(json_encode([
+        $this->factura->datos = (object) [
             'periodo' => '201603',
             'orden' => 2,
-        ]));
+        ];
 
         $result = $this->factura->requestCAEA();
         $this->assertNotEmpty($result);
@@ -360,9 +328,7 @@ class WsfeTest extends TestCase
         $importeIVA,
         $importTribute = 0,
         $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null,
-        $arraySubtotalesIVA = null,
-        $arrayOpcionales = null)
+        $arrayOtrosTributos = null)
     {
         $comprobante = [
             'cantidadRegistros' => 1,
@@ -387,8 +353,8 @@ class WsfeTest extends TestCase
             'fechaVencimientoPago' => '20160316',
             'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
             'arrayOtrosTributos' => $arrayOtrosTributos,
-            'arraySubtotalesIVA' => $arraySubtotalesIVA,
-            'arrayOpcionales' => $arrayOpcionales,
+            'arraySubtotalesIVA' => null,
+            'arrayOpcionales' => null,
         ];
 
         return json_decode(json_encode($comprobante));

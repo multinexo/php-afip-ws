@@ -11,12 +11,10 @@ declare(strict_types=1);
 namespace Tests\Afip;
 
 use Multinexo\WSPN3\Wspn3;
-use PHPUnit\Framework\TestCase;
+use Tests\TestAfipCase;
 
-class Wspn3Test extends TestCase
+class Wspn3Test extends TestAfipCase
 {
-    use AfipTraitTest;
-
     public function testConsultPersonData(): void
     {
         $wspn3 = new Wspn3($this->getConfig());
