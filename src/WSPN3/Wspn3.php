@@ -10,87 +10,46 @@ declare(strict_types=1);
 
 namespace Multinexo\WSPN3;
 
-use Multinexo\Auth\AuthenticateTrait;
 use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Models\Validaciones;
-use Multinexo\WSAA\Wsaa;
+use stdClass;
 
 /**
  * Class Wspn3.
  */
 class Wspn3
 {
-    use Validaciones, AuthenticateTrait;
+    private $service;
 
-    /**
-     * @var string
-     */
-    protected $ws;
+    private $ws;
 
-    /**
-     * @var Wsaa
-     */
-    protected $wsaa;
+    private $resultado;
 
-    /**
-     * @var Authentication
-     */
-    protected $autenticacion;
-
-    /**
-     * @var \stdClass
-     */
-    public $client;
-
-    /**
-     * @var \stdClass
-     */
-    protected $authRequest;
-
-    /**
-     * @var \stdClass
-     */
     public $datos;
-
-    /**
-     * @var ManejadorResultados
-     */
-    public $resultado;
-
-    /**
-     * @var \stdClass
-     */
-    protected $configuracion;
 
     /**
      * Wspn3 constructor.
      */
-    public function __construct(AfipConfig $afipConfig = null)
+    public function __construct(AfipConfig $afipConfig)
     {
-        if ($afipConfig !== null) {
-            $this->setearConfiguracion($afipConfig);
-        }
         $this->ws = 'wspn3';
+        $this->service = new Authentication($afipConfig, $this->ws);
         $this->resultado = new ManejadorResultados();
     }
 
-    public function consultarDatosPersona(string $cuit)
+    public function consultarDatosPersona(string $cuit): stdClass
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
         $contribuyente = '<?xml version="1.0" encoding="UTF-8"?>
             <contribuyentePK>
             <id>' . $cuit . '</id>
             </contribuyentePK>';
 
-        return $this->wsGet($this->client, $this->authRequest, $contribuyente);
+        return $this->wsGet($contribuyente);
     }
 
-    public function getResumeWspn3Information($data)
+    public function getResumeWspn3Information(stdClass $data)
     {
         $parsed_data = [
             'legal_name' => $this->getLegalName($data),
@@ -117,7 +76,7 @@ class Wspn3
         return $array;
     }
 
-    private function getLegalName($data)
+    private function getLegalName(stdClass $data)
     {
         $typePerson = $data->persona->tipoPersona;
 
@@ -131,7 +90,7 @@ class Wspn3
         return $legal_name;
     }
 
-    private function getDescription($data)
+    private function getDescription(stdClass $data)
     {
         $description = null;
         if (property_exists($data, 'persona')) {
@@ -143,7 +102,7 @@ class Wspn3
         return $description;
     }
 
-    private function getAddresses($data)
+    private function getAddresses(stdClass $data)
     {
         $address = null;
         if (property_exists($data, 'domicilios')) {
@@ -153,7 +112,7 @@ class Wspn3
         return $address;
     }
 
-    private function getPhones($data)
+    private function getPhones(stdClass $data)
     {
         $phone = null;
         if (property_exists($data, 'telefonos')) {
@@ -163,7 +122,7 @@ class Wspn3
         return $phone;
     }
 
-    private function getResponsibility($data)
+    private function getResponsibility(stdClass $data)
     {
         $responsibility = null;
 
@@ -180,12 +139,12 @@ class Wspn3
         return $responsibility;
     }
 
-    public function wsGet($client, $authRequest, $contribuyente)
+    public function wsGet($contribuyente)
     {
-        $resultado = $client->get(
+        $resultado = $this->service->client->get(
             $contribuyente,
-            $authRequest->token,
-            $authRequest->sign
+            $this->service->authRequest->token,
+            $this->service->authRequest->sign
         );
 
         $this->resultado->procesar($resultado);
@@ -195,7 +154,7 @@ class Wspn3
         return json_decode(json_encode($resultado));
     }
 
-    public function wsDummy($client): \stdClass
+    public static function dummy($client): stdClass
     {
         $resultado = $client->dummy();
 

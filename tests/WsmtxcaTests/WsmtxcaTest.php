@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Afip;
+namespace Tests\WsmtxcaTests;
 
 use Multinexo\WSMTXCA\Wsmtxca;
 use Tests\TestAfipCase;

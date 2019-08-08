@@ -19,6 +19,10 @@
     {
       "name": "Pablo Reyes",
       "homepage": "http://pabloreyes.com/"
+    },
+    {
+      "name": "Lucas Correa",
+      "email": "correa97lukas@hotmail.com"
     }
   ],
   "support": {
@@ -76,8 +80,34 @@
     "phpstan-tests": "./vendor/bin/phpstan analyse -l 7 -c resources/rules/phpstan.tests.neon tests",
     "coverage": [
       "ulimit -Sn 50000",
-      "phpdbg -d memory_limit=-1 -qrr ./vendor/bin/phpunit",
-      "php ./vendor/reyesoft/ci/tools/coverage-checker.php resources/.tmp/clover.xml 54"
+      "phpdbg -d memory_limit=-1 -qrr ./vendor/bin/phpunit --colors=always",
+      "php ./vendor/reyesoft/ci/tools/coverage-checker.php"
     ]
+  },
+  "extra": {
+    "coverage": {
+      "file": "resources/.tmp/clover.xml",
+      "thresholds": {
+        "global": {
+          "lines": 65,
+          "functions": 52
+        },
+        "/src/Models": {
+          "functions": 64
+        },
+        "/src/WSAA": {
+          "functions": 33
+        },
+        "/src/WSFE": {
+          "functions": 64
+        },
+        "/src/WSMTXCA": {
+          "functions": 30
+        },
+        "/src/WSPN3": {
+          "functions": 72
+        }
+      }
+    }
   }
 }

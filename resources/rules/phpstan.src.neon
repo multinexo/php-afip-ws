@@ -1,6 +1,7 @@
 includes:
 	- ../../vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
+    excludes_analyse:
+        - 'src/Models/Validaciones.php'
     ignoreErrors:
-        - '#Parameter \#1 ...\$rule of static method Respect\\Validation\\Validator::allOf\(\) expects Respect\\Validation\\Validatable, array given.#'
         - '#Call to an undefined method SoapClient::loginCms\(\).#'

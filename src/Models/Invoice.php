@@ -10,25 +10,22 @@ declare(strict_types=1);
 
 namespace Multinexo\Models;
 
-use Multinexo\Auth\AuthenticateTrait;
+use Multinexo\Auth\Authentication;
 
 abstract class Invoice implements InvoiceInterface
 {
-    public $datos;
+    protected $ws;
 
-    public $client;
+    protected $service;
+
+    public $datos;
 
     public $resultado;
 
-    protected $ws;
+    use Validaciones;
 
-    protected $wsaa;
-
-    protected $authRequest;
-
-    protected $autenticacion;
-
-    public $configuracion;
-
-    use Validaciones, AuthenticateTrait;
+    public function __construct(AfipConfig $afipConfig)
+    {
+        $this->service = new Authentication($afipConfig, $this->ws);
+    }
 }

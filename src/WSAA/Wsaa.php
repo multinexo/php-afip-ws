@@ -12,6 +12,7 @@ namespace Multinexo\WSAA;
 
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\GeneralHelper;
+use stdClass;
 
 /**
  * Class wsaa
@@ -22,16 +23,33 @@ use Multinexo\Models\GeneralHelper;
 class Wsaa
 {
     /**
-     * @var \stdClass
+     * Chequea si necesita renovar el Ticket de Acceso para el ws.
+     *
+     * @throws WsException
      */
-    public $configuracion;
+    public function checkTARenovation(stdClass $service): bool
+    {
+        $path = $service->configuracion->dir->xml_generados . 'TA-' . $service->configuracion->cuit . '-' . $service->ws . '.xml';
+
+        if (!file_exists($path)) {
+            self::authenticate($service);
+        }
+
+        $expirationTime = self::getXmlAttribute($path, ['header', 'expirationTime']);
+
+        if (strtotime((string) $expirationTime) < strtotime(date('Y-m-d h:m:i'))) {
+            self::authenticate($service);
+
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Crea un pedido de ticket de acceso (Access Request Ticket (TRA)).
-     *
-     * @param string $service : Receive the service name (wsfe, wsbfe, wsfex, wsctg, etc.)
      */
-    public function createTRA(string $service): void
+    private static function createTRA(stdClass $service): void
     {
         $TRA = new \SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
@@ -41,8 +59,8 @@ class Wsaa
         $TRA->header->addChild('uniqueId', date('U'));
         $TRA->header->addChild('generationTime', date('c', date('U') - 60));
         $TRA->header->addChild('expirationTime', date('c', date('U') + 60));
-        $TRA->addChild('service', GeneralHelper::getOriginalWsName($service));
-        $TRA->asXML($this->configuracion->dir->xml_generados . 'TRA-' . $service . '.xml');
+        $TRA->addChild('service', GeneralHelper::getOriginalWsName($service->ws));
+        $TRA->asXML($service->configuracion->dir->xml_generados . 'TRA-' . $service->ws . '.xml');
     }
 
     /**
@@ -52,15 +70,15 @@ class Wsaa
      *
      * @throws WsException
      */
-    public function signTRA(string $service): string
+    private static function signTRA(stdClass $service): string
     {
-        $configuracion = $this->configuracion;
+        $configuracion = $service->configuracion;
         $dir = $configuracion->dir;
         $archivos = $configuracion->archivos;
 
         $STATUS = openssl_pkcs7_sign(
-            $dir->xml_generados . 'TRA-' . $service . '.xml',
-            $dir->xml_generados . 'TRA-' . $service . '.tmp',
+            $dir->xml_generados . 'TRA-' . $service->ws . '.xml',
+            $dir->xml_generados . 'TRA-' . $service->ws . '.tmp',
             'file://' . $archivos->certificado,
             [
                 'file://' . $archivos->clavePrivada,
@@ -73,7 +91,7 @@ class Wsaa
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
-        $inf = fopen($dir->xml_generados . 'TRA-' . $service . '.tmp', 'rb');
+        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'rb');
         $i = 0;
         $CMS = '';
 
@@ -85,7 +103,7 @@ class Wsaa
         }
         fclose($inf);
         //  unlink("TRA.xml");
-        unlink($dir->xml_generados . 'TRA-' . $service . '.tmp');
+        unlink($dir->xml_generados . 'TRA-' . $service->ws . '.tmp');
 
         return $CMS;
     }
@@ -99,20 +117,20 @@ class Wsaa
      *
      * @throws WsException
      */
-    public function callWSAA(string $CMS)
+    private static function callWSAA(stdClass $service, string $CMS)
     {
-        $client = new \SoapClient($this->configuracion->archivos->wsaaWsdl, [
-            'proxy_port' => $this->configuracion->proxyPort,
+        $client = new \SoapClient($service->configuracion->archivos->wsaaWsdl, [
+            'proxy_port' => $service->configuracion->proxyPort,
             'soap_version' => SOAP_1_2,
-            'location' => $this->configuracion->url->wsaa,
+            'location' => $service->configuracion->url->wsaa,
             'trace' => 1,
             'exceptions' => 0,
         ]);
         $results = $client->loginCms(['in0' => $CMS]);
-        file_put_contents($this->configuracion->dir->xml_generados . 'request-loginCms.xml',
+        file_put_contents($service->configuracion->dir->xml_generados . 'request-loginCms.xml',
             $client->__getLastRequest()
         );
-        file_put_contents($this->configuracion->dir->xml_generados . 'response-loginCms.xml',
+        file_put_contents($service->configuracion->dir->xml_generados . 'response-loginCms.xml',
             $client->__getLastResponse()
         );
         if (is_soap_fault($results)) {
@@ -127,11 +145,11 @@ class Wsaa
      *
      * @throws WsException
      */
-    public function authenticate(string $service)
+    private static function authenticate(stdClass $service): bool
     {
         //        ini_set("soap.wsdl_cache_enabled", "0");
-        $dir = $this->configuracion->dir;
-        $archivos = $this->configuracion->archivos;
+        $dir = $service->configuracion->dir;
+        $archivos = $service->configuracion->archivos;
 
         /* Se crean los directorios en donde se alojaran las claves y los xmls generados en caso que no existan */
         foreach ($dir as $directory) {
@@ -147,11 +165,11 @@ class Wsaa
             }
         }
 
-        $this->createTRA($service);
-        $CMS = $this->signTRA($service);
-        $TA = $this->callWSAA($CMS);
+        self::createTRA($service);
+        $CMS = self::signTRA($service);
+        $TA = self::callWSAA($service, $CMS);
 
-        $filename = $dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml';
+        $filename = $dir->xml_generados . 'TA-' . $service->configuracion->cuit . '-' . $service->ws . '.xml';
         if (!file_put_contents($filename, $TA)) {
             throw new WsException('Hubo un error al tratar de autenticarse');
         }
@@ -164,7 +182,7 @@ class Wsaa
      *
      * @return bool|\SimpleXMLElement|\SimpleXMLElement[]
      */
-    public function getXmlAttribute(string $path, array $nodes = [])
+    private static function getXmlAttribute(string $path, array $nodes = [])
     {
         $TaXml = simplexml_load_file($path);
         foreach ($nodes as $node) {
@@ -176,29 +194,5 @@ class Wsaa
         }
 
         return $TaXml;
-    }
-
-    /**
-     * Chequea si necesita renovar el Ticket de Acceso para el ws.
-     *
-     * @throws WsException
-     */
-    public function checkTARenovation(string $service): bool
-    {
-        $path = $this->configuracion->dir->xml_generados . 'TA-' . $this->configuracion->cuit . '-' . $service . '.xml';
-
-        if (!file_exists($path)) {
-            $this->authenticate($service);
-        }
-
-        $expirationTime = $this->getXmlAttribute($path, ['header', 'expirationTime']);
-
-        if (strtotime((string) $expirationTime) < strtotime(date('Y-m-d h:m:i'))) {
-            $this->authenticate($service);
-
-            return true;
-        }
-
-        return false;
     }
 }

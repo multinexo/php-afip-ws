@@ -24,14 +24,12 @@ trait WsmtxcaFuncionesInternas
      * Consultar un Comprobante autorizado
      * Permite consultar los datos de un comprobante previamente autorizado, ya sea del tipo Código de Autorización CAE
      * ó CAEA.
-     *
-     * @param \stdClass $authRequest
      */
-    public function wsConsultarComprobante($client, $authRequest, $data): string
+    public function wsConsultarComprobante($data): string
     {
-        $resultado = $client->consultarComprobante(
+        $resultado = $this->service->client->consultarComprobante(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'consultaComprobanteRequest' => [
                     'codigoTipoComprobante' => $data->codigoComprobante,
                     'numeroPuntoVenta' => $data->puntoVenta,
@@ -50,14 +48,12 @@ trait WsmtxcaFuncionesInternas
      * Consultar un CAEA previamente otorgado
      * Permite consultar la información correspondiente a CAEA s que hayan tenido vigencia en algún momento dentro de un
      * rango de fechas determinado.
-     *
-     * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEAEntreFechas($client, $authRequest, $data): \stdClass
+    public function wsConsultarCAEAEntreFechas($data): \stdClass
     {
-        $resultado = $client->consultarCAEAEntreFechas(
+        $resultado = $this->service->client->consultarCAEAEntreFechas(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'fechaDesde' => $data->fechaDesde,
                 'fechaHasta' => $data->fechaHasta,
             ]);
@@ -71,14 +67,12 @@ trait WsmtxcaFuncionesInternas
     /**
      * Consultar un CAEA previamente otorgado
      * Permite consultar la información correspondiente a un CAEA previamente otorgado.
-     *
-     * @param \stdClass $authRequest
      */
-    public function wsConsultarCAEA($client, $authRequest, $data): \stdClass
+    public function wsConsultarCAEA($data): \stdClass
     {
-        $resultado = $client->consultarCAEA(
+        $resultado = $this->service->client->consultarCAEA(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'CAEA' => $data->caea,
             ]);
         $this->checkSoapFault($resultado);
@@ -91,7 +85,6 @@ trait WsmtxcaFuncionesInternas
     /**
      * SolicitarCAEA.
      *
-     * @param \stdClass $authRequest
      * @param \stdClass $data
      *
      * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
@@ -103,11 +96,11 @@ trait WsmtxcaFuncionesInternas
      *                * CAE: CAE asignado al  comprobante  autorizado.
      *                * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsSolicitarCAEA($client, $authRequest, $data): \stdClass
+    public function wsSolicitarCAEA($data): \stdClass
     {
-        $resultado = $client->solicitarCAEA(
+        $resultado = $this->service->client->solicitarCAEA(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'solicitudCAEA' => [
                     'periodo' => $data->periodo,
                     'orden' => $data->orden,
@@ -124,7 +117,6 @@ trait WsmtxcaFuncionesInternas
     /**
      * Autorizar Comprobante CAE.
      *
-     * @param \stdClass $authRequest
      * @param string $cbte
      *
      * @return \stdClass retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
@@ -136,11 +128,11 @@ trait WsmtxcaFuncionesInternas
      *                   * CAE: CAE asignado al  comprobante  autorizado.
      *                   * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsAutorizarComprobante($client, $authRequest, $cbte): \stdClass
+    public function wsAutorizarComprobante($cbte): \stdClass
     {
-        $resultado = $client->autorizarComprobante(
+        $resultado = $this->service->client->autorizarComprobante(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'comprobanteCAERequest' => $cbte,
             ]);
 
@@ -158,16 +150,15 @@ trait WsmtxcaFuncionesInternas
      * Permite consultar el último número decomprobante autorizado para undeterminado punto de venta y tipo de
      * comprobante, tanto para comprobantes con código de autorización CAE como CAEA.
      *
-     * @param \stdClass $authRequest
      * @param int $cbteTipo : Tipo de comprobante que se desea consultar
      * @param int $ptoVta : Punto de venta para el cual se requiera conocer el último número de
      *                    comprobante autorizado
      */
-    public function wsConsultarUltimoComprobanteAutorizado($client, $authRequest, $cbteTipo, $ptoVta)
+    public function wsConsultarUltimoComprobanteAutorizado($cbteTipo, $ptoVta)
     {
-        $resultado = $client->consultarUltimoComprobanteAutorizado(
+        $resultado = $this->service->client->consultarUltimoComprobanteAutorizado(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'consultaUltimoComprobanteAutorizadoRequest' => [
                     'codigoTipoComprobante' => $cbteTipo,
                     'numeroPuntoVenta' => $ptoVta,
@@ -182,14 +173,14 @@ trait WsmtxcaFuncionesInternas
     /**
      * Metodo dummy para verificacion de funcionamiento.
      *
-     * @return \stdClass retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
-     *                   * AppServer string(2) Servidor de aplicaciones
-     *                   * DbServer string(2) Servidor de base de datos
-     *                   * AuthServer string(2) Servidor de autenticación
+     * retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     * AppServer string(2) Servidor de aplicaciones
+     * DbServer string(2) Servidor de base de datos
+     * AuthServer string(2) Servidor de autenticación
      *
      * @throws WsException
      */
-    public function Dummy($client): \stdClass
+    public static function dummy($client): \stdClass
     {
         $result = $client->Dummy();
 
@@ -327,11 +318,11 @@ trait WsmtxcaFuncionesInternas
      * @param \stdClass $authRequest
      * @param string $cbte
      */
-    public function wsInformarComprobanteCAEA($client, $authRequest, $cbte)
+    public function wsInformarComprobanteCAEA($cbte)
     {
-        $result = $client->informarComprobanteCAEA(
+        $result = $this->service->client->informarComprobanteCAEA(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'comprobanteCAEARequest' => $cbte,
             ]);
         $this->checkSoapFault($result);
@@ -340,14 +331,13 @@ trait WsmtxcaFuncionesInternas
     }
 
     /**
-     * @param \stdClass $authRequest
      * @param string $caea
      */
-    public function wsInformarCAEANoUtilizado($client, $authRequest, $caea)
+    public function wsInformarCAEANoUtilizado($caea)
     {
-        $result = $client->informarCAEANoUtilizado(
+        $result = $this->service->client->informarCAEANoUtilizado(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
             ]);
         $this->checkSoapFault($result);
@@ -356,15 +346,14 @@ trait WsmtxcaFuncionesInternas
     }
 
     /**
-     * @param \stdClass $authRequest
      * @param string $caea
      * @param string $ptoVta
      */
-    public function wsInformarCAEANoUtilizadoPtoVta($client, $authRequest, $caea, $ptoVta)
+    public function wsInformarCAEANoUtilizadoPtoVta($caea, $ptoVta)
     {
-        $result = $client->informarCAEANoUtilizadoPtoVta(
+        $result = $this->service->client->informarCAEANoUtilizadoPtoVta(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
                 'numeroPuntoVenta' => $ptoVta,
             ]);
@@ -374,14 +363,13 @@ trait WsmtxcaFuncionesInternas
     }
 
     /**
-     * @param \stdClass $authRequest
      * @param string $caea
      */
-    public function wsConsultarPtosVtaCAEANoInformados($client, $authRequest, $caea)
+    public function wsConsultarPtosVtaCAEANoInformados($caea)
     {
-        $result = $client->consultarPtosVtaCAEANoInformados(
+        $result = $this->service->client->consultarPtosVtaCAEANoInformados(
             [
-                'authRequest' => $authRequest,
+                'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
             ]);
         $this->checkSoapFault($result);

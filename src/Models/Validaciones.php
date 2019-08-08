@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Multinexo\Models;
 
 use Multinexo\Exceptions\ValidationException;
-use Multinexo\WSFE\WsParametros as WsfeParameters;
+use Multinexo\WSFE\Wsfe;
 use Multinexo\WSMTXCA\Wsmtxca;
-use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
+use Multinexo\WSMTXCA\WsParametros;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
 
@@ -163,7 +163,7 @@ trait Validaciones
     /**
      * Devuelve mensajes de error personalizados.
      */
-    public function getErrorMessages(): array
+    private function getErrorMessages(): array
     {
         return [
             'notEmpty' => 'Campo {{name}} obligatorio',
@@ -194,7 +194,7 @@ trait Validaciones
      *
      * @throws ValidationException
      */
-    public function validarDatosArray(array $array, string $regla): void
+    private function validarDatosArray(array $array, string $regla): void
     {
         if (empty($array)) {
             return;
@@ -267,16 +267,17 @@ trait Validaciones
      *
      * @return array|mixed
      */
-    public function codComprobantes()
+    private function codComprobantes()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (new WsfeParameters())->FEParamGetTiposCbte($this->client, $this->authRequest);
+            /** @var Wsfe $this */
+            $codigos = $this->FEParamGetTiposCbte();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->CbteTipo);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsmtxcaParameters())->consultarTiposComprobante($this->client, $this->authRequest);
+            $codigos = (new WsParametros())->consultarTiposComprobante($this->service->client, $this->service->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayTiposComprobante->codigoDescripcion);
@@ -290,16 +291,16 @@ trait Validaciones
      *
      * @return array|mixed
      */
-    public function codDocumento()
+    private function codDocumento()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (array) (new WsfeParameters())->FEParamGetTiposDoc($this->client, $this->authRequest);
+            $codigos = (array) $this->FEParamGetTiposDoc();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos['DocTipo']);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsmtxcaParameters())->consultarTiposDocumento($this->client, $this->authRequest);
+            $codigos = (new WsParametros())->consultarTiposDocumento($this->service->client, $this->service->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayTiposDocumento->codigoDescripcion);
@@ -313,16 +314,16 @@ trait Validaciones
      *
      * @return array|mixed
      */
-    public function codMonedas()
+    private function codMonedas()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (new WsfeParameters())->FEParamGetTiposMonedas($this->client, $this->authRequest);
+            $codigos = $this->FEParamGetTiposMonedas();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->Moneda);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsmtxcaParameters())->consultarMonedas($this->client, $this->authRequest);
+            $codigos = (new WsParametros())->consultarMonedas($this->service->client, $this->service->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayMonedas->codigoDescripcion);
@@ -336,16 +337,16 @@ trait Validaciones
      *
      * @return array|mixed
      */
-    public function codIva()
+    private function codIva()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (new WsfeParameters())->FEParamGetTiposIva($this->client, $this->authRequest);
+            $codigos = $this->FEParamGetTiposIva();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->IvaTipo);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsmtxcaParameters())->consultarAlicuotasIVA($this->client, $this->authRequest);
+            $codigos = (new WsParametros())->consultarAlicuotasIVA($this->service->client, $this->service->authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayAlicuotasIVA->codigoDescripcion);
@@ -357,11 +358,11 @@ trait Validaciones
     /**
      * Retorna array con los codigos de opcionales permitidos para una persona determinada.
      */
-    public function codOpcionales(): array
+    private function codOpcionales(): array
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (new WsfeParameters())->FEParamGetTiposOpcional($this->client, $this->authRequest);
+            $codigos = $this->FEParamGetTiposOpcional();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->OpcionalTipo);
@@ -373,11 +374,11 @@ trait Validaciones
     /**
      * Retorna array con los codigos de tributos permitidos para una persona determinada.
      */
-    public function codTributos(): array
+    private function codTributos(): array
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $codigos = (new WsfeParameters())->FEParamGetTiposTributos($this->client, $this->authRequest);
+            $codigos = $this->FEParamGetTiposTributos();
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->TributoTipo);
@@ -386,11 +387,11 @@ trait Validaciones
         return $codigos;
     }
 
-    public function getAvailablePosNumbers()
+    private function getAvailablePosNumbers()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
-            $result = (new WsfeParameters())->FEParamGetPtosVenta($this->client, $this->authRequest);
+            $result = $this->FEParamGetPtosVenta();
             if (empty((array) $result->ResultGet)) {
                 return [];
             }
@@ -407,7 +408,7 @@ trait Validaciones
                 }
             }
         } elseif ($this->ws === 'wsmtxca') {
-            $result = (new WsmtxcaParameters())->consultarPuntosVenta($this->client, $this->authRequest);
+            $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
 
             if (empty((array) $result->arrayPuntosVenta)) {
                 return [];
