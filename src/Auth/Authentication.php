@@ -70,7 +70,7 @@ class Authentication
         return $this->connectToSoapClient($wsdl, $this->service->configuracion->url->{$this->service->ws});
     }
 
-    public function connectToSoapClient($wsdlPath, string $url)
+    public function connectToSoapClient(string $wsdlPath, string $url)
     {
         return new SoapClient($wsdlPath,
             [
