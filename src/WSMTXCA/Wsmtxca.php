@@ -22,14 +22,12 @@ class Wsmtxca extends Invoice
 {
     use WsmtxcaFuncionesInternas;
 
-    public function __construct(AfipConfig $afipConfig = null)
+    public function __construct(AfipConfig $afipConfig)
     {
-        if (isset($afipConfig)) {
-            $this->setearConfiguracion($afipConfig);
-        }
-
         $this->ws = 'wsmtxca';
         $this->resultado = new ManejadorResultados();
+
+        parent::__construct($afipConfig);
     }
 
     /**
@@ -39,16 +37,10 @@ class Wsmtxca extends Invoice
      */
     public function createInvoice()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validateDataInvoice();
 
         try {
             $ultimoComprobante = $this->wsConsultarUltimoComprobanteAutorizado(
-                $this->client,
-                $this->authRequest,
                 $this->datos->codigoComprobante,
                 $this->datos->puntoVenta
             );
@@ -62,7 +54,7 @@ class Wsmtxca extends Invoice
         $this->datos = $this->parseFacturaArray($this->datos);
         $this->datos->numeroComprobante = $ultimoComprobante + 1;
 
-        return $this->wsAutorizarComprobante($this->client, $this->authRequest, $this->datos);
+        return $this->wsAutorizarComprobante($this->datos);
     }
 
     /**
@@ -73,13 +65,9 @@ class Wsmtxca extends Invoice
      */
     public function getCAEA()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->wsConsultarCAEA($this->client, $this->authRequest, $this->datos);
+        return $this->wsConsultarCAEA($this->datos);
     }
 
     /**
@@ -89,11 +77,7 @@ class Wsmtxca extends Invoice
      */
     public function requestCAEA()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
-        return $this->wsSolicitarCAEA($this->client, $this->authRequest, $this->datos);
+        return $this->wsSolicitarCAEA($this->datos);
     }
 
     /**
@@ -104,12 +88,8 @@ class Wsmtxca extends Invoice
      */
     public function consultarCAEAEntreFechas()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->wsConsultarCAEAEntreFechas($this->client, $this->authRequest, $this->datos);
+        $result = $this->wsConsultarCAEAEntreFechas($this->datos);
 
         return isset($result->CAEAResponse) ? $result->CAEAResponse : null;
     }
@@ -122,12 +102,8 @@ class Wsmtxca extends Invoice
      */
     public function getInvoice()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->wsConsultarComprobante($this->client, $this->authRequest, $this->datos);
+        return $this->wsConsultarComprobante($this->datos);
     }
 }

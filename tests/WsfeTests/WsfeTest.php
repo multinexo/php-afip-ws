@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Afip;
+namespace Tests\WsfeTests;
 
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Exceptions\WsException;
@@ -278,17 +278,6 @@ class WsfeTest extends TestAfipCase
             'puntoVenta' => 1,
         ];
         $this->factura->getInvoice();
-    }
-
-    public function testConsultCAEAPerPeriod(): void
-    {
-        $this->factura->datos = (object) [
-            'periodo' => '201603',
-            'orden' => 2,
-        ];
-
-        $result = $this->factura->getCAEA();
-        $this->assertNotEmpty($result);
     }
 
     public function testSolicitCAEA(): void

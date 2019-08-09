@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Afip;
+namespace Tests\Wspn3Tests;
 
 use Multinexo\WSPN3\Wspn3;
 use Tests\TestAfipCase;
@@ -20,5 +20,9 @@ class Wspn3Test extends TestAfipCase
         $wspn3 = new Wspn3($this->getConfig());
         $result = $wspn3->consultarDatosPersona('30561785402');
         $this->assertNotEmpty($result);
+
+        $person_data = $wspn3->getResumeWspn3Information($result);
+        $this->assertNotEmpty($person_data->legal_name);
+        $this->assertNotEmpty($person_data->responsibility);
     }
 }

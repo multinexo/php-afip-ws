@@ -9,16 +9,6 @@
 declare(strict_types=1);
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Directorio del archivo wsdl del WS de Autenticación y Autorización
-    |--------------------------------------------------------------------------
-    |
-    | El WS de Autenticación y Autorización es un servicio B2B (“Business to Business”) que permite que los
-    | computadoras pertenecientes a la AFIP y entes externos a la AFIP intercambien información en forma directa
-    | sin intervención de operadores.
-    |
-    */
 
     'dir' => [
         'xml_generados' => null,

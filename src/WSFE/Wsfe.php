@@ -14,21 +14,18 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
-use Multinexo\WSAA\Wsaa;
 
 /**
  * Class Wsfe (Invoice without items).
  */
 class Wsfe extends Invoice
 {
-    public function __construct(AfipConfig $afipConfig = null)
+    public function __construct(AfipConfig $afipConfig)
     {
-        if (isset($afipConfig)) {
-            $this->setearConfiguracion($afipConfig);
-        }
-
         $this->ws = 'wsfe';
         $this->resultado = new ManejadorResultados();
+
+        parent::__construct($afipConfig);
     }
 
     /**
@@ -38,15 +35,9 @@ class Wsfe extends Invoice
      */
     public function createInvoice()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validateDataInvoice();
 
         $ultimoComprobante = $this->FECompUltimoAutorizado(
-            $this->client,
-            $this->authRequest,
             $this->datos->codigoComprobante,
             $this->datos->puntoVenta
         )->CbteNro;
@@ -55,7 +46,7 @@ class Wsfe extends Invoice
         $this->datos->FeDetReq->FECAEDetRequest->CbteDesde = $ultimoComprobante + 1;
         $this->datos->FeDetReq->FECAEDetRequest->CbteHasta = $ultimoComprobante + 1;
 
-        return $this->FECAESolicitar($this->client, $this->authRequest, $this->datos);
+        return $this->FECAESolicitar($this->datos);
     }
 
     /**
@@ -67,13 +58,9 @@ class Wsfe extends Invoice
      */
     public function getCAEA()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->FECAEAConsultar($this->client, $this->authRequest, $this->datos);
+        return $this->FECAEAConsultar($this->datos);
     }
 
     /**
@@ -84,13 +71,9 @@ class Wsfe extends Invoice
      */
     public function requestCAEA()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->FECAEASolicitar($this->client, $this->authRequest, $this->datos);
+        return $this->FECAEASolicitar($this->datos);
     }
 
     /**
@@ -101,31 +84,23 @@ class Wsfe extends Invoice
      */
     public function getInvoice()
     {
-        if (!$this->getAutenticacion()) {
-            throw new WsException('Error de autenticacion');
-        }
-
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->FECompConsultar($this->client, $this->authRequest, $this->datos);
+        return $this->FECompConsultar($this->datos);
     }
 
     /**
      * Método  de autorización de comprobantes  electrónicos por  CAE
      * Solicitud de Código de Autorización Electrónico (CAE).
      *
-     * @param \stdClass $authRequest :
-     *                               $token: Token devuelto por el WSAA
-     *                               $sign: Sign devuelto por el WSAA
-     *                               $cuit: Cuit contribuyente (representado o Emisora)
      * @param \stdClass $data : Contiene información del comprobante
      *
      * @throws WsException
      */
-    public function FECAESolicitar($client, $authRequest, $data)
+    public function FECAESolicitar($data)
     {
-        $resultado = $client->FECAESolicitar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAESolicitar([
+            'Auth' => $this->service->authRequest,
             'FeCAEReq' => $data,
         ]);
 
@@ -145,10 +120,6 @@ class Wsfe extends Invoice
      * Retorna el ultimo comprobante autorizado para el tipo de comprobante / cuit / punto de venta ingresado / Tipo de
      * Emisión.
      *
-     * @param \stdClass $authRequest :
-     *                               $token: Token devuelto por el WSAA
-     *                               $sign: Sign devuelto por el WSAA
-     *                               $cuit: Cuit contribuyente (representado o Emisora)
      * @param string $cbteTipo
      * @param string $ptoVta
      *
@@ -158,10 +129,10 @@ class Wsfe extends Invoice
      *                   * CbteTipo int(3): Tipo de comprobante
      *                   * CbteNro long(8): Número de comprobante
      */
-    public function FECompUltimoAutorizado($client, $authRequest, $cbteTipo, $ptoVta): \stdClass
+    public function FECompUltimoAutorizado($cbteTipo, $ptoVta): \stdClass
     {
-        $resultado = $client->FECompUltimoAutorizado([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECompUltimoAutorizado([
+            'Auth' => $this->service->authRequest,
             'PtoVta' => $ptoVta,
             'CbteTipo' => $cbteTipo,
         ]);
@@ -175,10 +146,10 @@ class Wsfe extends Invoice
      * Este  método  permite  consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado
      * para un periodo/orden.
      */
-    public function FECAEAConsultar($client, $authRequest, $data)
+    public function FECAEAConsultar($data)
     {
-        $resultado = $client->FECAEAConsultar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAEAConsultar([
+            'Auth' => $this->service->authRequest,
             'Periodo' => $data->periodo,
             'Orden' => $data->orden,
         ]);
@@ -192,10 +163,10 @@ class Wsfe extends Invoice
      * Solicitud de Código de Autorización Electrónico Anticipado (CAEA)
      * Podrá ser solicitado dentro de los 5 (cinco) días corridos anteriores al comienzo de cada quincena.
      */
-    public function FECAEASolicitar($client, $authRequest, $data)
+    public function FECAEASolicitar($data)
     {
-        $resultado = $client->FECAEASolicitar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAEASolicitar([
+            'Auth' => $this->service->authRequest,
             'Periodo' => $data->periodo,
             'Orden' => $data->orden,
         ]);
@@ -210,10 +181,10 @@ class Wsfe extends Invoice
      * Consulta Comprobante emitido y su código:
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
      */
-    public function FECompConsultar($client, $authRequest, $data)
+    public function FECompConsultar($data)
     {
-        $resultado = $client->FECompConsultar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECompConsultar([
+            'Auth' => $this->service->authRequest,
             'FeCompConsReq' => [
                 'CbteTipo' => $data->codigoComprobante,
                 'CbteNro' => $data->numeroComprobante,
@@ -234,7 +205,7 @@ class Wsfe extends Invoice
      *                * DbServer string(2) Servidor de base de datos
      *                * AuthServer string(2) Servidor de autenticación
      */
-    public function FEDummy($client)
+    public static function dummy($client)
     {
         $result = $client->FEDummy();
 
@@ -363,23 +334,17 @@ class Wsfe extends Invoice
         }
     }
 
-    /*/
-
-    // TODO: Testar funciones
-    // TODO: error 10002
-
     /**
      * Método para informar comprobantes emitidos con CAEA:
      * Permite informar para cada CAEA otorgado, la totalidad de los comprobantes emitidos y asociados a cada CAEA.
      * Rendición de comprobantes asociados a un CAEA.
      *
-     * @param \stdClass $authRequest
      * @param \stdClass $data
      */
-    public function FECAEARegInformativo($client, $authRequest, $data)
+    public function FECAEARegInformativo($data)
     {
-        $resultado = $client->FECAEARegInformativo([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAEARegInformativo([
+            'Auth' => $this->service->authRequest,
             'FeCAEARegInfReq' => $data,
         ]);
 
@@ -393,15 +358,14 @@ class Wsfe extends Invoice
      * Permite consultar mediante un CAEA, cuales fueron los puntos de venta que fueron notificados  como  sin
      * movimiento.
      *
-     * @param \stdClass $authRequest
      * @param string $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
      *                     puntos de venta
      * @param int $ptoVta : Punto de venta vinculado al CAEA informado
      */
-    public function FECAEASinMovimientoConsultar($client, $authRequest, $caea, $ptoVta)
+    public function FECAEASinMovimientoConsultar($caea, $ptoVta)
     {
-        $resultado = $client->FECAEASinMovimientoConsultar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAEASinMovimientoConsultar([
+            'Auth' => $this->service->authRequest,
             'CAEA' => $caea,
             'PtoVta' => $ptoVta,
         ]);
@@ -416,15 +380,14 @@ class Wsfe extends Invoice
      * Permite informar a la administración cuales fueron los CAEA’s otorgados que no sufrieron movimiento alguno
      * para un determinado punto de venta.
      *
-     * @param \stdClass $authRequest
      * @param string $caea : CAEA otorgado, e identificado como “Sin Movimientos” para determinados
      *                     puntos de venta
      * @param int $ptoVta : Punto de venta vinculado al CAEA informado
      */
-    public function FECAEASinMovimientoInformar($client, $authRequest, $caea, $ptoVta)
+    public function FECAEASinMovimientoInformar($caea, $ptoVta)
     {
-        $resultado = $client->FECAEASinMovimientoInformar([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECAEASinMovimientoInformar([
+            'Auth' => $this->service->client->authRequest,
             'CAEA' => $caea,
             'PtoVta' => $ptoVta,
         ]);
@@ -438,19 +401,227 @@ class Wsfe extends Invoice
      * Retorna la cantidad maxima de registros que puede tener una invocacion al metodo FECAESolicitar /
      * FECAEARegInformativo.
      *
-     * @param \stdClass $authRequest
-     *
      * @return int Cantidad máxima de registros que se pueden incluir en un Request de solicitud de CAE e Informar
      *             CAEA
      */
-    public function FECompTotXRequest($client, $authRequest): int
+    public function FECompTotXRequest(): int
     {
-        $resultado = $client->FECompTotXRequest([
-            'Auth' => $authRequest,
+        $resultado = $this->service->client->FECompTotXRequest([
+            'Auth' => $this->service->authRequest,
         ]);
 
         $this->resultado->procesar($resultado->FECompTotXRequestResult);
 
         return $resultado->FECompTotXRequestResult->RegXReq;
+    }
+
+    /**
+     * Recupera la cotizacion de la moneda consultada y su fecha.
+     *
+     * @param string $monId : Código de moneda de la que se solicita cotización
+     *
+     * Retorna la última cotización de la base de datos aduanera de la moneda ingresada.
+     * MonCotiz double(4+6) Cotización de la moneda
+     * MonId string(3) Código de moneda
+     * FchCotiz string(8) Fecha de la cotización. Formato yyyymmdd
+     */
+    public function FEParamGetCotizacion($monId): \stdClass
+    {
+        $resultado = $this->service->client->FEParamGetCotizacion([
+            'Auth' => $this->service->authRequest,
+            'MonId' => $monId,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetCotizacionResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de puntos de venta registrados y su estado:
+     * Permite consultar los puntos de venta para ambos tipos de Código de Autorización (CAE y CAEA) gestionados
+     * previamente por la CUIT emisora.
+     *
+     * PtoVenta: Detalle de los tipos puntos de venta electrónicos:
+     * Nro int(4) Punto de venta
+     * EmisionTipo string(8) Identifica si es punto de venta para CAE o CAE
+     * Bloqueado string(1) Indica si el punto de  venta  esta  bloqueado. De darse esta situación se
+     *               deberá ingresar al ABM de puntos de venta a regularizar la situación Valores  S o N
+     * FchBaja string(8) Indica la fecha de baja en caso de estarlo
+     */
+    public function FEParamGetPtosVenta()
+    {
+        $resultado = $this->service->client->FEParamGetPtosVenta([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetPtosVentaResult;
+    }
+
+    /**
+     * Recupera el listado de Tipos de Comprobantes utilizables en servicio de autorización.
+     * Permite consultar los tipos de comprobantes habilitados en este WS.
+     *
+     * CbteTipo: Detalle de los tipos de comprobantes; esta compuesto por los siguientes campos:
+     * Id int(3)  Código  de comprobante
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposCbte()
+    {
+        $resultado = $this->service->client->FEParamGetTiposCbte([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposCbteResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de identificadores para el campo Concepto.
+     *
+     * ConceptoTipo: Detalle de los tipos de conceptos; esta compuesto por los siguientes campos:
+     * Id int(3)  Código  de concepto
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposConcepto()
+    {
+        $resultado = $this->service->client->FEParamGetTiposConcepto([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposConceptoResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de Tipos de Documentos utilizables en servicio de autorización.
+     *
+     * DocTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
+     *               esta compuesto por los siguientes campos:
+     * Id int(2)  Código de tipo de documento
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposDoc()
+    {
+        $resultado = $this->service->client->FEParamGetTiposDoc([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposDocResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de Tipos de Iva utilizables en servicio de autorización:
+     * Se obtiene la totalidad de alícuotas de IVA posibles de uso en el presente WS, detallando código y descripción.
+     *
+     * IvaTipo: Retorna el universo de tipos de documentos disponibles en el presente WS;
+     *               esta compuesto por los siguientes campos:
+     * Id int(2) Tipo de IVA
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposIva()
+    {
+        $resultado = $this->service->client->FEParamGetTiposIva([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposIvaResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de monedas utilizables en servicio de autorización.
+     *
+     * Moneda: Retorna el universo de tipos de documentos disponibles en el presente WS;
+     *               esta compuesto por los siguientes campos:
+     * Id string(3) Código de moneda
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposMonedas()
+    {
+        $resultado = $this->service->client->FEParamGetTiposMonedas([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposMonedasResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de identificadores para los campos Opcionales
+     * Permite consultar los códigos y descripciones de los tipos de datos Opcionales que se  encuentran habilitados
+     * para ser usados en el WS.
+     *
+     * OpcionalTipo: Detalle de los tipos de datos opcionales; esta compuesto por los siguientes campos:
+     * Id string(4) Identificador de campo  opcional
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposOpcional()
+    {
+        $resultado = $this->service->client->FEParamGetTiposOpcional([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposOpcionalResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de los diferentes paises que pueden ser utilizados en el servicio de autorizacion.
+     *
+     * PaisTipo: Lista de paises; esta compuesto por los siguientes campos:
+     * Id string(4) Código de país
+     * Desc string(250) Descripción
+     */
+    public function FEParamGetTiposPaises()
+    {
+        $resultado = $this->service->client->FEParamGetTiposPaises([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposPaisesResult->ResultGet;
+    }
+
+    /**
+     * Recupera el listado de los diferente tributos que pueden ser utilizados en el servicio de autorizacion.
+     *
+     * TributoTipo: Detalle de los tipos de tributos; esta compuesto por los siguientes campos:
+     * Id string(2) Código de Tributo
+     * Desc string(250) Descripción
+     * FchDesde string(8) Fecha de vigencia desde
+     * FchHasta string(8) Fecha de vigencia hasta
+     */
+    public function FEParamGetTiposTributos()
+    {
+        $resultado = $this->service->client->FEParamGetTiposTributos([
+            'Auth' => $this->service->authRequest,
+        ]);
+
+        $this->resultado->procesar($resultado);
+
+        return $resultado->FEParamGetTiposTributosResult->ResultGet;
     }
 }
