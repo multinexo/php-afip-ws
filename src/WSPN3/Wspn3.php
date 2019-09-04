@@ -128,11 +128,7 @@ class Wspn3
 
         if (property_exists($data, 'actividades')) {
             if (property_exists($data->actividades, 'actividad')) {
-                if (\count($data->actividades->actividad) > 1) {
-                    $responsibility = $data->actividades->actividad[0]->actividadPK->estado;
-                } else {
-                    $responsibility = $data->actividades->actividad->actividadPK->estado;
-                }
+                $responsibility = $data->actividades->actividad->actividadPK->estado;
             }
         }
 

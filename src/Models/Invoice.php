@@ -14,9 +14,9 @@ use Multinexo\Auth\Authentication;
 
 abstract class Invoice implements InvoiceInterface
 {
-    protected $ws;
+    public $service;
 
-    protected $service;
+    public $ws;
 
     public $datos;
 
