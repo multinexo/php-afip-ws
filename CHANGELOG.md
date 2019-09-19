@@ -8,6 +8,7 @@
 - Added urls of production and sandbox to config file ([#391726d](https://github.com/multinexo/php-afip-ws/pull/12/commits/391726d066bb0fdd72d729174e49d190f266192a))
 
 ### Changed
+- New version to PHP 7.2
 - Folder restructuring ([#3da9cbb](https://github.com/multinexo/php-afip-ws/pull/9/commits/3da9cbb31c80d91fac518d13fa3993edde3ee914))
 - Renamed method `crearComprobante` for `createInvoice` ([#3da9cbb](https://github.com/multinexo/php-afip-ws/pull/9/commits/3da9cbb31c80d91fac518d13fa3993edde3ee914))
 - Services refactoring ([#6dde466](https://github.com/multinexo/php-afip-ws/pull/14/commits/6dde466f4f7d48b7d7d89ec18b8348c8b98b73d5))
