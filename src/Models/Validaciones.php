@@ -387,7 +387,7 @@ trait Validaciones
         return $codigos;
     }
 
-    private function getAvailablePosNumbers()
+    public function getAvailablePosNumbers()
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
@@ -396,13 +396,7 @@ trait Validaciones
                 return [];
             }
 
-            if (count($result->ResultGet->PtoVenta) > 1) {
-                $puntosVenta = $result->ResultGet->PtoVenta;
-            } else {
-                $puntosVenta = $result->ResultGet;
-            }
-
-            foreach ($puntosVenta as $puntoVenta) {
+            foreach ($result->ResultGet as $puntoVenta) {
                 if ($puntoVenta->Bloqueado === 'N') {
                     $codigos[] = $puntoVenta->Nro;
                 }

@@ -15,7 +15,6 @@ use Multinexo\WSFE\Wsfe;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
 use Multinexo\WSPN3\Wspn3;
-use stdClass;
 
 class AfipWebService
 {
@@ -34,7 +33,7 @@ class AfipWebService
             ],
         ];
 
-        $defConf = include getcwd() . '/config/config.php';
+        $defConf = include __DIR__ . '/../../config/config.php';
         $conf = array_replace_recursive($defConf, $newConf);
 
         $mode_sandbox = $afipConfig->sandbox ?? false;
@@ -46,18 +45,18 @@ class AfipWebService
         return $conf;
     }
 
-    public static function checkWsStatusOrFail(stdClass $service): void
+    public static function checkWsStatusOrFail(string $ws, \SoapClient $client): void
     {
-        switch ($service->ws) {
+        switch ($ws) {
             case 'wsmtxca':
-                $serverStatus = Wsmtxca::dummy($service->client);
+                $serverStatus = Wsmtxca::dummy($client);
 
                 $status = $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
                     && $serverStatus->dbserver === 'OK';
                 break;
             case 'wspn3':
-                $serverStatus = Wspn3::dummy($service->client);
+                $serverStatus = Wspn3::dummy($client);
 
                 $status = $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
@@ -65,7 +64,7 @@ class AfipWebService
                 break;
             case 'wsfe':
             default:
-                $serverStatus = Wsfe::dummy($service->client);
+                $serverStatus = Wsfe::dummy($client);
 
                 $status = $serverStatus->AppServer === 'OK'
                     && $serverStatus->DbServer === 'OK'
@@ -74,7 +73,7 @@ class AfipWebService
         }
 
         if (!$status) {
-            throw new WsException('Web service `' . $service->ws . '` temporalmente no disponible.');
+            throw new WsException('Web service `' . $ws . '` temporalmente no disponible.');
         }
     }
 

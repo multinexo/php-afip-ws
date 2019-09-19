@@ -15,7 +15,7 @@ return [
     ],
 
     'archivos' => [
-        'wsaaWsdl' => getcwd() . '/src/WSAA/wsaa.wsdl',
+        'wsaaWsdl' => __DIR__ . '/../src/WSAA/wsaa.wsdl',
         'certificado' => null,
         'clavePrivada' => null,
     ],
