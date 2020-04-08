@@ -446,7 +446,7 @@ final class WsmtxcaTest extends TestAfipCase
     public function testConsultCAEABetweenDates(): int
     {
         $this->factura->datos = (object) [
-            'fechaDesde' => date('Y-m-d', strtotime(date('Y-m-d') . '- 5 month')),
+            'fechaDesde' => date('Y-m-d', (int) (strtotime(date('Y-m-d') . '- 5 month'))),
             'fechaHasta' => date('Y-m-d'),
         ];
 

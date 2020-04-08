@@ -36,7 +36,7 @@ class CSRFile
     {
         $name = str_replace(' ', '_', $this->business_name);
         $csrName = time() . '_CSR_' . $name;
-        $csrTemp_file = tempnam(sys_get_temp_dir(), $csrName);
+        $csrTemp_file = (string) tempnam(sys_get_temp_dir(), $csrName);
 
         $companyData = '/C=AR/O=' . $this->business_name . '/CN=' . $this->app_name . '/serialNumber=CUIT '
             . $this->business_cuit;

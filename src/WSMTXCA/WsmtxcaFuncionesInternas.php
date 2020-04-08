@@ -88,9 +88,7 @@ trait WsmtxcaFuncionesInternas
     /**
      * SolicitarCAEA.
      *
-     * @param \stdClass $data
-     *
-     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     * retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
      *                * cuit: Cuit Emisora del comprobante.
      *                * codigoTipoComprobante: Especifica el tipo de  comprobante.
      *                * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
@@ -320,7 +318,6 @@ trait WsmtxcaFuncionesInternas
     /**
      * // TODO: Testar funciones.
      * /**
-     * @param \stdClass $authRequest
      * @param string $cbte
      */
     public function wsInformarComprobanteCAEA($cbte)

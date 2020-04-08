@@ -24,23 +24,6 @@ class WsParametros
         $this->resultado = new ManejadorResultados();
     }
 
-    // TODO: Analizar si se utiliza esta funcion
-
-    /**
-     * @param \stdClass $client
-     * @param \stdClass $authRequest
-     */
-    public function consultar(string $serviceName, $client, $authRequest)
-    {
-        $service = 'consultar' . $serviceName;
-        $array = 'array' . $serviceName;
-        $resultado = $client->{$service}([
-            'authRequest' => $authRequest,
-        ]);
-
-        return $resultado->{$array}->codigoDescripcion;
-    }
-
     /**
      * Consultar Tipos de Comprobantes.
      *

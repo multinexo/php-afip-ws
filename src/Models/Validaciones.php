@@ -102,6 +102,9 @@ trait Validaciones
         return (object) $rules;
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getRulesForElectronicInvoice(): array
     {
         $wsReglas = [];
@@ -168,6 +171,8 @@ trait Validaciones
 
     /**
      * Devuelve mensajes de error personalizados.
+     *
+     * @return mixed[]
      */
     private function getErrorMessages(): array
     {
@@ -197,6 +202,8 @@ trait Validaciones
 
     /**
      * Valida los datos de un array.
+     *
+     * @param mixed[] $array
      *
      * @throws ValidationException
      */

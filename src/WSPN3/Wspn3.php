@@ -16,9 +16,6 @@ use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use stdClass;
 
-/**
- * Class Wspn3.
- */
 class Wspn3
 {
     private $service;
@@ -65,7 +62,12 @@ class Wspn3
         return json_decode(json_encode($clear_data));
     }
 
-    private static function flushNullFromArray(array $array)
+    /**
+     * @param mixed[] $array
+     *
+     * @return mixed[]
+     */
+    private static function flushNullFromArray(array $array): array
     {
         foreach ($array as $k => $item) {
             if (!$item) {

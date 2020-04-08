@@ -14,12 +14,16 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
+use Multinexo\Models\Validaciones;
+use SoapClient;
 
 /**
  * Class Wsfe (Invoice without items).
  */
 class Wsfe extends Invoice
 {
+    use Validaciones;
+
     public function __construct(AfipConfig $afipConfig)
     {
         $this->ws = 'wsfe';
@@ -221,9 +225,9 @@ class Wsfe extends Invoice
      * @param string $wsdlPath
      * @param string $url
      */
-    public function connectToSoapClient($wsdlPath, $url): \SoapClient
+    public function connectToSoapClient($wsdlPath, $url): SoapClient
     {
-        return new \SoapClient(
+        return new SoapClient(
             $wsdlPath,
             [
                 'soap_version' => SOAP_1_2,

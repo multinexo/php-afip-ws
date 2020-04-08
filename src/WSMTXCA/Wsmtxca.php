@@ -14,6 +14,7 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
+use Multinexo\Models\Validaciones;
 
 /**
  * Class Wsmtxca (Invoice with items).
@@ -21,6 +22,7 @@ use Multinexo\Models\Invoice;
 class Wsmtxca extends Invoice
 {
     use WsmtxcaFuncionesInternas;
+    use Validaciones;
 
     public function __construct(AfipConfig $afipConfig)
     {

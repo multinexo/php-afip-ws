@@ -12,6 +12,9 @@ namespace Multinexo\WSAA;
 
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\GeneralHelper;
+use Multinexo\Models\Validaciones;
+use SimpleXMLElement;
+use SoapClient;
 use stdClass;
 
 /**
@@ -22,6 +25,8 @@ use stdClass;
  */
 class Wsaa
 {
+    use Validaciones;
+
     /**
      * Chequea si necesita renovar el Ticket de Acceso para el ws.
      *
@@ -51,15 +56,15 @@ class Wsaa
      */
     private static function createTRA(stdClass $service): void
     {
-        $TRA = new \SimpleXMLElement(
+        $TRA = new SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
             '<loginTicketRequest version="1.0">' .
             '</loginTicketRequest>'
         );
         $TRA->addChild('header');
         $TRA->header->addChild('uniqueId', date('U'));
-        $TRA->header->addChild('generationTime', date('c', date('U') - 60));
-        $TRA->header->addChild('expirationTime', date('c', date('U') + 60));
+        $TRA->header->addChild('generationTime', date('c', time() - 60));
+        $TRA->header->addChild('expirationTime', date('c', time() + 60));
         $TRA->addChild('service', GeneralHelper::getOriginalWsName($service->ws));
         $TRA->asXML($service->configuracion->dir->xml_generados . 'TRA-' . $service->ws . '.xml');
     }
@@ -120,7 +125,7 @@ class Wsaa
      */
     private static function callWSAA(stdClass $service, string $CMS)
     {
-        $client = new \SoapClient($service->configuracion->archivos->wsaaWsdl, [
+        $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $service->configuracion->proxyPort,
             'soap_version' => SOAP_1_2,
             'location' => $service->configuracion->url->wsaa,
@@ -183,7 +188,9 @@ class Wsaa
     /**
      * Permite obtener un atributo de un archivo con formato xml.
      *
-     * @return bool|\SimpleXMLElement|\SimpleXMLElement[]
+     * @param mixed[] $nodes
+     *
+     * @return bool|SimpleXMLElement|SimpleXMLElement[]
      */
     private static function getXmlAttribute(string $path, array $nodes = [])
     {

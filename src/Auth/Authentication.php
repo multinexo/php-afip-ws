@@ -19,6 +19,7 @@ use stdClass;
 
 class Authentication
 {
+    /** @var stdClass|null */
     private $service;
 
     private $configuracion;
@@ -89,6 +90,9 @@ class Authentication
         $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit
             . '-' . $this->service->ws . '.xml';
         $TA = simplexml_load_file($ta);
+        if ($TA === false) {
+            return '';
+        }
         $token = $TA->credentials->token;
         $sign = $TA->credentials->sign;
         $authRequest = '';

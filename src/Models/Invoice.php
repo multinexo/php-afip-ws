@@ -14,7 +14,6 @@ use Multinexo\Auth\Authentication;
 
 abstract class Invoice implements InvoiceInterface
 {
-    use Validaciones;
     public $service;
 
     public $ws;
