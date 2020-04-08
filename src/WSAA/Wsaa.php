@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -12,6 +12,9 @@ namespace Multinexo\WSAA;
 
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\GeneralHelper;
+use Multinexo\Models\Validaciones;
+use SimpleXMLElement;
+use SoapClient;
 use stdClass;
 
 /**
@@ -22,6 +25,8 @@ use stdClass;
  */
 class Wsaa
 {
+    use Validaciones;
+
     /**
      * Chequea si necesita renovar el Ticket de Acceso para el ws.
      *
@@ -51,14 +56,15 @@ class Wsaa
      */
     private static function createTRA(stdClass $service): void
     {
-        $TRA = new \SimpleXMLElement(
+        $TRA = new SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
             '<loginTicketRequest version="1.0">' .
-            '</loginTicketRequest>');
+            '</loginTicketRequest>'
+        );
         $TRA->addChild('header');
         $TRA->header->addChild('uniqueId', date('U'));
-        $TRA->header->addChild('generationTime', date('c', date('U') - 60));
-        $TRA->header->addChild('expirationTime', date('c', date('U') + 60));
+        $TRA->header->addChild('generationTime', date('c', time() - 60));
+        $TRA->header->addChild('expirationTime', date('c', time() + 60));
         $TRA->addChild('service', GeneralHelper::getOriginalWsName($service->ws));
         $TRA->asXML($service->configuracion->dir->xml_generados . 'TRA-' . $service->ws . '.xml');
     }
@@ -91,7 +97,7 @@ class Wsaa
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
-        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'rb');
+        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'r');
         $i = 0;
         $CMS = '';
 
@@ -113,13 +119,13 @@ class Wsaa
      *
      * @param string $CMS : Recibe un CMS (Cryptographic Message Syntax)
      *
-     * @return mixed: Ticket de Acceso generado por AFIP en formato xml
-     *
      * @throws WsException
+     *
+     * @return mixed: Ticket de Acceso generado por AFIP en formato xml
      */
     private static function callWSAA(stdClass $service, string $CMS)
     {
-        $client = new \SoapClient($service->configuracion->archivos->wsaaWsdl, [
+        $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $service->configuracion->proxyPort,
             'soap_version' => SOAP_1_2,
             'location' => $service->configuracion->url->wsaa,
@@ -127,10 +133,12 @@ class Wsaa
             'exceptions' => 0,
         ]);
         $results = $client->loginCms(['in0' => $CMS]);
-        file_put_contents($service->configuracion->dir->xml_generados . 'request-loginCms.xml',
+        file_put_contents(
+            $service->configuracion->dir->xml_generados . 'request-loginCms.xml',
             $client->__getLastRequest()
         );
-        file_put_contents($service->configuracion->dir->xml_generados . 'response-loginCms.xml',
+        file_put_contents(
+            $service->configuracion->dir->xml_generados . 'response-loginCms.xml',
             $client->__getLastResponse()
         );
         if (is_soap_fault($results)) {
@@ -151,12 +159,12 @@ class Wsaa
         $dir = $service->configuracion->dir;
         $archivos = $service->configuracion->archivos;
 
-        /* Se crean los directorios en donde se alojaran las claves y los xmls generados en caso que no existan */
+        // Se crean los directorios en donde se alojaran las claves y los xmls generados en caso que no existan
         foreach ($dir as $directory) {
             !is_dir($directory) ? mkdir($directory, 0777, true) : false;
         }
 
-        /* Se verifica que exista la clave privada, el certificado y el wsaa.wsdl */
+        // Se verifica que exista la clave privada, el certificado y el wsaa.wsdl
         foreach ($archivos as $archivo) {
             if (!file_exists($archivo)) {
                 throw new WsException(
@@ -180,7 +188,9 @@ class Wsaa
     /**
      * Permite obtener un atributo de un archivo con formato xml.
      *
-     * @return bool|\SimpleXMLElement|\SimpleXMLElement[]
+     * @param mixed[] $nodes
+     *
+     * @return bool|SimpleXMLElement|SimpleXMLElement[]
      */
     private static function getXmlAttribute(string $path, array $nodes = [])
     {

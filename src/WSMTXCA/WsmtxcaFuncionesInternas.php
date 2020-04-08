@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -35,7 +35,8 @@ trait WsmtxcaFuncionesInternas
                     'numeroPuntoVenta' => $data->puntoVenta,
                     'numeroComprobante' => $data->numeroComprobante,
                 ],
-            ]);
+            ]
+        );
 
         $this->checkSoapFault($resultado);
 
@@ -56,7 +57,8 @@ trait WsmtxcaFuncionesInternas
                 'authRequest' => $this->service->authRequest,
                 'fechaDesde' => $data->fechaDesde,
                 'fechaHasta' => $data->fechaHasta,
-            ]);
+            ]
+        );
         $this->checkSoapFault($resultado);
 
         $this->resultado->procesar($resultado);
@@ -74,7 +76,8 @@ trait WsmtxcaFuncionesInternas
             [
                 'authRequest' => $this->service->authRequest,
                 'CAEA' => $data->caea,
-            ]);
+            ]
+        );
         $this->checkSoapFault($resultado);
 
         $this->resultado->procesar($resultado);
@@ -85,9 +88,7 @@ trait WsmtxcaFuncionesInternas
     /**
      * SolicitarCAEA.
      *
-     * @param \stdClass $data
-     *
-     * @return string retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
+     * retorna la comprobación vía “ping” de los elementos principales de infraestructura del servicio.
      *                * cuit: Cuit Emisora del comprobante.
      *                * codigoTipoComprobante: Especifica el tipo de  comprobante.
      *                * numeroPuntoVenta: Indica el  número de  punto de venta del comprobante  autorizado.
@@ -105,7 +106,8 @@ trait WsmtxcaFuncionesInternas
                     'periodo' => $data->periodo,
                     'orden' => $data->orden,
                 ],
-            ]);
+            ]
+        );
 
         $this->checkSoapFault($resultado);
 
@@ -134,7 +136,8 @@ trait WsmtxcaFuncionesInternas
             [
                 'authRequest' => $this->service->authRequest,
                 'comprobanteCAERequest' => $cbte,
-            ]);
+            ]
+        );
 
         $this->checkSoapFault($resultado);
 
@@ -163,7 +166,8 @@ trait WsmtxcaFuncionesInternas
                     'codigoTipoComprobante' => $cbteTipo,
                     'numeroPuntoVenta' => $ptoVta,
                 ],
-            ]);
+            ]
+        );
 
         $this->resultado->procesar($resultado);
 
@@ -205,7 +209,8 @@ trait WsmtxcaFuncionesInternas
                         'Description' => $result->faultstring,
                         'Detail' => $result->detail,
                     ],
-                ]);
+                ]
+            );
         }
 
         return $result;
@@ -310,12 +315,9 @@ trait WsmtxcaFuncionesInternas
         }
     }
 
-    /*/
-
-    // TODO: Testar funciones
-
     /**
-     * @param \stdClass $authRequest
+     * // TODO: Testar funciones.
+     * /**
      * @param string $cbte
      */
     public function wsInformarComprobanteCAEA($cbte)
@@ -324,7 +326,8 @@ trait WsmtxcaFuncionesInternas
             [
                 'authRequest' => $this->service->authRequest,
                 'comprobanteCAEARequest' => $cbte,
-            ]);
+            ]
+        );
         $this->checkSoapFault($result);
 
         return $result->comprobante;
@@ -339,7 +342,8 @@ trait WsmtxcaFuncionesInternas
             [
                 'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
-            ]);
+            ]
+        );
         $this->checkSoapFault($result);
 
         return $result->comprobante;
@@ -356,7 +360,8 @@ trait WsmtxcaFuncionesInternas
                 'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
                 'numeroPuntoVenta' => $ptoVta,
-            ]);
+            ]
+        );
         $this->checkSoapFault($result);
 
         return $result->comprobante;
@@ -371,7 +376,8 @@ trait WsmtxcaFuncionesInternas
             [
                 'authRequest' => $this->service->authRequest,
                 'CAEA' => $caea,
-            ]);
+            ]
+        );
         $this->checkSoapFault($result);
 
         return $result->arrayPuntosVenta;

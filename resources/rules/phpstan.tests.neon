@@ -1,5 +1,30 @@
 includes:
-    - ../../vendor/phpstan/phpstan-strict-rules/rules.neon
+    # - ../../vendor/phpstan/phpstan-strict-rules/rules.neon
     - ../../vendor/phpstan/phpstan-phpunit/extension.neon
     - ../../vendor/phpstan/phpstan-phpunit/rules.neon
-    - ../../vendor/phpstan/phpstan-phpunit/strictRules.neon
+
+parameters:
+    paths:
+        - ../../tests
+    level: max
+    ignoreErrors:
+        ## phpstan 0.11 to 0.12
+        - '#has no typehint specifiedx\.$#'
+        - '#Call to an undefined method SoapClient::loginCms\(\).#'
+        - '#json_decode expects string, string\|false given#'
+        - '#Only booleans are allowed in a negated boolean#'
+        # refactoring required
+        - '#expects resource, resource\|false#'
+        - '#empty\(\) is not allowed. Use more strict comparison.#'
+        - '#Call to an undefined method .*Wsmtxca\:\:#'
+        - '#\\Validatable, array<int,#'
+        - '#call to static method .*\\Validator#'
+        - '#Variable property access on mixed#'
+        - '#Access to an undefined property .*\\Wsaa::\$#'
+        - '#Call to an undefined method .*\\Wsaa::#'
+        - '#Unreachable statement - code above always terminates.#'
+        # @todo BE-128
+        - '#no typehint specified#'
+        - '#has no return typehint#'
+        - '#return type has no value type specified in iterable type array#'
+    reportUnmatchedIgnoredErrors: false

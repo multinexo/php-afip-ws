@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -16,9 +16,6 @@ use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use stdClass;
 
-/**
- * Class Wspn3.
- */
 class Wspn3
 {
     private $service;
@@ -65,7 +62,12 @@ class Wspn3
         return json_decode(json_encode($clear_data));
     }
 
-    private static function flushNullFromArray(array $array)
+    /**
+     * @param mixed[] $array
+     *
+     * @return mixed[]
+     */
+    private static function flushNullFromArray(array $array): array
     {
         foreach ($array as $k => $item) {
             if (!$item) {

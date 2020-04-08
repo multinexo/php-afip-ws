@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -12,19 +12,19 @@ namespace Multinexo\Models;
 
 class AfipConfig
 {
-    /* @var bool */
+    /** @var bool */
     public $sandbox;
 
-    /* @var string */
+    /** @var string */
     public $cuit;
 
-    /* @var string */
+    /** @var string */
     public $xml_generated_directory;
 
-    /* @var string */
+    /** @var string */
     public $certificate_path;
 
-    /* @var string */
+    /** @var string */
     public $privatekey_path;
 
     public function setSandbox(bool $value = null): void
