@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -108,6 +108,7 @@ class Wsfe extends Invoice
 
         if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado === 'R') {
             $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg;
+
             throw new WsException($observaciones);
         }
 
@@ -222,7 +223,8 @@ class Wsfe extends Invoice
      */
     public function connectToSoapClient($wsdlPath, $url): \SoapClient
     {
-        return new \SoapClient($wsdlPath,
+        return new \SoapClient(
+            $wsdlPath,
             [
                 'soap_version' => SOAP_1_2,
                 'location' => $url,
@@ -230,7 +232,8 @@ class Wsfe extends Invoice
                 //       'proxy_port'   => 80,
                 'exceptions' => 0,
                 'trace' => 1,
-            ]);
+            ]
+        );
     }
 
     /**

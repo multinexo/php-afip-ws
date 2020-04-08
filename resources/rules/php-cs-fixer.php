@@ -9,6 +9,7 @@ $rules = array_merge(
         'strict_comparison' => false,
         'no_useless_else' => false,
         'php_unit_method_casing' => false,
+        'php_unit_test_case_static_method_calls' => ['call_type' => 'this'],
     ]
 );
 

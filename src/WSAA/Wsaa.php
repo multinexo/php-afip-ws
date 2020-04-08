@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -54,7 +54,8 @@ class Wsaa
         $TRA = new \SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
             '<loginTicketRequest version="1.0">' .
-            '</loginTicketRequest>');
+            '</loginTicketRequest>'
+        );
         $TRA->addChild('header');
         $TRA->header->addChild('uniqueId', date('U'));
         $TRA->header->addChild('generationTime', date('c', date('U') - 60));
@@ -91,7 +92,7 @@ class Wsaa
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
-        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'rb');
+        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'r');
         $i = 0;
         $CMS = '';
 
@@ -113,9 +114,9 @@ class Wsaa
      *
      * @param string $CMS : Recibe un CMS (Cryptographic Message Syntax)
      *
-     * @return mixed: Ticket de Acceso generado por AFIP en formato xml
-     *
      * @throws WsException
+     *
+     * @return mixed: Ticket de Acceso generado por AFIP en formato xml
      */
     private static function callWSAA(stdClass $service, string $CMS)
     {
@@ -127,10 +128,12 @@ class Wsaa
             'exceptions' => 0,
         ]);
         $results = $client->loginCms(['in0' => $CMS]);
-        file_put_contents($service->configuracion->dir->xml_generados . 'request-loginCms.xml',
+        file_put_contents(
+            $service->configuracion->dir->xml_generados . 'request-loginCms.xml',
             $client->__getLastRequest()
         );
-        file_put_contents($service->configuracion->dir->xml_generados . 'response-loginCms.xml',
+        file_put_contents(
+            $service->configuracion->dir->xml_generados . 'response-loginCms.xml',
             $client->__getLastResponse()
         );
         if (is_soap_fault($results)) {
@@ -151,12 +154,12 @@ class Wsaa
         $dir = $service->configuracion->dir;
         $archivos = $service->configuracion->archivos;
 
-        /* Se crean los directorios en donde se alojaran las claves y los xmls generados en caso que no existan */
+        // Se crean los directorios en donde se alojaran las claves y los xmls generados en caso que no existan
         foreach ($dir as $directory) {
             !is_dir($directory) ? mkdir($directory, 0777, true) : false;
         }
 
-        /* Se verifica que exista la clave privada, el certificado y el wsaa.wsdl */
+        // Se verifica que exista la clave privada, el certificado y el wsaa.wsdl
         foreach ($archivos as $archivo) {
             if (!file_exists($archivo)) {
                 throw new WsException(

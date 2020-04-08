@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -13,7 +13,11 @@ namespace Tests\ModelTests;
 use Multinexo\Models\CSRFile;
 use Tests\TestAfipCase;
 
-class CsrFileTest extends TestAfipCase
+/**
+ * @internal
+ * @covers \Multinexo\Models\CSRFile
+ */
+final class CsrFileTest extends TestAfipCase
 {
     public function testDownloadCSRFile(): void
     {

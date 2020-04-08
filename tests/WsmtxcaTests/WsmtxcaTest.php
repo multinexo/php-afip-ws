@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -13,7 +13,11 @@ namespace Tests\WsmtxcaTests;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Tests\TestAfipCase;
 
-class WsmtxcaTest extends TestAfipCase
+/**
+ * @internal
+ * @covers \Multinexo\WSMTXCA\Wsmtxca
+ */
+final class WsmtxcaTest extends TestAfipCase
 {
     /** @var Wsmtxca */
     private $factura;
@@ -29,7 +33,6 @@ class WsmtxcaTest extends TestAfipCase
         $this->assertTrue(true);
 
         return;
-
         $arrayItems = [
             'item' => [
                 [
@@ -86,7 +89,8 @@ class WsmtxcaTest extends TestAfipCase
             $importeSubtotal,
             $importeNoGravado,
             $arrayItems,
-            $arraySubtotalesIVA);
+            $arraySubtotalesIVA
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -98,7 +102,6 @@ class WsmtxcaTest extends TestAfipCase
         $this->assertTrue(true);
 
         return;
-
         $arrayItems = [
             'item' => [
                 [
@@ -155,7 +158,8 @@ class WsmtxcaTest extends TestAfipCase
             $importeSubtotal,
             $importeNoGravado,
             $arrayItems,
-            $arraySubtotalesIVA);
+            $arraySubtotalesIVA
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -218,7 +222,8 @@ class WsmtxcaTest extends TestAfipCase
             150,
             0,
             $arrayItems,
-            $arraySubtotalesIVA);
+            $arraySubtotalesIVA
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
@@ -267,7 +272,8 @@ class WsmtxcaTest extends TestAfipCase
             null,
             150,
             0,
-            $arrayItems);
+            $arrayItems
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result->comprobanteResponse->CAE);
