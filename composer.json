@@ -34,10 +34,8 @@
     "respect/validation": "^1.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "3.3.1",
-    "reyesoft/ci": "1.0.9",
+    "reyesoft/ci": "1.2.0",
     "codedungeon/phpunit-result-printer": "0.19.10",
-    "sebastian/phpcpd": "4.1.0",
     "php-mock/php-mock": "2.1.2",
     "phpunit/phpunit": "7.5.9"
   },
