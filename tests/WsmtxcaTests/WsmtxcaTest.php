@@ -26,10 +26,6 @@ class WsmtxcaTest extends TestAfipCase
 
     public function testCreateInvoiceWithItemsOfMonotributeToMonotribute(): void
     {
-        $this->assertTrue(true);
-
-        return;
-
         $arrayItems = [
             'item' => [
                 [

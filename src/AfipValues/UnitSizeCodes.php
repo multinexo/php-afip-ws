@@ -8,11 +8,12 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace Multinexo\AfipValues;
 
-use PHPUnit\Framework\TestCase;
-
-class TestAfipCase extends TestCase
+/**
+ * @see http://www.afip.gov.ar/genericos/guiavirtual/archivos/Ejemplo%20c%C3%B3mo%20se%20informan%20los%20distintos%20tipos%20de%20percepciones.pdf
+ */
+class UnitSizeCodes
 {
-    use AfipTraitTest;
+    public const UNKNOWN = 7;
 }
