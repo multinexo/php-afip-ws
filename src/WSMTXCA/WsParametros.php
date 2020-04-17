@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -22,23 +22,6 @@ class WsParametros
     public function __construct()
     {
         $this->resultado = new ManejadorResultados();
-    }
-
-    // TODO: Analizar si se utiliza esta funcion
-
-    /**
-     * @param \stdClass $client
-     * @param \stdClass $authRequest
-     */
-    public function consultar(string $serviceName, $client, $authRequest)
-    {
-        $service = 'consultar' . $serviceName;
-        $array = 'array' . $serviceName;
-        $resultado = $client->{$service}([
-            'authRequest' => $authRequest,
-        ]);
-
-        return $resultado->{$array}->codigoDescripcion;
     }
 
     /**

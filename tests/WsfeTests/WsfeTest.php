@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -15,7 +15,11 @@ use Multinexo\Exceptions\WsException;
 use Multinexo\WSFE\Wsfe;
 use Tests\TestAfipCase;
 
-class WsfeTest extends TestAfipCase
+/**
+ * @internal
+ * @covers \Multinexo\WSFE\Wsfe
+ */
+final class WsfeTest extends TestAfipCase
 {
     /** @var Wsfe */
     private $factura;
@@ -36,7 +40,8 @@ class WsfeTest extends TestAfipCase
             200.00,
             0,
             0,
-            null);
+            null
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -54,7 +59,8 @@ class WsfeTest extends TestAfipCase
             0.00,
             0,
             0,
-            null);
+            null
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -85,7 +91,8 @@ class WsfeTest extends TestAfipCase
             200.00,
             0,
             0,
-            $arrayComprobantesAsociados);
+            $arrayComprobantesAsociados
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -122,7 +129,8 @@ class WsfeTest extends TestAfipCase
             0,
             10,
             null,
-            $arrayOtrosTributos);
+            $arrayOtrosTributos
+        );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
@@ -155,7 +163,8 @@ class WsfeTest extends TestAfipCase
             26.25,
             0,
             null,
-            null);
+            null
+        );
         $this->factura->datos->arraySubtotalesIVA = json_decode(json_encode($arraySubtotalesIVA));
 
         $result = $this->factura->createInvoice();
@@ -192,7 +201,8 @@ class WsfeTest extends TestAfipCase
             0,
             0,
             null,
-            null);
+            null
+        );
         $this->factura->datos->arrayOpcionales = json_decode(json_encode($arrayOpcionales));
         $this->factura->createInvoice();
     }
@@ -207,7 +217,8 @@ class WsfeTest extends TestAfipCase
             0,
             0,
             200.00,
-            0);
+            0
+        );
 
         $this->factura->createInvoice();
     }
@@ -237,7 +248,8 @@ class WsfeTest extends TestAfipCase
             0,
             200.00,
             'error',
-            $arrayComprobantesAsociados);
+            $arrayComprobantesAsociados
+        );
 
         $this->factura->createInvoice();
     }
@@ -317,8 +329,8 @@ class WsfeTest extends TestAfipCase
         $importeIVA,
         $importTribute = 0,
         $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null)
-    {
+        $arrayOtrosTributos = null
+    ) {
         $comprobante = [
             'cantidadRegistros' => 1,
             'puntoVenta' => 3,

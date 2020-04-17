@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -28,6 +28,7 @@ trait Validaciones
         switch ($tipoRegla) {
             case 'fe':
                 $rules = $this->getRulesForElectronicInvoice();
+
                 break;
             case 'items':
                 $rules = [
@@ -43,6 +44,7 @@ trait Validaciones
                     'importeIVA' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
                     'importeItem' => v::floatVal()->between(0, 9999999999999.99),
                 ];
+
                 break;
             case 'iva':
                 $codIva = $this->codIva();
@@ -55,6 +57,7 @@ trait Validaciones
                     $regla = ['baseImponible' => v::floatVal()->between(0, 9999999999999.99)];
                     $rules = array_merge($rules, $regla);
                 }
+
                 break;
             case 'comprobantesAsociados':
                 $codComprobantes = $this->codComprobantes();
@@ -63,6 +66,7 @@ trait Validaciones
                     'puntoVenta' => v::notEmpty()->intVal()->between(1, 9999)->length(1, 4),
                     'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
                 ];
+
                 break;
             case 'tributos':
                 if ($this->ws === 'wsfe') {
@@ -83,6 +87,7 @@ trait Validaciones
                         'importe' => v::floatVal()->between(0, 9999999999999.99),
                     ];
                 }
+
                 break;
             case 'opcionales':
                 $codOpcionales = $this->codOpcionales();
@@ -90,12 +95,16 @@ trait Validaciones
                     'codigoOpcional' => v::in($codOpcionales),
                     'valor' => v::notEmpty()->stringType()->length(1, 250),
                 ];
+
                 break;
         }
 
         return (object) $rules;
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getRulesForElectronicInvoice(): array
     {
         $wsReglas = [];
@@ -162,6 +171,8 @@ trait Validaciones
 
     /**
      * Devuelve mensajes de error personalizados.
+     *
+     * @return mixed[]
      */
     private function getErrorMessages(): array
     {
@@ -191,6 +202,8 @@ trait Validaciones
 
     /**
      * Valida los datos de un array.
+     *
+     * @param mixed[] $array
      *
      * @throws ValidationException
      */

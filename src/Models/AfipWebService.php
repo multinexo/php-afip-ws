@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -54,6 +54,7 @@ class AfipWebService
                 $status = $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
                     && $serverStatus->dbserver === 'OK';
+
                 break;
             case 'wspn3':
                 $serverStatus = Wspn3::dummy($client);
@@ -61,6 +62,7 @@ class AfipWebService
                 $status = $serverStatus->appserver === 'OK'
                     && $serverStatus->authserver === 'OK'
                     && $serverStatus->dbserver === 'OK';
+
                 break;
             case 'wsfe':
             default:
@@ -69,6 +71,7 @@ class AfipWebService
                 $status = $serverStatus->AppServer === 'OK'
                     && $serverStatus->DbServer === 'OK'
                     && $serverStatus->AuthServer === 'OK';
+
                 break;
         }
 

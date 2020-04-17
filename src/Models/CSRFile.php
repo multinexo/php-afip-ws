@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -36,7 +36,7 @@ class CSRFile
     {
         $name = str_replace(' ', '_', $this->business_name);
         $csrName = time() . '_CSR_' . $name;
-        $csrTemp_file = tempnam(sys_get_temp_dir(), $csrName);
+        $csrTemp_file = (string) tempnam(sys_get_temp_dir(), $csrName);
 
         $companyData = '/C=AR/O=' . $this->business_name . '/CN=' . $this->app_name . '/serialNumber=CUIT '
             . $this->business_cuit;

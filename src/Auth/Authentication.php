@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -19,6 +19,7 @@ use stdClass;
 
 class Authentication
 {
+    /** @var stdClass|null */
     private $service;
 
     private $configuracion;
@@ -41,6 +42,7 @@ class Authentication
     public function auth(string $ws): void
     {
         $this->service = new stdClass();
+
         try {
             $this->service->ws = $ws;
             $this->service->configuracion = $this->configuracion;
@@ -49,7 +51,7 @@ class Authentication
             $this->authRequest = $this->getCredentials();
             $this->service->client = $this->client;
             AfipWebService::checkWsStatusOrFail($this->service->ws, $this->client);
-            unset($this->service);
+            $this->service = null;
         } catch (WsException $exception) {
             throw new WsException('Error de autenticación: ' . $exception->getMessage());
         }
@@ -72,13 +74,15 @@ class Authentication
 
     public function connectToSoapClient(string $wsdlPath, string $url)
     {
-        return new SoapClient($wsdlPath,
+        return new SoapClient(
+            $wsdlPath,
             [
                 'soap_version' => SOAP_1_2,
                 'location' => $url,
                 'exceptions' => 0,
                 'trace' => 1,
-            ]);
+            ]
+        );
     }
 
     public function getCredentials()
@@ -86,6 +90,9 @@ class Authentication
         $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit
             . '-' . $this->service->ws . '.xml';
         $TA = simplexml_load_file($ta);
+        if ($TA === false) {
+            return '';
+        }
         $token = $TA->credentials->token;
         $sign = $TA->credentials->sign;
         $authRequest = '';
