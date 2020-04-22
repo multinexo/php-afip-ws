@@ -133,6 +133,7 @@ final class AfipInvoiceTranslator
 
     private function getIvaAmounts(bool $is_wsfe_service): array
     {
+        $data = [];
         foreach ($this->subtotal_iva_by_code as $condition_code => $value) {
             $data[] = [
                 'codigoIva' => $condition_code,
@@ -142,7 +143,7 @@ final class AfipInvoiceTranslator
         }
 
         return [
-            'subtotalIVA' => $data ?? [],
+            'subtotalIVA' => $data,
         ];
     }
 }

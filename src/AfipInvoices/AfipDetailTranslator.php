@@ -50,9 +50,9 @@ final class AfipDetailTranslator
         $data = $this->translate();
 
         if ($this->detail->getQty() > 0) {
-            $item['precioUnitario'] = ($this->detail->getIvaAmount() + $this->detail->getBonusAmount()) / $this->detail->getQty();
+            $data['precioUnitario'] = ($this->detail->getIvaAmount() + $this->detail->getBonusAmount()) / $this->detail->getQty();
         }
-        unset($item['importeIVA']);
+        unset($data['importeIVA']);
 
         return $data;
     }

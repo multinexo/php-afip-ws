@@ -1,6 +1,6 @@
 # PHP library for AFIP Web Services (Argentina)
 
-## Install
+## Installation
 
 ```bash
 composer require multinexo/php-afip-ws
@@ -74,7 +74,7 @@ composer require multinexo/php-afip-ws
     ];
 ```
 ## Documentation
-For more information, consult the [documentation official](https://www.afip.gob.ar/ws/documentacion/).
+For more information, visit [official documentation](https://www.afip.gob.ar/ws/documentacion/).
 
 ## Testing
 
