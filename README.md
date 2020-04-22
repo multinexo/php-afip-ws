@@ -1,17 +1,12 @@
-PHP library for AFIP Web Services (Argentina)
-======================================================
+# PHP library for AFIP Web Services (Argentina)
 
------------
+## Installation
 
-### Install
-
-Vía Composer
-
-```javascript
+```bash
 composer require multinexo/php-afip-ws
 ```
 
-### Usage
+## Usage
 
 ```php
     /** Invoice with items */
@@ -78,13 +73,13 @@ composer require multinexo/php-afip-ws
         'importeItem' => 49.00,
     ];
 ```
-### Documentation
-For more information, consult the [documentation official](https://www.afip.gob.ar/ws/documentacion/).
+## Documentation
+For more information, visit [official documentation](https://www.afip.gob.ar/ws/documentacion/).
 
-### Testing
+## Testing
 
-```php
-    $ composer coverage
+```bash
+composer coverage
 ```
 
 ### Security
