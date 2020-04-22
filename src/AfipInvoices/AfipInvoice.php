@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -53,6 +53,7 @@ class AfipInvoice
     {
         $detail = new AfipDetail();
         $this->addAfipDetail($detail);
+
         return $detail;
     }
 
@@ -133,21 +134,23 @@ class AfipInvoice
         return $this->details;
     }
 
-    public function getExemptAmount(): float {
+    public function getExemptAmount(): float
+    {
         return .0;
     }
 
-    public function getAnotherTaxes(): float {
+    public function getAnotherTaxes(): float
+    {
         return .0;
     }
 
-    public function getDataFromAfip(AfipConfig $config):AfipResult {
+    public function getDataFromAfip(AfipConfig $config): AfipResult
+    {
         // legacy bootstrap
         $factura = new Wsmtxca($config);
 
         $factura->datos = (new AfipInvoiceTranslator($this))->getDataWsmtxcaArray();
 
-        var_dump($factura->datos);
-        die;
+        return new AfipResult();
     }
 }

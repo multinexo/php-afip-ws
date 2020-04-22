@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 1997-2018 Reyesoft <info@reyesoft.com>.
+ * Copyright (C) 1997-2020 Reyesoft <info@reyesoft.com>.
  *
  * This file is part of php-afip-ws. php-afip-ws can not be copied and/or
  * distributed without the express permission of Reyesoft
@@ -10,13 +10,12 @@ declare(strict_types=1);
 
 namespace Multinexo\AfipInvoices;
 
-use App\Documents\AfipWebServiceLocal;
 use Illuminate\Support\Arr;
 
 /**
  * @internal
  */
-class AfipInvoiceTranslator
+final class AfipInvoiceTranslator
 {
     /** @var AfipInvoice */
     private $invoice;
@@ -82,7 +81,8 @@ class AfipInvoiceTranslator
         ];
     }
 
-    public function getDataWsmtxcaArray(): array {
+    public function getDataWsmtxcaArray(): array
+    {
         $data = $this->getDataArray();
 
         $data['fechaEmision'] = date('Y-m-d');
@@ -100,7 +100,8 @@ class AfipInvoiceTranslator
         return $data;
     }
 
-    public function getDataWsfeArray(): array {
+    public function getDataWsfeArray(): array
+    {
         $data = $this->getDataArray();
 
         $data['fechaEmision'] = date('Ymd');
@@ -117,12 +118,12 @@ class AfipInvoiceTranslator
 
     private function addIvaAmount(AfipDetail $detail): void
     {
-        $iva_code =  $detail->getIvaConditionCode();
+        $iva_code = $detail->getIvaConditionCode();
 
-        if(!isset($this->subtotal_iva_by_code[$iva_code])) {
+        if (!isset($this->subtotal_iva_by_code[$iva_code])) {
             $this->subtotal_iva_by_code[$iva_code] = [
                 'iva_amount' => .0,
-                'net_amount' => .0
+                'net_amount' => .0,
             ];
         }
 
