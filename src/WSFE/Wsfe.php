@@ -637,12 +637,6 @@ class Wsfe extends Invoice
     {
         $pos_numbers = [];
         $result = $this->FEParamGetPtosVenta();
-        //        if (empty((array) $result->ResultGet)) {
-        //            Log::debug('----> getAvailablePosNumbers EMPTY '.print_r($result, true));
-        //            return [];
-        //        }
-
-        Log::debug('----> getAvailablePosNumbers wsfe RESULT ' . print_r($result, true));
 
         $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
         if (!is_array($fetched_pos_array)) {
@@ -651,8 +645,6 @@ class Wsfe extends Invoice
             $fetched_pos_array = $result->ResultGet ?? [];
         }
         foreach ($fetched_pos_array as $fetched_pos) {
-            Log::debug('----> getAvailablePosNumbers wsfe puntoVenta ' . print_r($fetched_pos, true));
-
             if ($fetched_pos->FchBaja > 0) {
                 continue;
             }

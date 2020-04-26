@@ -14,7 +14,6 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
-use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 
 /**
@@ -115,16 +114,10 @@ class Wsmtxca extends Invoice
         $pos_numbers = [];
         $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
 
-        if (empty((array) $result->arrayPuntosVenta)) {
-            Log::debug('----> getAvailablePosNumbers EMPTY ' . print_r($result, true));
-
-            return [];
-        }
-
-        foreach ($result->arrayPuntosVenta as $puntoVenta) {
-            Log::debug('----> getAvailablePosNumbers RESULT ' . print_r($puntoVenta, true));
-            if ($puntoVenta->bloqueado === 'No') {
-                $pos_numbers[] = $puntoVenta->numeroPuntoVenta;
+        $fetched_pos_array = $result->arrayPuntosVenta ?? [];
+        foreach ($fetched_pos_array as $fetched_pos) {
+            if ($fetched_pos->bloqueado === 'No') {
+                $pos_numbers[] = $fetched_pos->numeroPuntoVenta;
             }
         }
 
