@@ -11,7 +11,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "double spaces..." &&
-sh resources/ci/tools/find-double-spaces.sh app/
+sh resources/ci/tools/find-double-spaces.sh src/
 sh resources/ci/tools/find-double-spaces.sh tests/
 
 echo "php-cs-fixer..." &&

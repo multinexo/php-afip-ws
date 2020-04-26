@@ -108,4 +108,33 @@ class Wsmtxca extends Invoice
 
         return $this->wsConsultarComprobante($this->datos);
     }
+
+    public function getAvailablePosNumbers(): array
+    {
+        $pos_numbers = [];
+        $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
+
+        $fetched_pos_array = $result->arrayPuntosVenta ?? [];
+        foreach ($fetched_pos_array as $fetched_pos) {
+            if ($fetched_pos->bloqueado === 'No') {
+                $pos_numbers[] = $fetched_pos->numeroPuntoVenta;
+            }
+        }
+
+        return $pos_numbers;
+    }
+
+    /**
+     * Retorna array con los códigos comprobantes permitidos para una persona determinada.
+     *
+     * @internal
+     */
+    public function codComprobantes(): array
+    {
+        $codigos = (new WsParametros())->consultarTiposComprobante($this->service->client, $this->service->authRequest);
+
+        return array_map(function ($o) {
+            return $o->codigo;
+        }, $codigos->arrayTiposComprobante->codigoDescripcion ?? []);
+    }
 }
