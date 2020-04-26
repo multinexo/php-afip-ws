@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Multinexo\Models;
 
 use Multinexo\Exceptions\ValidationException;
-use Multinexo\WSFE\Wsfe;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros;
 use Respect\Validation\Exceptions\NestedValidationException;
@@ -276,30 +275,6 @@ trait Validaciones
     }
 
     /**
-     * Retorna array con los códigos comprobantes permitidos para una persona determinada.
-     *
-     * @return array|mixed
-     */
-    private function codComprobantes()
-    {
-        $codigos = [];
-        if ($this->ws === 'wsfe') {
-            /** @var Wsfe $this */
-            $codigos = $this->FEParamGetTiposCbte();
-            $codigos = array_map(function ($o) {
-                return $o->Id;
-            }, $codigos->CbteTipo);
-        } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsParametros())->consultarTiposComprobante($this->service->client, $this->service->authRequest);
-            $codigos = array_map(function ($o) {
-                return $o->codigo;
-            }, $codigos->arrayTiposComprobante->codigoDescripcion);
-        }
-
-        return $codigos;
-    }
-
-    /**
      * Retorna array con los codigos de documentos.
      *
      * @return array|mixed
@@ -395,37 +370,6 @@ trait Validaciones
             $codigos = array_map(function ($o) {
                 return $o->Id;
             }, $codigos->TributoTipo);
-        }
-
-        return $codigos;
-    }
-
-    public function getAvailablePosNumbers()
-    {
-        $codigos = [];
-        if ($this->ws === 'wsfe') {
-            $result = $this->FEParamGetPtosVenta();
-            if (empty((array) $result->ResultGet)) {
-                return [];
-            }
-
-            foreach ($result->ResultGet as $puntoVenta) {
-                if ($puntoVenta->Bloqueado === 'N') {
-                    $codigos[] = $puntoVenta->Nro;
-                }
-            }
-        } elseif ($this->ws === 'wsmtxca') {
-            $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
-
-            if (empty((array) $result->arrayPuntosVenta)) {
-                return [];
-            }
-
-            foreach ($result->arrayPuntosVenta as $puntoVenta) {
-                if ($puntoVenta->bloqueado === 'No') {
-                    $codigos[] = $puntoVenta->numeroPuntoVenta;
-                }
-            }
         }
 
         return $codigos;

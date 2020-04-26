@@ -30,12 +30,13 @@
   },
   "require": {
     "php": ">=7.1",
+    "ext-json": "*",
     "ext-soap": "*",
     "ext-simplexml": "*",
     "respect/validation": "^1.0"
   },
   "require-dev": {
-    "reyesoft/ci": "1.2.0",
+    "reyesoft/ci": "1.3.0",
     "codedungeon/phpunit-result-printer": "0.19.10",
     "php-mock/php-mock": "2.1.2",
     "phpunit/phpunit": "7.5.9"

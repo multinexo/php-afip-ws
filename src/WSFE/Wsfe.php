@@ -14,11 +14,12 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
+use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use SoapClient;
 
 /**
- * Class Wsfe (Invoice without items).
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Wsfe extends Invoice
 {
@@ -210,7 +211,7 @@ class Wsfe extends Invoice
      *                * DbServer string(2) Servidor de base de datos
      *                * AuthServer string(2) Servidor de autenticación
      */
-    public static function dummy($client)
+    public static function dummy($client): \stdClass
     {
         $result = $client->FEDummy();
 
@@ -630,5 +631,53 @@ class Wsfe extends Invoice
         $this->resultado->procesar($resultado);
 
         return $resultado->FEParamGetTiposTributosResult->ResultGet;
+    }
+
+    public function getAvailablePosNumbers(): array
+    {
+        $pos_numbers = [];
+        $result = $this->FEParamGetPtosVenta();
+        //        if (empty((array) $result->ResultGet)) {
+        //            Log::debug('----> getAvailablePosNumbers EMPTY '.print_r($result, true));
+        //            return [];
+        //        }
+
+        Log::debug('----> getAvailablePosNumbers wsfe RESULT ' . print_r($result, true));
+
+        $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
+        if (!is_array($fetched_pos_array)) {
+            // testing dont work like production
+            Log::debug('Fix testing env: ' . print_r($result->ResultGet, true));
+            $fetched_pos_array = $result->ResultGet ?? [];
+        }
+        foreach ($fetched_pos_array as $fetched_pos) {
+            Log::debug('----> getAvailablePosNumbers wsfe puntoVenta ' . print_r($fetched_pos, true));
+
+            if ($fetched_pos->FchBaja > 0) {
+                continue;
+            }
+
+            if ($fetched_pos->Bloqueado !== 'N') {
+                continue;
+            }
+
+            $pos_numbers[] = $fetched_pos->Nro;
+        }
+
+        return $pos_numbers;
+    }
+
+    /**
+     * Retorna array con los códigos comprobantes permitidos para una persona determinada.
+     *
+     * @internal
+     */
+    public function codComprobantes(): array
+    {
+        $codigos = $this->FEParamGetTiposCbte();
+
+        return array_map(function ($o) {
+            return $o->Id;
+        }, $codigos->CbteTipo ?? []);
     }
 }

@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Multinexo\Models;
 
+use Multinexo\AfipWebServiceInterface;
 use Multinexo\Auth\Authentication;
 
-abstract class Invoice implements InvoiceInterface
+abstract class Invoice implements InvoiceInterface, AfipWebServiceInterface
 {
     public $service;
 
