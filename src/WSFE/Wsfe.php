@@ -115,7 +115,7 @@ class Wsfe extends Invoice
             $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg ?? '';
 
             if (empty($observaciones)) {
-                $observaciones = print_r('FECAEDetResponse: '.reset($resultado)->FeDetResp->FECAEDetResponse, true);
+                $observaciones = print_r('FECAEDetResponse: ' . reset($resultado)->FeDetResp->FECAEDetResponse, true);
             }
 
             throw new WsException($observaciones);
@@ -489,6 +489,10 @@ class Wsfe extends Invoice
         ]);
 
         $this->resultado->procesar($resultado);
+
+        if (!isset($resultado->FEParamGetTiposCbteResult->ResultGet)) {
+            throw new WsException('ResultGet not defined: ' . print_r($resultado, true));
+        }
 
         return $resultado->FEParamGetTiposCbteResult->ResultGet;
     }
