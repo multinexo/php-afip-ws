@@ -112,7 +112,11 @@ class Wsfe extends Invoice
         $this->resultado->procesar($resultado);
 
         if (reset($resultado)->FeDetResp->FECAEDetResponse->Resultado === 'R') {
-            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg;
+            $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg ?? '';
+
+            if (empty($observaciones)) {
+                $observaciones = print_r('FECAEDetResponse: '.reset($resultado)->FeDetResp->FECAEDetResponse, true);
+            }
 
             throw new WsException($observaciones);
         }
