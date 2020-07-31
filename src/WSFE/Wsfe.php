@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSFE;
 
+use Multinexo\Exceptions\AfipUnhandledException;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
@@ -115,7 +116,7 @@ class Wsfe extends Invoice
             $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg ?? '';
 
             if (empty($observaciones)) {
-                $observaciones = print_r('FECAEDetResponse: ' . reset($resultado)->FeDetResp->FECAEDetResponse, true);
+                throw new AfipUnhandledException(print_r('FECAEDetResponse: ' . reset($resultado)->FeDetResp->FECAEDetResponse, true));
             }
 
             throw new WsException($observaciones);
@@ -481,6 +482,11 @@ class Wsfe extends Invoice
      * Desc string(250) Descripción
      * FchDesde string(8) Fecha de vigencia desde
      * FchHasta string(8) Fecha de vigencia hasta
+     *
+     * @throws AfipUnhandledException
+     * @throws WsException
+     *
+     * @return mixed
      */
     public function FEParamGetTiposCbte()
     {
@@ -491,7 +497,7 @@ class Wsfe extends Invoice
         $this->resultado->procesar($resultado);
 
         if (!isset($resultado->FEParamGetTiposCbteResult->ResultGet)) {
-            throw new WsException('ResultGet not defined: ' . print_r($resultado, true));
+            throw new AfipUnhandledException('ResultGet not defined: ' . print_r($resultado, true));
         }
 
         return $resultado->FEParamGetTiposCbteResult->ResultGet;

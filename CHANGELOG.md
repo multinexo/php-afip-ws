@@ -2,8 +2,11 @@
 
 ## [2.0.2] - 30-07-20
 
+### Added 
+- AfipUnhandledException. Used for uncontrolled errors. You never send this data final user, it's only for debugging purposes. 
+
 ### Fixed
-- Error when WSFE return an error without Observations 
+- Error when WSFE return an error without Observations
 
 ## [v2.0.0 (2019-08-08)](https://github.com/multinexo/php-afip-ws/releases/tag/2.0.0)
 
