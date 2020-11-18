@@ -21,16 +21,14 @@ class Authentication
 {
     /** @var stdClass|null */
     private $service;
-
+    /** @var mixed */
     private $configuracion;
-
+    /** @var array|stdClass|string */
     public $authRequest;
-
+    /** @var SoapClient */
     public $client;
 
-    /**
-     * Authentication constructor.
-     */
+    // Authentication constructor.
     public function __construct(AfipConfig $newConf, string $ws)
     {
         $conf = AfipWebService::setConfig($newConf);
@@ -57,7 +55,7 @@ class Authentication
         }
     }
 
-    public function getClient()
+    public function getClient(): SoapClient
     {
         $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit
             . '-' . $this->service->ws . '.xml';
@@ -72,7 +70,7 @@ class Authentication
         return $this->connectToSoapClient($wsdl, $this->service->configuracion->url->{$this->service->ws});
     }
 
-    public function connectToSoapClient(string $wsdlPath, string $url)
+    public function connectToSoapClient(string $wsdlPath, string $url): SoapClient
     {
         return new SoapClient(
             $wsdlPath,
@@ -85,6 +83,9 @@ class Authentication
         );
     }
 
+    /**
+     * @return array|stdClass|string
+     */
     public function getCredentials()
     {
         $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit

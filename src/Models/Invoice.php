@@ -12,15 +12,17 @@ namespace Multinexo\Models;
 
 use Multinexo\AfipWebServiceInterface;
 use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\ManejadorResultados;
 
 abstract class Invoice implements InvoiceInterface, AfipWebServiceInterface
 {
+    /** @var Authentication */
     public $service;
-
+    /** @var string */
     public $ws;
-
+    /** @var mixed */
     public $datos;
-
+    /** @var ManejadorResultados */
     public $resultado;
 
     public function __construct(AfipConfig $afipConfig)

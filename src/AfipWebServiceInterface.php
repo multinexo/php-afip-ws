@@ -10,11 +10,13 @@ declare(strict_types=1);
 
 namespace Multinexo;
 
+use stdClass;
+
 interface AfipWebServiceInterface
 {
     public function getAvailablePosNumbers(): array;
 
-    public static function dummy($client): \stdClass;
+    public static function dummy(\SoapClient $client): stdClass;
 
     /**
      * @internal

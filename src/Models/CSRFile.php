@@ -12,12 +12,13 @@ namespace Multinexo\Models;
 
 class CSRFile
 {
+    /** @var string */
     protected $business_name;
-
+    /** @var int */
     protected $business_cuit;
-
+    /** @var string */
     protected $privatekey_path;
-
+    /** @var string */
     protected $app_name;
 
     public function __construct(

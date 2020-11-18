@@ -19,7 +19,9 @@ final class AfipInvoiceTranslator
 {
     /** @var AfipInvoice */
     private $invoice;
+    /** @var array */
     private $subtotal_iva_by_code = [];
+    /** @var array */
     private $items = [];
 
     public function __construct(AfipInvoice $invoice)

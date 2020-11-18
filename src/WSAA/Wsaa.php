@@ -114,16 +114,14 @@ class Wsaa
         return $CMS;
     }
 
-    /**
+    /*
      * Conecta con el servidor remoto y ejecuta el metodo remoto LoginCMS retornando un Ticket de Acceso (TA).
      *
-     * @param string $CMS : Recibe un CMS (Cryptographic Message Syntax)
+     * param $CMS : Recibe un CMS (Cryptographic Message Syntax)
      *
-     * @throws WsException
-     *
-     * @return mixed: Ticket de Acceso generado por AFIP en formato xml
+     * return Ticket de Acceso generado por AFIP en formato xml
      */
-    private static function callWSAA(stdClass $service, string $CMS)
+    private static function callWSAA(stdClass $service, string $CMS): stdClass
     {
         $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $service->configuracion->proxyPort,

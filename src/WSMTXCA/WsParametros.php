@@ -11,9 +11,11 @@ declare(strict_types=1);
 namespace Multinexo\WSMTXCA;
 
 use Multinexo\Exceptions\ManejadorResultados;
+use stdClass;
 
 class WsParametros
 {
+    /** @var ManejadorResultados */
     protected $resultado;
 
     /**
@@ -24,12 +26,8 @@ class WsParametros
         $this->resultado = new ManejadorResultados();
     }
 
-    /**
-     * Consultar Tipos de Comprobantes.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarTiposComprobante($client, $authRequest)
+    // Consultar Tipos de Comprobantes.
+    public function consultarTiposComprobante(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarTiposComprobante([
             'authRequest' => $authRequest,
@@ -40,12 +38,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Tipos de Documento.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarTiposDocumento($client, $authRequest)
+    // Consultar Tipos de Documento.
+    public function consultarTiposDocumento(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarTiposDocumento([
             'authRequest' => $authRequest,
@@ -56,24 +50,16 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Alicuotas IVA.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarAlicuotasIVA($client, $authRequest)
+    // Consultar Alicuotas IVA.
+    public function consultarAlicuotasIVA(\SoapClient $client, array $authRequest): stdClass
     {
         return $client->consultarAlicuotasIVA([
             'authRequest' => $authRequest,
         ]);
     }
 
-    /**
-     * Consultar Condiciones IVA.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarCondicionesIVA($client, $authRequest)
+    // Consultar Condiciones IVA.
+    public function consultarCondicionesIVA(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarCondicionesIVA([
             'authRequest' => $authRequest,
@@ -84,12 +70,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Monedas.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarMonedas($client, $authRequest)
+    // Consultar Monedas.
+    public function consultarMonedas(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarMonedas([
             'authRequest' => $authRequest,
@@ -100,13 +82,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Cotizacion de Moneda.
-     *
-     * @param \stdClass $authRequest
-     * @param string $codMon
-     */
-    public function consultarCotizacionMoneda($client, $authRequest, $codMon)
+    // Consultar Cotizacion de Moneda.
+    public function consultarCotizacionMoneda(\SoapClient $client, array $authRequest, string $codMon): stdClass
     {
         $resultado = $client->consultarCotizacionMoneda([
             'authRequest' => $authRequest,
@@ -118,12 +95,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Unidades de Medida.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarUnidadesMedida($client, $authRequest)
+    // Consultar Unidades de Medida.
+    public function consultarUnidadesMedida(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarUnidadesMedida([
             'authRequest' => $authRequest,
@@ -134,10 +107,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Puntos de Venta.
-     */
-    public function consultarPuntosVenta($client, $authRequest)
+    // Consultar Puntos de Venta.
+    public function consultarPuntosVenta(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarPuntosVenta([
             'authRequest' => $authRequest,
@@ -148,12 +119,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Puntosde Venta CAE.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarPuntosVentaCAE($client, $authRequest)
+    // Consultar Puntosde Venta CAE.
+    public function consultarPuntosVentaCAE(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarPuntosVentaCAE([
             'authRequest' => $authRequest,
@@ -164,12 +131,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Puntos de Venta CAEA.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarPuntosVentaCAEA($client, $authRequest)
+    // Consultar Puntos de Venta CAEA.
+    public function consultarPuntosVentaCAEA(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarPuntosVentaCAEA([
             'authRequest' => $authRequest,
@@ -180,12 +143,8 @@ class WsParametros
         return $resultado;
     }
 
-    /**
-     * Consultar Tipos Tributo.
-     *
-     * @param \stdClass $authRequest
-     */
-    public function consultarTiposTributo($client, $authRequest)
+    // Consultar Tipos Tributo.
+    public function consultarTiposTributo(\SoapClient $client, array $authRequest): stdClass
     {
         $resultado = $client->consultarTiposTributo([
             'authRequest' => $authRequest,

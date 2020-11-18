@@ -88,10 +88,10 @@
         "coverage": {
             "file": "resources/.tmp/clover.xml",
             "thresholds": {
-                "global": { "lines": 45, "functions": 35 },
-                "/src/Models": { "functions": 40 },
+                "global": { "lines": 45, "functions": 34 },
+                "/src/Models": { "functions": 37 },
                 "/src/WSAA": { "functions": 0 },
-                "/src/WSFE": { "functions": 64 },
+                "/src/WSFE": { "functions": 56 },
                 "/src/WSMTXCA": { "functions": 0 },
                 "/src/WSPN3": { "functions": 81 }
             }
