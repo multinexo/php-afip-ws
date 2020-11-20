@@ -15,6 +15,7 @@ use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\Models\Validaciones;
+use stdClass;
 
 /**
  * Class Wsmtxca (Invoice with items).
@@ -37,7 +38,7 @@ class Wsmtxca extends Invoice
      *
      * @throws WsException
      */
-    public function createInvoice()
+    public function createInvoice(): stdClass
     {
         $this->validateDataInvoice();
 
@@ -65,7 +66,7 @@ class Wsmtxca extends Invoice
      * @throws WsException
      * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function getCAEA()
+    public function getCAEA(): stdClass
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
@@ -77,7 +78,7 @@ class Wsmtxca extends Invoice
      *
      * @throws WsException
      */
-    public function requestCAEA()
+    public function requestCAEA(): stdClass
     {
         return $this->wsSolicitarCAEA($this->datos);
     }
@@ -88,7 +89,7 @@ class Wsmtxca extends Invoice
      * @throws WsException
      * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function consultarCAEAEntreFechas()
+    public function consultarCAEAEntreFechas(): ?stdClass
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
         $result = $this->wsConsultarCAEAEntreFechas($this->datos);
@@ -102,7 +103,7 @@ class Wsmtxca extends Invoice
      * @throws WsException
      * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function getInvoice()
+    public function getInvoice(): stdClass
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
@@ -112,7 +113,9 @@ class Wsmtxca extends Invoice
     public function getAvailablePosNumbers(): array
     {
         $pos_numbers = [];
-        $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $this->service->authRequest);
+        /** @var array $authRequest */
+        $authRequest = $this->service->authRequest;
+        $result = (new WsParametros())->consultarPuntosVenta($this->service->client, $authRequest);
 
         $fetched_pos_array = $result->arrayPuntosVenta ?? [];
         foreach ($fetched_pos_array as $fetched_pos) {
@@ -131,7 +134,9 @@ class Wsmtxca extends Invoice
      */
     public function codComprobantes(): array
     {
-        $codigos = (new WsParametros())->consultarTiposComprobante($this->service->client, $this->service->authRequest);
+        /** @var array $authRequest */
+        $authRequest = $this->service->authRequest;
+        $codigos = (new WsParametros())->consultarTiposComprobante($this->service->client, $authRequest);
 
         return array_map(function ($o) {
             return $o->codigo;

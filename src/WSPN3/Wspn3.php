@@ -18,17 +18,15 @@ use stdClass;
 
 class Wspn3
 {
+    /** @var Authentication */
     private $service;
-
+    /** @var string */
     private $ws;
-
+    /** @var ManejadorResultados */
     private $resultado;
-
+    /** @var mixed */
     public $datos;
 
-    /**
-     * Wspn3 constructor.
-     */
     public function __construct(AfipConfig $afipConfig)
     {
         $this->ws = 'wspn3';
@@ -46,7 +44,7 @@ class Wspn3
         return $this->wsGet($contribuyente);
     }
 
-    public function getResumeWspn3Information(stdClass $data)
+    public function getResumeWspn3Information(stdClass $data): stdClass
     {
         $parsed_data = [
             'legal_name' => $this->getLegalName($data),
@@ -62,11 +60,6 @@ class Wspn3
         return json_decode(json_encode($clear_data));
     }
 
-    /**
-     * @param mixed[] $array
-     *
-     * @return mixed[]
-     */
     private static function flushNullFromArray(array $array): array
     {
         foreach ($array as $k => $item) {
@@ -78,7 +71,7 @@ class Wspn3
         return $array;
     }
 
-    private function getLegalName(stdClass $data)
+    private function getLegalName(stdClass $data): ?string
     {
         $typePerson = $data->persona->tipoPersona;
 
@@ -92,7 +85,7 @@ class Wspn3
         return $legal_name;
     }
 
-    private function getDescription(stdClass $data)
+    private function getDescription(stdClass $data): ?string
     {
         $description = null;
         if (property_exists($data, 'persona')) {
@@ -104,9 +97,9 @@ class Wspn3
         return $description;
     }
 
-    private function getAddresses(stdClass $data)
+    private function getAddresses(stdClass $data): array
     {
-        $address = null;
+        $address = [];
         if (property_exists($data, 'domicilios')) {
             $address = $data->domicilios->domicilio;
         }
@@ -114,9 +107,9 @@ class Wspn3
         return $address;
     }
 
-    private function getPhones(stdClass $data)
+    private function getPhones(stdClass $data): stdClass
     {
-        $phone = null;
+        $phone = new stdClass();
         if (property_exists($data, 'telefonos')) {
             $phone = $data->telefonos;
         }
@@ -124,10 +117,9 @@ class Wspn3
         return $phone;
     }
 
-    private function getResponsibility(stdClass $data)
+    private function getResponsibility(stdClass $data): string
     {
-        $responsibility = null;
-
+        $responsibility = '';
         if (property_exists($data, 'actividades')) {
             if (property_exists($data->actividades, 'actividad')) {
                 $responsibility = $data->actividades->actividad->actividadPK->estado;
@@ -137,22 +129,24 @@ class Wspn3
         return $responsibility;
     }
 
-    public function wsGet($contribuyente)
+    public function wsGet(string $contribuyente): stdClass
     {
+        /** @var stdClass $authRequest */
+        $authRequest = $this->service->authRequest;
         $resultado = $this->service->client->get(
             $contribuyente,
-            $this->service->authRequest->token,
-            $this->service->authRequest->sign
+            $authRequest->token,
+            $authRequest->sign
         );
 
-        $this->resultado->procesar($resultado);
+        $this->resultado->procesar((object) $resultado);
 
         $resultado = simplexml_load_string($resultado); // TODO: Colocar el función aparte
 
         return json_decode(json_encode($resultado));
     }
 
-    public static function dummy($client): stdClass
+    public static function dummy(\SoapClient $client): stdClass
     {
         $resultado = $client->dummy();
 

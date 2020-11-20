@@ -1,6 +1,7 @@
 includes:
 	- ../../vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
+    checkMissingIterableValueType: false
     ignoreErrors:
         - '#Call to an undefined method SoapClient::loginCms\(\).#'
         - '#json_decode expects string, string\|false given#'
@@ -9,12 +10,10 @@ parameters:
         - '#expects resource, resource\|false#'
         - '#empty\(\) is not allowed. Use more strict comparison.#'
         - '#Call to an undefined method .*Wsmtxca\:\:#'
-        - '#\\Validatable, array<int,#'
         - '#call to static method .*\\Validator#'
         - '#Variable property access on mixed#'
         - '#Access to an undefined property .*\\Wsaa::\$#'
         - '#Call to an undefined method .*\\Wsaa::#'
-        # @todo BE-128
-        - '#no typehint specified#'
-        - '#has no return typehint#'
-        - '#return type has no value type specified in iterable type array#'
+        - '#Call to an undefined method SoapClient::#'
+        - '#Parameter \#1 ...\$rule of static method Respect\\Validation\\Validator\:\:allOf\(\) expects#'
+        - '#Cannot call method getMessage\(\) on stdClass.#'

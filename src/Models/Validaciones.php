@@ -15,13 +15,12 @@ use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
+use stdClass;
 
 trait Validaciones
 {
-    /**
-     * Devuelve un array con reglas dependiendo del tipo de dato a validar.
-     */
-    public function getRules(string $tipoRegla)
+    // Devuelve un array con reglas dependiendo del tipo de dato a validar.
+    public function getRules(string $tipoRegla): stdClass
     {
         $rules = [];
         switch ($tipoRegla) {
@@ -101,9 +100,6 @@ trait Validaciones
         return (object) $rules;
     }
 
-    /**
-     * @return mixed[]
-     */
     private function getRulesForElectronicInvoice(): array
     {
         $wsReglas = [];
@@ -168,11 +164,7 @@ trait Validaciones
         return array_merge($reglasFeGenerales, $wsReglas);
     }
 
-    /**
-     * Devuelve mensajes de error personalizados.
-     *
-     * @return mixed[]
-     */
+    // Devuelve mensajes de error personalizados.
     private function getErrorMessages(): array
     {
         return [
@@ -199,13 +191,7 @@ trait Validaciones
         ];
     }
 
-    /**
-     * Valida los datos de un array.
-     *
-     * @param mixed[] $array
-     *
-     * @throws ValidationException
-     */
+    // Valida los datos de un array.
     private function validarDatosArray(array $array, string $regla): void
     {
         if (empty($array)) {
@@ -218,11 +204,7 @@ trait Validaciones
         }
     }
 
-    /**
-     * Valida los datos para un comprobante dependiendo si este tiene o no items asociados.
-     *
-     * @throws ValidationException
-     */
+    // Valida los datos para un comprobante dependiendo si este tiene o no items asociados.
     public function validateDataInvoice(): void
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
@@ -248,16 +230,12 @@ trait Validaciones
         }
     }
 
-    /**
-     * Valida que los datos ingresados cumplan con determinadas reglas.
-     *
-     * @throws ValidationException
-     */
-    public function validarDatos($datos, \stdClass $reglas): void
+    // Valida que los datos ingresados cumplan con determinadas reglas.
+    public function validarDatos(stdClass $datos, stdClass $reglas): void
     {
         $validaciones = [];
 
-        foreach ($datos as $key => $dato) {
+        foreach ((array) $datos as $key => $dato) {
             $validaciones[] = v::attribute($key, $reglas->{$key});
         }
 
@@ -274,12 +252,8 @@ trait Validaciones
         }
     }
 
-    /**
-     * Retorna array con los codigos de documentos.
-     *
-     * @return array|mixed
-     */
-    private function codDocumento()
+    // Retorna array con los codigos de documentos.
+    private function codDocumento(): array
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
@@ -288,7 +262,9 @@ trait Validaciones
                 return $o->Id;
             }, $codigos['DocTipo']);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsParametros())->consultarTiposDocumento($this->service->client, $this->service->authRequest);
+            /** @var array $authRequest */
+            $authRequest = $this->service->authRequest;
+            $codigos = (new WsParametros())->consultarTiposDocumento($this->service->client, $authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayTiposDocumento->codigoDescripcion);
@@ -297,12 +273,8 @@ trait Validaciones
         return $codigos;
     }
 
-    /**
-     * Retorna array con los codigos de moneda.
-     *
-     * @return array|mixed
-     */
-    private function codMonedas()
+    // Retorna array con los codigos de moneda.
+    private function codMonedas(): array
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
@@ -311,7 +283,9 @@ trait Validaciones
                 return $o->Id;
             }, $codigos->Moneda);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsParametros())->consultarMonedas($this->service->client, $this->service->authRequest);
+            /** @var array $authRequest */
+            $authRequest = $this->service->authRequest;
+            $codigos = (new WsParametros())->consultarMonedas($this->service->client, $authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayMonedas->codigoDescripcion);
@@ -320,12 +294,8 @@ trait Validaciones
         return $codigos;
     }
 
-    /**
-     * Retorna array con los codigos de iva permitidos para una persona determinada.
-     *
-     * @return array|mixed
-     */
-    private function codIva()
+    // Retorna array con los codigos de iva permitidos para una persona determinada.
+    private function codIva(): array
     {
         $codigos = [];
         if ($this->ws === 'wsfe') {
@@ -334,7 +304,9 @@ trait Validaciones
                 return $o->Id;
             }, $codigos->IvaTipo);
         } elseif ($this->ws === 'wsmtxca') {
-            $codigos = (new WsParametros())->consultarAlicuotasIVA($this->service->client, $this->service->authRequest);
+            /** @var array $authRequest */
+            $authRequest = $this->service->authRequest;
+            $codigos = (new WsParametros())->consultarAlicuotasIVA($this->service->client, $authRequest);
             $codigos = array_map(function ($o) {
                 return $o->codigo;
             }, $codigos->arrayAlicuotasIVA->codigoDescripcion);
@@ -343,9 +315,7 @@ trait Validaciones
         return $codigos;
     }
 
-    /**
-     * Retorna array con los codigos de opcionales permitidos para una persona determinada.
-     */
+    // Retorna array con los codigos de opcionales permitidos para una persona determinada.
     private function codOpcionales(): array
     {
         $codigos = [];
@@ -359,9 +329,7 @@ trait Validaciones
         return $codigos;
     }
 
-    /**
-     * Retorna array con los codigos de tributos permitidos para una persona determinada.
-     */
+    // Retorna array con los codigos de tributos permitidos para una persona determinada.
     private function codTributos(): array
     {
         $codigos = [];

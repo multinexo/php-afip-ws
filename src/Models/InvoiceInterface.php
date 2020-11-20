@@ -10,13 +10,15 @@ declare(strict_types=1);
 
 namespace Multinexo\Models;
 
+use stdClass;
+
 interface InvoiceInterface
 {
-    public function createInvoice();
+    public function createInvoice(): stdClass;
 
-    public function getCAEA();
+    public function getCAEA(): stdClass;
 
-    public function requestCAEA();
+    public function requestCAEA(): stdClass;
 
-    public function getInvoice();
+    public function getInvoice(): stdClass;
 }

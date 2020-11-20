@@ -15,9 +15,11 @@ use Multinexo\WSFE\Wsfe;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros as WsmtxcaParameters;
 use Multinexo\WSPN3\Wspn3;
+use stdClass;
 
 class AfipWebService
 {
+    /** @var stdClass */
     private $service;
 
     public static function setConfig(AfipConfig $afipConfig = null): array
