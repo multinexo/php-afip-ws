@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased] - 04-03-21
+## [2.0.3] - 04-03-21
 
 ### Fixed
 - AfipUnhandledException on WSFE.
