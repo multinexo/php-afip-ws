@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.0.3] - 04-03-21
+
+### Fixed
+- AfipUnhandledException on WSFE.
+
+### Changed
+- Improvements: Syntax with `use` and Types on some functions.
+
 ## [2.0.2] - 30-07-20
 
 ### Added 
