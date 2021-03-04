@@ -33,6 +33,7 @@
     "ext-json": "*",
     "ext-soap": "*",
     "ext-simplexml": "*",
+    "league/flysystem": "^1.1",
     "respect/validation": "^1.0"
   },
   "require-dev": {

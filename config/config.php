@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 return [
 
+    /*
     'dir' => [
         'xml_generados' => null,
     ],
@@ -19,6 +20,9 @@ return [
         'certificado' => null,
         'clavePrivada' => null,
     ],
+
+    'cuit' => null,
+    */
 
     'passPhrase' => null,
 
@@ -39,6 +43,4 @@ return [
         'wsfe' => 'https://servicios1.afip.gov.ar/wsfev1/service.asmx',
         'wspn3' => 'https://aws.afip.gov.ar/padron-puc-ws/services/select.ContribuyenteNivel3SelectServiceImpl',
     ],
-
-    'cuit' => null,
 ];

@@ -13,16 +13,18 @@ namespace Multinexo\Auth;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\AfipWebService;
+use Multinexo\Service;
 use Multinexo\WSAA\Wsaa;
 use SoapClient;
 use stdClass;
 
 class Authentication
 {
-    /** @var stdClass|null */
+    /** @var Service|null */
     private $service;
 
-    private $configuracion;
+    /** @var AfipConfig */
+    private $afip_config;
 
     public $authRequest;
 
@@ -31,21 +33,19 @@ class Authentication
     /**
      * Authentication constructor.
      */
-    public function __construct(AfipConfig $newConf, string $ws)
+    public function __construct(AfipConfig $afip_config, string $ws)
     {
-        $conf = AfipWebService::setConfig($newConf);
-        $this->configuracion = json_decode(json_encode($conf));
-
+        $this->afip_config = $afip_config;
         $this->auth($ws);
     }
 
     public function auth(string $ws): void
     {
-        $this->service = new stdClass();
+        $this->service = new Service();
 
         try {
             $this->service->ws = $ws;
-            $this->service->configuracion = $this->configuracion;
+            $this->service->config = $this->afip_config;
             (new Wsaa())->checkTARenovation($this->service);
             $this->client = $this->getClient();
             $this->authRequest = $this->getCredentials();
@@ -59,17 +59,15 @@ class Authentication
 
     public function getClient()
     {
-        $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit
-            . '-' . $this->service->ws . '.xml';
         $wsdl = dirname(__DIR__) . '/' . strtoupper($this->service->ws) . '/' . $this->service->ws . '.wsdl';
 
-        foreach ([$ta, $wsdl] as $item) {
+        foreach ([$wsdl] as $item) {
             if (!file_exists($item)) {
                 throw new WsException('Fallo al abrir: ' . $item);
             }
         }
 
-        return $this->connectToSoapClient($wsdl, $this->service->configuracion->url->{$this->service->ws});
+        return $this->connectToSoapClient($wsdl, $this->service->config->getUrl($this->service->ws));
     }
 
     public function connectToSoapClient(string $wsdlPath, string $url)
@@ -87,9 +85,9 @@ class Authentication
 
     public function getCredentials()
     {
-        $ta = $this->service->configuracion->dir->xml_generados . 'TA-' . $this->service->configuracion->cuit
-            . '-' . $this->service->ws . '.xml';
-        $TA = simplexml_load_file($ta);
+        $TA = simplexml_load_string($this->service->config->getFilesystem()->read(
+            'TA-' . $this->service->config->getCuit(). '-' . $this->service->ws . '.xml'
+        ));
         if ($TA === false) {
             return '';
         }
@@ -100,13 +98,13 @@ class Authentication
             $authRequest = [
                 'token' => $token,
                 'sign' => $sign,
-                'cuitRepresentada' => $this->service->configuracion->cuit,
+                'cuitRepresentada' => $this->service->config->getCuit(),
             ];
         } elseif ($this->service->ws === 'wsfe') {
             $authRequest = [
                 'Token' => $token,
                 'Sign' => $sign,
-                'Cuit' => $this->service->configuracion->cuit,
+                'Cuit' => $this->service->config->getCuit(),
             ];
         } elseif ($this->service->ws === 'wspn3') {
             $authRequest = new stdClass();

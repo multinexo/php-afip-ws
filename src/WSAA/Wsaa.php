@@ -13,6 +13,7 @@ namespace Multinexo\WSAA;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\GeneralHelper;
 use Multinexo\Models\Validaciones;
+use Multinexo\Service;
 use SimpleXMLElement;
 use SoapClient;
 use stdClass;
@@ -32,11 +33,11 @@ class Wsaa
      *
      * @throws WsException
      */
-    public function checkTARenovation(stdClass $service): bool
+    public function checkTARenovation(Service $service): bool
     {
-        $path = $service->configuracion->dir->xml_generados . 'TA-' . $service->configuracion->cuit . '-' . $service->ws . '.xml';
+        $path = $service->getXmlPath();
 
-        if (!file_exists($path)) {
+        if (!$service->config->getFilesystem()->has($path)) {
             self::authenticate($service);
         }
 
@@ -54,7 +55,7 @@ class Wsaa
     /**
      * Crea un pedido de ticket de acceso (Access Request Ticket (TRA)).
      */
-    private static function createTRA(stdClass $service): void
+    private static function createTRA(Service $service): void
     {
         $TRA = new SimpleXMLElement(
             '<?xml version="1.0" encoding="UTF-8"?>' .
@@ -66,7 +67,10 @@ class Wsaa
         $TRA->header->addChild('generationTime', date('c', time() - 60));
         $TRA->header->addChild('expirationTime', date('c', time() + 60));
         $TRA->addChild('service', GeneralHelper::getOriginalWsName($service->ws));
-        $TRA->asXML($service->configuracion->dir->xml_generados . 'TRA-' . $service->ws . '.xml');
+        $service->config->getFilesystem()->put(
+            $service->getXmlPath(),
+            $TRA->asXML()
+        );
     }
 
     /**
@@ -76,19 +80,23 @@ class Wsaa
      *
      * @throws WsException
      */
-    private static function signTRA(stdClass $service): string
+    private static function signTRA(Service $service): string
     {
-        $configuracion = $service->configuracion;
-        $dir = $configuracion->dir;
-        $archivos = $configuracion->archivos;
+        $in_file_name = tempnam(sys_get_temp_dir(), 'afip-in');
+        $out_file_name = tempnam(sys_get_temp_dir(), 'afip-out');
+        $sign_cert = tempnam(sys_get_temp_dir(), 'sign_cert');
+        $private_key = tempnam(sys_get_temp_dir(), 'private_key');
+        file_put_contents($in_file_name, $service->config->getFilesystem()->get($service->getXmlPath()));
+        file_put_contents($sign_cert, $service->config->getFilesystem()->get($service->config->getPathCertificate()));
+        file_put_contents($private_key, $service->config->getFilesystem()->get($service->config->getPathPrivateKey()));
 
         $STATUS = openssl_pkcs7_sign(
-            $dir->xml_generados . 'TRA-' . $service->ws . '.xml',
-            $dir->xml_generados . 'TRA-' . $service->ws . '.tmp',
-            'file://' . $archivos->certificado,
+            $in_file_name,
+            $out_file_name,
+            'file://' . $sign_cert,
             [
-                'file://' . $archivos->clavePrivada,
-                $configuracion->passPhrase,
+                'file://' . $private_key,
+                $service->config->getPassPhrase(),
             ],
             [],
             0
@@ -97,7 +105,7 @@ class Wsaa
         if (!$STATUS) {
             throw new WsException('Error en la generacion de la firma PKCS#7');
         }
-        $inf = fopen($dir->xml_generados . 'TRA-' . $service->ws . '.tmp', 'r');
+        $inf = fopen($out_file_name, 'r');
         $i = 0;
         $CMS = '';
 
@@ -109,7 +117,7 @@ class Wsaa
         }
         fclose($inf);
         //  unlink("TRA.xml");
-        unlink($dir->xml_generados . 'TRA-' . $service->ws . '.tmp');
+        unlink($out_file_name);
 
         return $CMS;
     }
@@ -123,16 +131,19 @@ class Wsaa
      *
      * @return mixed: Ticket de Acceso generado por AFIP en formato xml
      */
-    private static function callWSAA(stdClass $service, string $CMS)
+    private static function callWSAA(Service $service, string $CMS)
     {
-        $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
-            'proxy_port' => $service->configuracion->proxyPort,
+        $client = new SoapClient($service->config->getWsaaWsdlPath(), [
+            'proxy_port' => $service->config->getProxyPort(),
             'soap_version' => SOAP_1_2,
-            'location' => $service->configuracion->url->wsaa,
+            'location' => $service->config->getUrl('wsaa'),
             'trace' => 1,
             'exceptions' => 0,
         ]);
         $results = $client->loginCms(['in0' => $CMS]);
+        $service->config->getFilesystem()->put(
+            $service->getXmlPath()
+        )
         file_put_contents(
             $service->configuracion->dir->xml_generados . 'request-loginCms.xml',
             $client->__getLastRequest()
