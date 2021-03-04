@@ -97,7 +97,7 @@ class Wsfe extends Invoice
             $observaciones = reset($resultado)->FeDetResp->FECAEDetResponse->Observaciones->Obs->Msg ?? '';
 
             if (empty($observaciones)) {
-                throw new AfipUnhandledException(print_r('FECAEDetResponse: ' . reset($resultado)->FeDetResp->FECAEDetResponse, true));
+                throw new AfipUnhandledException('FECAEDetResponse: ' . print_r(reset($resultado)->FeDetResp->FECAEDetResponse, true));
             }
 
             throw new WsException($observaciones);
