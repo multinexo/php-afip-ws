@@ -2,6 +2,7 @@
   "name": "multinexo/php-afip-ws",
   "description": "Librería PHP para interactuar con el webservice de AFIP (Argentina -> factura electrónica).",
   "type": "library",
+  "version": "2.0.4",
   "keywords": [
     "afip",
     "argentina",

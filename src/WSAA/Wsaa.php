@@ -121,7 +121,7 @@ class Wsaa
      *
      * return Ticket de Acceso generado por AFIP en formato xml
      */
-    private static function callWSAA(stdClass $service, string $CMS): stdClass
+    private static function callWSAA(stdClass $service, string $CMS): string
     {
         $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $service->configuracion->proxyPort,
