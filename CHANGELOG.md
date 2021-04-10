@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.0.4] - 10-04-21
+
+### Fixed
+- Return type of callWSAA();
+
 ## [2.0.3] - 04-03-21
 
 ### Fixed
