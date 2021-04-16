@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+
+### Added
+- AfipUnavailableServiceException
+
 ## [2.0.4] - 10-04-21
 
 ### Fixed
