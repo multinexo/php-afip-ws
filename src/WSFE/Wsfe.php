@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Multinexo\WSFE;
 
 use Multinexo\Auth\Authentication;
+use Multinexo\Exceptions\AfipUnavailableServiceException;
 use Multinexo\Exceptions\AfipUnhandledException;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
@@ -464,6 +465,23 @@ class Wsfe extends Invoice
         ]);
 
         $this->resultado->procesar($resultado);
+
+        $error_code = $resultado->FEParamGetTiposCbteResult->Errors->Code ?? null;
+        if ($error_code > 0) {
+            switch ($error_code) {
+                case 600:
+                    // ValidacionDeToken: No validaron las fechas del token GenTime, ExpTime, NowUTC:...
+                    throw new AfipUnavailableServiceException(
+                        $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? '',
+                        $error_code
+                    );
+                default:
+                    throw new WsException(
+                        $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? print_r($resultado, true),
+                        $error_code
+                    );
+            }
+        }
 
         if (!isset($resultado->FEParamGetTiposCbteResult->ResultGet)) {
             throw new AfipUnhandledException('ResultGet not defined: ' . print_r($resultado, true));
