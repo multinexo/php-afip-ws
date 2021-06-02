@@ -3,7 +3,6 @@ includes:
 parameters:
     checkMissingIterableValueType: false
     ignoreErrors:
-        - '#Call to an undefined method SoapClient::loginCms\(\).#'
         - '#json_decode expects string, string\|false given#'
         - '#Only booleans are allowed in a negated boolean#'
         # refactoring required
@@ -14,6 +13,5 @@ parameters:
         - '#Variable property access on mixed#'
         - '#Access to an undefined property .*\\Wsaa::\$#'
         - '#Call to an undefined method .*\\Wsaa::#'
-        - '#Call to an undefined method SoapClient::#'
         - '#Parameter \#1 ...\$rule of static method Respect\\Validation\\Validator\:\:allOf\(\) expects#'
         - '#Cannot call method getMessage\(\) on stdClass.#'

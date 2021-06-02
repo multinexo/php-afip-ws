@@ -22,8 +22,8 @@ use stdClass;
  */
 class Wsmtxca extends Invoice
 {
-    use WsmtxcaFuncionesInternas;
     use Validaciones;
+    use WsmtxcaFuncionesInternas;
 
     public function __construct(AfipConfig $afipConfig)
     {
@@ -94,7 +94,7 @@ class Wsmtxca extends Invoice
         $this->validarDatos($this->datos, $this->getRules('fe'));
         $result = $this->wsConsultarCAEAEntreFechas($this->datos);
 
-        return isset($result->CAEAResponse) ? $result->CAEAResponse : null;
+        return $result->CAEAResponse ?? null;
     }
 
     /**
