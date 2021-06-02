@@ -30,17 +30,17 @@
     "issues": "https://github.com/multinexo/php-afip-ws/issues"
   },
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.4",
     "ext-json": "*",
     "ext-soap": "*",
     "ext-simplexml": "*",
     "respect/validation": "^1.0"
   },
   "require-dev": {
-    "reyesoft/ci": "1.3.0",
+    "reyesoft/ci": "1.4.3",
     "codedungeon/phpunit-result-printer": "0.19.10",
-    "php-mock/php-mock": "2.1.2",
-    "phpunit/phpunit": "7.5.9"
+    "php-mock/php-mock": "2.3.0",
+    "phpunit/phpunit": "9.5.4"
   },
   "autoload": {
     "psr-4": {
