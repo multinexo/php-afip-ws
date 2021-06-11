@@ -35,6 +35,8 @@ jobs:
       - name: PHPStan
         run: composer phpstan
 
-      - name: Run tests
+      - name: Docker AFIP
         uses: docker:/pablorsk/php-afip:latest
+
+      - name: Run tests
         run: composer coverage
