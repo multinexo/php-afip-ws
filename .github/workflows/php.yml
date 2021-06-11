@@ -6,9 +6,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: test AFIP url
-        run: curl -i https://wsaahomo.afip.gov.ar/ws/services/LoginCms
-
       - uses: actions/checkout@v1
 
       - name: Setup PHP
@@ -28,6 +25,12 @@ jobs:
           key: php7.2-composer-locked-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             php7.2-composer-locked-
+
+      - name: Open SSL for AFIP SOAP (MinProtocol)
+        run: sed -i 's,^\(MinProtocol[ ]*=\).*,\1'TLSv1.2',g' /etc/ssl/openssl.cnf \
+
+      - name: Open SSL for AFIP SOAP (CipherString)
+        run: sed -i 's,^\(CipherString[ ]*=\).*,\1'DEFAULT@SECLEVEL=1',g' /etc/ssl/openssl.cnf
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
