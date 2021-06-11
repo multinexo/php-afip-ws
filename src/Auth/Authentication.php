@@ -52,6 +52,7 @@ class Authentication
             $this->service = null;
         } catch (WsException $exception) {
             print_r($exception);
+
             throw new WsException('Error de autenticación: ' . $exception->getMessage());
         }
     }
