@@ -6,6 +6,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: test AFIP url
+        run: curl -i https://wsaahomo.afip.gov.ar/ws/services/LoginCms
+
       - uses: actions/checkout@v1
 
       - name: Setup PHP
