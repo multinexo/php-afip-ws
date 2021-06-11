@@ -26,12 +26,6 @@ jobs:
           restore-keys: |
             php7.2-composer-locked-
 
-      - name: Open SSL for AFIP SOAP (MinProtocol)
-        run: sed -i 's,^\(MinProtocol[ ]*=\).*,\1'TLSv1.2',g' /etc/ssl/openssl.cnf \
-
-      - name: Open SSL for AFIP SOAP (CipherString)
-        run: sed -i 's,^\(CipherString[ ]*=\).*,\1'DEFAULT@SECLEVEL=1',g' /etc/ssl/openssl.cnf
-
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
@@ -42,4 +36,5 @@ jobs:
         run: composer phpstan
 
       - name: Run tests
+        uses: docker:/pablorsk/php-afip:latest
         run: composer coverage

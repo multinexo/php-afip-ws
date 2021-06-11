@@ -59,7 +59,6 @@ Homestead.json
 
 ### NetBeans ###
 nbproject/private/
-build/
 nbbuild/
 dist/
 nbdist/
