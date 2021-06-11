@@ -123,6 +123,13 @@ class Wsaa
      */
     private static function callWSAA(stdClass $service, string $CMS): string
     {
+        print_r([
+            'proxy_port' => $service->configuracion->proxyPort,
+            'soap_version' => SOAP_1_2,
+            'location' => $service->configuracion->url->wsaa,
+            'trace' => 1,
+            'exceptions' => 0,
+        ]);
         $client = new SoapClient($service->configuracion->archivos->wsaaWsdl, [
             'proxy_port' => $service->configuracion->proxyPort,
             'soap_version' => SOAP_1_2,
