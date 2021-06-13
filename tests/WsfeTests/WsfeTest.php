@@ -177,7 +177,7 @@ final class WsfeTest extends TestAfipCase
     public function testCreateInvoiceWithoutItemsWithOptionalData(): void
     {
         $this->expectException(WsException::class);
-        $this->expectExceptionMessageRegExp('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
+        self::expectExceptionMessageMatches('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
 
         $arrayOpcionales = [
             'Opcional' => [

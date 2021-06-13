@@ -1,33 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-         cacheResult="true"
-         cacheResultFile="bootstrap/cache/.phpunit.result.cache"
-         backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
-         colors="true"
-         printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         beStrictAboutCoversAnnotation="false"
-         beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
-         processIsolation="false"
-         stopOnFailure="true">
-    <logging>
-        <log type="coverage-html" target="resources/.tmp/reports/coverage" lowUpperBound="55" highLowerBound="85" />
-        <log type="coverage-clover" target="resources/.tmp/clover.xml"/>
-        <log type="testdox-text" target="resources/.tmp/reports/executed.txt"/>
-    </logging>
-    <testsuites>
-        <testsuite name="integration">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" cacheResult="true" cacheResultFile="bootstrap/cache/.phpunit.result.cache" backupStaticAttributes="false" bootstrap="vendor/autoload.php" colors="true" printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" processIsolation="false" stopOnFailure="true">
+  <coverage>
+    <include>
+      <directory suffix=".php">src/</directory>
+    </include>
+    <report>
+      <clover outputFile="resources/.tmp/clover.xml"/>
+      <html outputDirectory="resources/.tmp/reports/coverage" lowUpperBound="55" highLowerBound="85"/>
+    </report>
+  </coverage>
+  <logging>
+    <testdoxText outputFile="resources/.tmp/reports/executed.txt"/>
+  </logging>
+  <testsuites>
+    <testsuite name="integration">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>
