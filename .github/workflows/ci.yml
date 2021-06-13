@@ -26,4 +26,4 @@ jobs:
       - name: PHPStan
         run: composer phpstan
       - name: Run tests
-        uses: juanicastellan0/php-afip-action@v1.5
+        uses: juanicastellan0/php-afip-action@v2
