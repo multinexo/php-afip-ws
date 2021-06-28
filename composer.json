@@ -39,7 +39,7 @@
   "require-dev": {
     "reyesoft/ci": "1.4.3",
     "codedungeon/phpunit-result-printer": "0.30.1",
-    "php-mock/php-mock": "2.3.0",
+    "mockery/mockery": "1.4.3",
     "phpunit/phpunit": "9.5.4"
   },
   "autoload": {
@@ -89,8 +89,8 @@
         "coverage": {
             "file": "resources/.tmp/clover.xml",
             "thresholds": {
-                "global": { "lines": 45, "functions": 34 },
-                "/src/Models": { "functions": 37 },
+                "global": { "lines": 40, "functions": 29 },
+                "/src/Models": { "functions": 25 },
                 "/src/WSAA": { "functions": 0 },
                 "/src/WSFE": { "functions": 56 },
                 "/src/WSMTXCA": { "functions": 0 },

@@ -17,6 +17,8 @@ parameters:
         - '#expects resource, resource\|false#'
         - '#empty\(\) is not allowed. Use more strict comparison.#'
         - '#Call to an undefined method .*Wsmtxca\:\:#'
+        - '#Call to an undefined method Mockery\\#'
+        - '#Access to an undefined property Mockery\\#'
         - '#\\Validatable, array<int,#'
         - '#call to static method .*\\Validator#'
         - '#Variable property access on mixed#'
