@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74e8289dcd76d0f44d067f0607839eac",
+    "content-hash": "8ce7e3e4951d498bcb2ea57badb51dc8",
     "packages": [
         {
             "name": "respect/validation",
@@ -5335,5 +5335,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
