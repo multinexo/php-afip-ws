@@ -27,7 +27,7 @@ final class CsrFileTest extends TestAfipCase
         $csr_path = $csr->saveFileContent();
 
         $this->assertNotEmpty($csr_path);
-        $this->assertInternalType('string', $csr_path);
-        $this->assertContains('tmp', $csr_path);
+        $this->assertIsString($csr_path);
+        $this->assertStringContainsString('tmp', $csr_path);
     }
 }

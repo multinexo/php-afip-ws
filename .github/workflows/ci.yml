@@ -1,0 +1,29 @@
+on: [push]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: xdebug, soap
+          coverage: xdebug
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+      - name: Cache dependencies installed with composer
+        uses: actions/cache@v1.0.2
+        with:
+          path: ~/.composer/cache
+          key: php7.2-composer-locked-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            php7.2-composer-locked-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: CI
+        run: composer ci
+      - name: PHPStan
+        run: composer phpstan
+      - name: Run tests
+        uses: juanicastellan0/php-afip-action@v2.2

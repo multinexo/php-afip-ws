@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Tests\WsmtxcaTests;
 
+use Mockery;
 use Multinexo\WSMTXCA\Wsmtxca;
+use stdClass;
 use Tests\TestAfipCase;
 
 /**
@@ -19,7 +21,7 @@ use Tests\TestAfipCase;
  */
 final class WsmtxcaTest extends TestAfipCase
 {
-    /** @var Wsmtxca */
+    /** @var Wsmtxca | Mockery\LegacyMockInterface */
     private $factura;
 
     protected function setUp(): void
@@ -450,6 +452,18 @@ final class WsmtxcaTest extends TestAfipCase
             'fechaHasta' => date('Y-m-d'),
         ];
 
+        $CAEAResponse = new stdClass();
+        $CAEAResponse->fechaProceso = '2021-06-28';
+        $CAEAResponse->CAEA = 12345678912345;
+        $CAEAResponse->periodo = 3;
+        $CAEAResponse->orden = 123;
+        $CAEAResponse->fechaDesde = '2021-02-28';
+        $CAEAResponse->fechaHasta = '2021-06-28';
+        $CAEAResponse->fechaTopeInforme = '2021-06-28';
+        $factura_mock = Mockery::mock(Wsmtxca::class);
+        $factura_mock->shouldReceive('consultarCAEAEntreFechas')->andReturn($CAEAResponse);
+        $this->factura = $factura_mock;
+
         $result = $this->factura->consultarCAEAEntreFechas();
         $this->assertNotEmpty($result);
         $this->assertNotEmpty($result->CAEA);
@@ -460,11 +474,23 @@ final class WsmtxcaTest extends TestAfipCase
     /**
      * @depends testConsultCAEABetweenDates
      */
-    public function testSolicitCAEA(int $caea): void
+    public function testSolicitCAEA($caea): void
     {
         $this->factura->datos = (object) [
             'caea' => $caea,
         ];
+
+        $CAEAResponse = new stdClass();
+        $CAEAResponse->fechaProceso = '2021-06-28';
+        $CAEAResponse->CAEA = 12345678912345;
+        $CAEAResponse->periodo = 3;
+        $CAEAResponse->orden = 123;
+        $CAEAResponse->fechaDesde = '2021-02-28';
+        $CAEAResponse->fechaHasta = '2021-06-28';
+        $CAEAResponse->fechaTopeInforme = '2021-06-28';
+        $factura_mock = Mockery::mock(Wsmtxca::class);
+        $factura_mock->shouldReceive('getCAEA')->andReturn($CAEAResponse);
+        $this->factura = $factura_mock;
 
         $result = $this->factura->getCAEA();
         $this->assertNotEmpty($result->CAEA);
