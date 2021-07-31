@@ -648,14 +648,16 @@ class Wsfe extends Invoice
         Log::debug('getAvailablePosNumbers $fetched_pos_array: '.print_r($fetched_pos_array, true));
         foreach ($fetched_pos_array as $fetched_pos) {
             Log::debug('getAvailablePosNumbers $fetched_pos_array '.print_r($fetched_pos, true));
+            Log::debug(' - FchBaja: '.print_r($fetched_pos->FchBaja, true));
             if ($fetched_pos->FchBaja > 0) {
                 continue;
             }
-            Log::debug(' -1');
 
+            Log::debug(' - Bloqueado: '.print_r($fetched_pos->Bloqueado, true));
             if ($fetched_pos->Bloqueado !== 'N') {
                 continue;
             }
+
             Log::debug(' -2');
 
             $pos_numbers[] = $fetched_pos->Nro;
