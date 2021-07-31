@@ -649,7 +649,7 @@ class Wsfe extends Invoice
         foreach ($fetched_pos_array as $fetched_pos) {
             Log::debug('getAvailablePosNumbers $fetched_pos_array '.print_r($fetched_pos, true));
             Log::debug(' - FchBaja: '.print_r($fetched_pos->FchBaja, true));
-            if ($fetched_pos->FchBaja > 0) {
+            if (intval($fetched_pos->FchBaja) > 0) {
                 continue;
             }
 
