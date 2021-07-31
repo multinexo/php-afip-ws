@@ -238,6 +238,10 @@ trait Validaciones
         $validaciones = [];
 
         foreach ((array) $datos as $key => $dato) {
+            if ($key === 'puntoVenta') {
+                Log::debug('puntoVenta $dato '.print_r($datos, true));
+            }
+
             $validaciones[] = v::attribute($key, $reglas->{$key});
         }
 

@@ -646,6 +646,7 @@ class Wsfe extends Invoice
             Log::debug('Fix testing env: ' . print_r($result->ResultGet, true));
             $fetched_pos_array = $result->ResultGet ?? [];
         }
+        Log::debug('getAvailablePosNumbers $fetched_pos_array: '.print_r($fetched_pos_array, true));
         foreach ($fetched_pos_array as $fetched_pos) {
             if ($fetched_pos->FchBaja > 0) {
                 continue;
@@ -657,6 +658,8 @@ class Wsfe extends Invoice
 
             $pos_numbers[] = $fetched_pos->Nro;
         }
+
+        Log::debug('getAvailablePosNumbers post_numbers: '.print_r($pos_numbers, true));
 
         return $pos_numbers;
     }
