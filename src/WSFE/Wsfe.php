@@ -638,6 +638,7 @@ class Wsfe extends Invoice
     {
         $pos_numbers = [];
         $result = $this->FEParamGetPtosVenta();
+        Log::debug('getAvailablePosNumbers post_numbers: '.print_r($result, true));
 
         $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
         if (!is_array($fetched_pos_array)) {
