@@ -638,7 +638,6 @@ class Wsfe extends Invoice
     {
         $pos_numbers = [];
         $result = $this->FEParamGetPtosVenta();
-        Log::debug('getAvailablePosNumbers post_numbers: '.print_r($result, true));
 
         $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
         if (!is_array($fetched_pos_array)) {
@@ -648,13 +647,16 @@ class Wsfe extends Invoice
         }
         Log::debug('getAvailablePosNumbers $fetched_pos_array: '.print_r($fetched_pos_array, true));
         foreach ($fetched_pos_array as $fetched_pos) {
+            Log::debug('getAvailablePosNumbers $fetched_pos_array '.print_r($fetched_pos, true));
             if ($fetched_pos->FchBaja > 0) {
                 continue;
             }
+            Log::debug(' -1');
 
             if ($fetched_pos->Bloqueado !== 'N') {
                 continue;
             }
+            Log::debug(' -2');
 
             $pos_numbers[] = $fetched_pos->Nro;
         }
