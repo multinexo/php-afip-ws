@@ -35,11 +35,6 @@ For more information, visit [official documentation](https://www.afip.gob.ar/ws/
 ## Testing
 
 ```bash
+docker run -it --rm --name php73 -e PHP_EXTENSIONS="" -v "$PWD":/usr/src/app thecodingmachine/php:7.3-v4-cli bash
 composer coverage
 ```
-
-### Security
-If you discover any security related issues, please contact us at [info@reyesoft.com](mailto:info@reyesoft.com).
-
-### License
-The MIT License (MIT). Please see [License File](https://github.com/multinexo/php-afip-ws/blob/master/LICENSE) for more information.

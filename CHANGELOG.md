@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.5] - 2021-07-31
 ### Changed
 - CHANGELOG based on Keep aChangelog
+- README with docker
 
 ### Fixed
 - Error "puntoVenta must be in { }" [#35](https://github.com/multinexo/php-afip-ws/issues/35)
