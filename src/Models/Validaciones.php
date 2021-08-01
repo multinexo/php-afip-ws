@@ -207,8 +207,6 @@ trait Validaciones
     // Valida los datos para un comprobante dependiendo si este tiene o no items asociados.
     public function validateDataInvoice(): void
     {
-        Log::debug('validateDataInvoice this->datos '.print_r($this->datos, true));
-        Log::debug('validateDataInvoice this->datos '.print_r($this->datos, true));
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
         if (property_exists($this->datos, 'arrayOtrosTributos')) {
@@ -238,10 +236,6 @@ trait Validaciones
         $validaciones = [];
 
         foreach ((array) $datos as $key => $dato) {
-            if ($key === 'puntoVenta') {
-                Log::debug('puntoVenta $dato '.print_r($datos, true));
-            }
-
             $validaciones[] = v::attribute($key, $reglas->{$key});
         }
 
