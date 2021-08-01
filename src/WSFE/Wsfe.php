@@ -646,7 +646,7 @@ class Wsfe extends Invoice
             $fetched_pos_array = $result->ResultGet ?? [];
         }
         foreach ($fetched_pos_array as $fetched_pos) {
-            if ($fetched_pos->FchBaja > 0) {
+            if (intval($fetched_pos->FchBaja) > 0) {
                 continue;
             }
 
