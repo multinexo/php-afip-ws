@@ -236,7 +236,7 @@ trait Validaciones
         $validaciones = [];
 
         foreach ((array) $datos as $key => $dato) {
-            $validaciones[] = v::attribute($key, $reglas->{$key});
+            $validaciones[] = v::attribute($key, $reglas->{$key} ?? null);
         }
 
         $validador = v::allOf($validaciones);
