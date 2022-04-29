@@ -266,11 +266,6 @@ class Wsfe extends Invoice
             ],
         ];
 
-        if (is_array($factura->CbteAsoc)) {
-            /** @var CreditOrDebitObject $factura */
-            $document['FeDetReq']['FECAEDetRequest']['CbteAsoc'] = $factura->CbteAsoc;
-        }
-
         $document = json_decode(json_encode($document));
         $this->getDataDocument($factura, $document);
 
