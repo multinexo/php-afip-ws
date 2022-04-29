@@ -9,7 +9,7 @@ namespace Multinexo\Objects;
  * @property int $codigoDocumento
  * @property int $numeroDocumento
  * @property int $numeroComprobante // todo: depende de la cantidad de fact enviadas
- * @property string $fechaEmision
+ * @property string $fechaEmision Format Ymd
  * @property flaot $importeTotal
  * @property flaot $importeGravado
  * @property flaot $importeNoGravado

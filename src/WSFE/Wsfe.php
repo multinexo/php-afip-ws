@@ -19,6 +19,7 @@ use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
+use Multinexo\Objects\CreditOrDebitObject;
 use SoapClient;
 use stdClass;
 
@@ -251,7 +252,7 @@ class Wsfe extends Invoice
                     'DocNro' => $factura->numeroDocumento,
                     'CbteDesde' => $factura->numeroComprobante, // todo: depende de la cantidad de fact enviadas
                     'CbteHasta' => $factura->numeroComprobante,
-                    'CbteFch' => date('Ymd', strtotime($factura->fechaEmision)),
+                    'CbteFch' => $factura->fechaEmision,
                     'ImpTotal' => $factura->importeTotal,
                     'ImpTotConc' => $factura->importeNoGravado,
                     'ImpNeto' => $importeGravado,
@@ -264,7 +265,8 @@ class Wsfe extends Invoice
             ],
         ];
 
-        if (sizeof($factura->CbteAsoc ?? []) > 0) {
+        if (is_array($factura->CbteAsoc)) {
+            /** @var CreditOrDebitObject $factura */
             $document['FeDetReq']['FECAEDetRequest']['CbteAsoc'] = $factura->CbteAsoc;
         }
 
