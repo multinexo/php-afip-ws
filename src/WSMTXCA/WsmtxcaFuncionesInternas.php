@@ -12,6 +12,7 @@ namespace Multinexo\WSMTXCA;
 
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Objects\InvoiceObject;
 use stdClass;
 
 trait WsmtxcaFuncionesInternas
@@ -214,7 +215,7 @@ trait WsmtxcaFuncionesInternas
      * Permite adaptar los datos enviados en el array de comprobante a los campos definidos por el ws de la AFIP
      * para la generacion de comprobantes con items.
      */
-    public function parseFacturaArray(stdClass $factura): stdClass
+    public function parseFacturaArray(stdClass $factura): InvoiceObject
     {
         $importeOtrosTributos = 0;
         $importeGravado = 0;

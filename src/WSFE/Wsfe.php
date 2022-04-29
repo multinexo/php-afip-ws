@@ -294,7 +294,7 @@ class Wsfe extends Invoice
 
         if (isset($invoice->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
-            foreach ($invoice->arraySubtotalesIVA->subtotalIVA as $iva) {
+            foreach ($invoice->arraySubtotalesIVA as $iva) {
                 $arraySubtotalesIVA[] = [
                     'Id' => $iva->codigoIva,
                     'BaseImp' => $iva->baseImponible,

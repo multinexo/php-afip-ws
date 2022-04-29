@@ -213,6 +213,7 @@ trait Validaciones
             $this->validarDatosArray((array) $this->datos->arrayOtrosTributos, 'tributos');
         }
 
+        /** @phpstan-ignore-next-line  */
         if (property_exists($this->datos, 'arraySubtotalesIVA')) {
             $this->validarDatosArray((array) $this->datos->arraySubtotalesIVA, 'iva');
         }
