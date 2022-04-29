@@ -138,7 +138,7 @@ trait Validaciones
                 'fechaVencimientoPago' => v::optional(v::date('Ymd')),
                 'arrayComprobantesAsociados' => v::optional(v::objectType()),
                 'arrayOtrosTributos' => v::optional(v::objectType()),
-                'arraySubtotalesIVA' => v::optional(v::objectType()),
+                'arraySubtotalesIVA' => v::optional(v::arrayType()),
                 'arrayOpcionales' => v::optional(v::objectType()),
                 'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
             ];
@@ -154,7 +154,7 @@ trait Validaciones
                 'observaciones' => v::optional(v::stringType()->length(0, 2000)),
                 'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
                 'arrayItems' => v::notEmpty()->objectType(),
-                'arraySubtotalesIVA' => v::optional(v::objectType()),
+                'arraySubtotalesIVA' => v::optional(v::arrayType()),
                 'arrayComprobantesAsociados' => v::optional(v::objectType()),
                 'arrayOtrosTributos' => v::optional(v::objectType()),
                 'fechaDesde' => v::optional(v::date('Y-m-d')),
