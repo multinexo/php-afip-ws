@@ -230,16 +230,6 @@ class Wsfe extends Invoice
     private function parseFacturaArray(): void
     {
         $factura = $this->datos;
-        $importeOtrosTributos = 0;
-        $importeGravado = 0;
-        if (property_exists($factura, 'importeOtrosTributos')) {
-            $importeOtrosTributos = $factura->importeOtrosTributos;
-        }
-
-        if (property_exists($factura, 'importeGravado')) {
-            $importeGravado = $factura->importeGravado;
-        }
-
         $document = [
             'FeCabReq' => [
                 'CantReg' => $factura->cantidadRegistros,
@@ -256,9 +246,9 @@ class Wsfe extends Invoice
                     'CbteFch' => $factura->fechaEmision,
                     'ImpTotal' => $factura->importeTotal,
                     'ImpTotConc' => $factura->importeNoGravado,
-                    'ImpNeto' => $importeGravado,
+                    'ImpNeto' => $factura->importeGravado,
                     'ImpOpEx' => $factura->importeExento,
-                    'ImpTrib' => $importeOtrosTributos,
+                    'ImpTrib' => $factura->importeOtrosTributos,
                     'ImpIVA' => $factura->importeIVA,
                     'MonId' => $factura->codigoMoneda,
                     'MonCotiz' => $factura->cotizacionMoneda,
