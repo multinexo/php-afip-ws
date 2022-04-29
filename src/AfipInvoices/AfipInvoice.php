@@ -149,6 +149,8 @@ class AfipInvoice
         // legacy bootstrap
         $factura = new Wsmtxca($config);
 
+        /** @todo change to object? */
+        /** @phpstan-ignore-next-line */
         $factura->datos = (new AfipInvoiceTranslator($this))->getDataWsmtxcaArray();
 
         return new AfipResult();

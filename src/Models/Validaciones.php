@@ -213,6 +213,7 @@ trait Validaciones
             $this->validarDatosArray((array) $this->datos->arrayOtrosTributos, 'tributos');
         }
 
+        /** @phpstan-ignore-next-line  */
         if (property_exists($this->datos, 'arraySubtotalesIVA')) {
             $this->validarDatosArray((array) $this->datos->arraySubtotalesIVA, 'iva');
         }
@@ -236,7 +237,7 @@ trait Validaciones
         $validaciones = [];
 
         foreach ((array) $datos as $key => $dato) {
-            $validaciones[] = v::attribute($key, $reglas->{$key});
+            $validaciones[] = v::attribute($key, $reglas->{$key} ?? null);
         }
 
         $validador = v::allOf($validaciones);

@@ -19,6 +19,7 @@ use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
+use Multinexo\Objects\InvoiceObject;
 use SoapClient;
 use stdClass;
 
@@ -228,16 +229,6 @@ class Wsfe extends Invoice
     private function parseFacturaArray(): void
     {
         $factura = $this->datos;
-        $importeOtrosTributos = 0;
-        $importeGravado = 0;
-        if (property_exists($factura, 'importeOtrosTributos')) {
-            $importeOtrosTributos = $factura->importeOtrosTributos;
-        }
-
-        if (property_exists($factura, 'importeGravado')) {
-            $importeGravado = $factura->importeGravado;
-        }
-
         $document = [
             'FeCabReq' => [
                 'CantReg' => $factura->cantidadRegistros,
@@ -251,12 +242,12 @@ class Wsfe extends Invoice
                     'DocNro' => $factura->numeroDocumento,
                     'CbteDesde' => $factura->numeroComprobante, // todo: depende de la cantidad de fact enviadas
                     'CbteHasta' => $factura->numeroComprobante,
-                    'CbteFch' => date('Ymd', strtotime($factura->fechaEmision)),
+                    'CbteFch' => $factura->fechaEmision,
                     'ImpTotal' => $factura->importeTotal,
                     'ImpTotConc' => $factura->importeNoGravado,
-                    'ImpNeto' => $importeGravado,
+                    'ImpNeto' => $factura->importeGravado,
                     'ImpOpEx' => $factura->importeExento,
-                    'ImpTrib' => $importeOtrosTributos,
+                    'ImpTrib' => $factura->importeOtrosTributos,
                     'ImpIVA' => $factura->importeIVA,
                     'MonId' => $factura->codigoMoneda,
                     'MonCotiz' => $factura->cotizacionMoneda,
@@ -270,11 +261,14 @@ class Wsfe extends Invoice
         $this->datos = $document;
     }
 
-    private function getDataDocument(stdClass $invoice, stdClass &$document): void
+    /**
+     * @param InvoiceObject $invoice
+     */
+    private function getDataDocument($invoice, stdClass &$document): void
     {
-        if (isset($invoice->arrayComprobantesAsociados)) {
+        if (is_array($invoice->comprobantesAsociados)) {
             $arrayComprobantesAsociados = [];
-            foreach ($invoice->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
+            foreach ($invoice->comprobantesAsociados as $comprobantesAsociado) {
                 $arrayComprobantesAsociados[] = [
                     'Tipo' => $comprobantesAsociado->codigoComprobante,
                     'PtoVta' => $comprobantesAsociado->puntoVenta,
@@ -300,7 +294,7 @@ class Wsfe extends Invoice
 
         if (isset($invoice->arraySubtotalesIVA)) {
             $arraySubtotalesIVA = [];
-            foreach ($invoice->arraySubtotalesIVA->subtotalIVA as $iva) {
+            foreach ($invoice->arraySubtotalesIVA as $iva) {
                 $arraySubtotalesIVA[] = [
                     'Id' => $iva->codigoIva,
                     'BaseImp' => $iva->baseImponible,

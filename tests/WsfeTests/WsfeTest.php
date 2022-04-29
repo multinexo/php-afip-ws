@@ -12,6 +12,7 @@ namespace Tests\WsfeTests;
 
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Objects\InvoiceObject;
 use Multinexo\WSFE\Wsfe;
 use Tests\TestAfipCase;
 
@@ -259,11 +260,11 @@ final class WsfeTest extends TestAfipCase
      */
     public function testConsultInvoice(int $cbte_nro): void
     {
-        $this->factura->datos = (object) [
-            'codigoComprobante' => 1,
-            'numeroComprobante' => $cbte_nro,
-            'puntoVenta' => 3,
-        ];
+        $this->factura->datos = new InvoiceObject();
+        $this->factura->datos->codigoComprobante = 1;
+        $this->factura->datos->numeroComprobante = $cbte_nro;
+        $this->factura->datos->puntoVenta = 3;
+
         $result = $this->factura->getInvoice();
         $this->assertNotEmpty($result);
     }
@@ -272,11 +273,11 @@ final class WsfeTest extends TestAfipCase
     {
         $this->expectException(WsException::class);
 
-        $this->factura->datos = (object) [
-            'codigoComprobante' => 1,
-            'numeroComprobante' => 9999,
-            'puntoVenta' => 3,
-        ];
+        $this->factura->datos = new InvoiceObject();
+        $this->factura->datos->codigoComprobante = 1;
+        $this->factura->datos->numeroComprobante = 9999;
+        $this->factura->datos->puntoVenta = 3;
+
         $this->factura->getInvoice();
     }
 
@@ -284,20 +285,19 @@ final class WsfeTest extends TestAfipCase
     {
         $this->expectException(ValidationException::class);
 
-        $this->factura->datos = (object) [
-            'codigoComprobante' => 1,
-            'numeroComprobante' => 'test',
-            'puntoVenta' => 1,
-        ];
+        $this->factura->datos = new InvoiceObject();
+        $this->factura->datos->codigoComprobante = 1;
+        $this->factura->datos->numeroComprobante = 'test';
+        $this->factura->datos->puntoVenta = 1;
+
         $this->factura->getInvoice();
     }
 
     public function testSolicitCAEA(): void
     {
-        $this->factura->datos = (object) [
-            'periodo' => '201604',
-            'orden' => 1,
-        ];
+        $this->factura->datos = new InvoiceObject();
+        $this->factura->datos->periodo = '201604';
+        $this->factura->datos->orden = 1;
 
         $result = $this->factura->getCAEA();
         $this->assertNotEmpty($result);
@@ -311,10 +311,9 @@ final class WsfeTest extends TestAfipCase
             . ' Del 3/11/2016 hasta 3/31/2016'
         );
 
-        $this->factura->datos = (object) [
-            'periodo' => '201603',
-            'orden' => 2,
-        ];
+        $this->factura->datos = new InvoiceObject();
+        $this->factura->datos->periodo = '201603';
+        $this->factura->datos->orden = 2;
 
         $result = $this->factura->requestCAEA();
         $this->assertNotEmpty($result);
