@@ -31,7 +31,7 @@ class InvoiceObject extends \stdClass
     /** @var int */
     public  $fechaVencimientoPago = null;
     /** @var array|null */
-    public  $arrayComprobantesAsociados = null;
+    public  $comprobantesAsociados = null;
     /** @var array|null */
     public  $arraySubtotalesIVA = [];
 }

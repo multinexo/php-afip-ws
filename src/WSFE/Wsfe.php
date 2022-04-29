@@ -20,6 +20,7 @@ use Multinexo\Models\Invoice;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\CreditOrDebitObject;
+use Multinexo\Objects\InvoiceObject;
 use SoapClient;
 use stdClass;
 
@@ -276,11 +277,14 @@ class Wsfe extends Invoice
         $this->datos = $document;
     }
 
-    private function getDataDocument(stdClass $invoice, stdClass &$document): void
+    /**
+     * @param InvoiceObject $invoice
+     */
+    private function getDataDocument($invoice, stdClass &$document): void
     {
-        if (isset($invoice->arrayComprobantesAsociados)) {
+        if (is_array($invoice->comprobantesAsociados)) {
             $arrayComprobantesAsociados = [];
-            foreach ($invoice->arrayComprobantesAsociados->comprobanteAsociado as $comprobantesAsociado) {
+            foreach ($invoice->comprobantesAsociados as $comprobantesAsociado) {
                 $arrayComprobantesAsociados[] = [
                     'Tipo' => $comprobantesAsociado->codigoComprobante,
                     'PtoVta' => $comprobantesAsociado->puntoVenta,
