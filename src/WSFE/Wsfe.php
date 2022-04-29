@@ -19,7 +19,6 @@ use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
-use Multinexo\Objects\CreditOrDebitObject;
 use Multinexo\Objects\InvoiceObject;
 use SoapClient;
 use stdClass;
