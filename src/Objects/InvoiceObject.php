@@ -10,11 +10,11 @@ namespace Multinexo\Objects;
  * @property int $numeroDocumento
  * @property int $numeroComprobante // todo: depende de la cantidad de fact enviadas
  * @property string $fechaEmision
- * @property int $importeTotal
- * @property int $importeGravado
- * @property int $importeNoGravado
+ * @property flaot $importeTotal
+ * @property flaot $importeGravado
+ * @property flaot $importeNoGravado
  * @property int $importeExento
- * @property int $importeIVA
+ * @property float $importeIVA
  */
 class InvoiceObject extends \stdClass
 {
@@ -32,4 +32,6 @@ class InvoiceObject extends \stdClass
     public  $fechaVencimientoPago = null;
     /** @var array|null */
     public  $arrayComprobantesAsociados = null;
+    /** @var array|null */
+    public  $arraySubtotalesIVA = [];
 }
