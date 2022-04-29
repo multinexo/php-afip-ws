@@ -15,7 +15,7 @@ namespace Multinexo\Objects;
  * @property int $importeExento
  * @property float $importeIVA
  */
-class InvoiceObject
+class InvoiceObject extends \stdClass
 {
     /** @var int */
     public  $cantidadRegistros = 1;
