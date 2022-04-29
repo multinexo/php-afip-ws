@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Multinexo\Models;
 
 use Multinexo\Exceptions\ValidationException;
+use Multinexo\Objects\InvoiceObject;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros;
 use Respect\Validation\Exceptions\NestedValidationException;
@@ -232,7 +233,11 @@ trait Validaciones
     }
 
     // Valida que los datos ingresados cumplan con determinadas reglas.
-    public function validarDatos(stdClass $datos, stdClass $reglas): void
+
+    /**
+     * @param InvoiceObject $datos
+     */
+    public function validarDatos($datos, stdClass $reglas): void
     {
         $validaciones = [];
 
