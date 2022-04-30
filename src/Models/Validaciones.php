@@ -12,6 +12,7 @@ namespace Multinexo\Models;
 
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Objects\InvoiceObject;
+use Multinexo\Objects\WebServiceEnum;
 use Multinexo\WSMTXCA\Wsmtxca;
 use Multinexo\WSMTXCA\WsParametros;
 use Respect\Validation\Exceptions\NestedValidationException;
@@ -126,43 +127,32 @@ trait Validaciones
             'importeIVA' => v::floatVal()->between(0, 9999999999999.99),
             'importeTotal' => v::floatVal()->between(0, 9999999999999.99),
             'caea' => v::intVal()->length(14, 14),
+            'cotizacionMoneda' => v::notEmpty()->between(0, 9999999999.999999),
+            'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
+            'fechaEmision' => v::optional(v::date('Y-m-d')),
+            'fechaServicioDesde' => v::optional(v::date('Y-m-d')),
+            'fechaServicioHasta' => v::optional(v::date('Y-m-d')),
+            'fechaVencimientoPago' => v::optional(v::date('Y-m-d')),
+            'comprobantesAsociados' => v::optional(v::arrayType()),
+            'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
+            'arrayOtrosTributos' => v::optional(v::arrayType()),
+            'arraySubtotalesIVA' => v::optional(v::objectType()),
         ];
-
-        if ($this->ws === 'wsfe') {
-            $wsReglas = [
-                'cotizacionMoneda' => v::notEmpty()->between(0, 9999999999.999999),
-                'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
-                'fechaEmision' => v::optional(v::date('Ymd')),
-                'fechaServicioDesde' => v::optional(v::date('Ymd')),
-                'fechaServicioHasta' => v::optional(v::date('Ymd')),
-                'fechaVencimientoPago' => v::optional(v::date('Ymd')),
-                'arrayComprobantesAsociados' => v::optional(v::objectType()),
-                'arrayOtrosTributos' => v::optional(v::objectType()),
-                'arraySubtotalesIVA' => v::optional(v::objectType()),
+        if ($this->ws === WebServiceEnum::WSFE) {
+            $wsReglasPlus = [
                 'arrayOpcionales' => v::optional(v::objectType()),
-                'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
             ];
-        } elseif ($this->ws === 'wsmtxca') {
-            $wsReglas = [
-                'cotizacionMoneda' => v::notEmpty()->between(0, 9999.999999),
-                'numeroComprobante' => v::optional(v::notEmpty()->intVal()->length(1, 8)),
-                'fechaEmision' => v::optional(v::date('Y-m-d')),
-                'fechaServicioDesde' => v::optional(v::date('Y-m-d')),
-                'fechaServicioHasta' => v::optional(v::date('Y-m-d')),
-                'fechaVencimientoPago' => v::optional(v::date('Y-m-d')),
+        } elseif ($this->ws === WebServiceEnum::WSMTXCA) {
+            $wsReglasPlus = [
                 'codigoTipoAutorizacion' => v::optional(v::in(['A', 'E'])),
                 'observaciones' => v::optional(v::stringType()->length(0, 2000)),
-                'importeOtrosTributos' => v::optional(v::floatVal()->between(0, 9999999999999.99)),
                 'arrayItems' => v::notEmpty()->objectType(),
-                'arraySubtotalesIVA' => v::optional(v::objectType()),
-                'arrayComprobantesAsociados' => v::optional(v::objectType()),
-                'arrayOtrosTributos' => v::optional(v::objectType()),
                 'fechaDesde' => v::optional(v::date('Y-m-d')),
                 'fechaHasta' => v::optional(v::date('Y-m-d')),
             ];
         }
 
-        return array_merge($reglasFeGenerales, $wsReglas);
+        return array_merge($reglasFeGenerales, $wsReglas, $wsReglasPlus ?? []);
     }
 
     // Devuelve mensajes de error personalizados.
@@ -195,12 +185,8 @@ trait Validaciones
     // Valida los datos de un array.
     private function validarDatosArray(array $array, string $regla): void
     {
-        if (empty($array)) {
-            return;
-        }
-
         // TODO: Los items tienen que ir si o si en el caso de fe wsmtxca
-        foreach (reset($array) as $dato) {
+        foreach ($array as $dato) {
             $this->validarDatos($dato, $this->getRules($regla));
         }
     }
@@ -210,32 +196,28 @@ trait Validaciones
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        if (property_exists($this->datos, 'arrayOtrosTributos')) {
-            $this->validarDatosArray((array) $this->datos->arrayOtrosTributos, 'tributos');
-        }
+        $this->validarDatosArray($this->datos->arrayOtrosTributos, 'tributos');
 
         /** @phpstan-ignore-next-line  */
         if (property_exists($this->datos, 'arraySubtotalesIVA')) {
             $this->validarDatosArray((array) $this->datos->arraySubtotalesIVA, 'iva');
         }
 
-        if (property_exists($this->datos, 'arrayComprobantesAsociados')) {
-            $this->validarDatosArray((array) $this->datos->arrayComprobantesAsociados, 'comprobantesAsociados');
-        }
+        $this->validarDatosArray($this->datos->comprobantesAsociados, 'comprobantesAsociados');
 
         if ($this->ws === 'wsfe') {
             if (property_exists($this->datos, 'arrayOpcionales')) {
                 $this->validarDatosArray((array) $this->datos->arrayOpcionales, 'opcionales');
             }
         } elseif ($this->ws === 'wsmtxca') {
-            $this->validarDatosArray((array) $this->datos->arrayItems, 'items');
+            $this->validarDatosArray($this->datos->items, 'items');
         }
     }
 
     // Valida que los datos ingresados cumplan con determinadas reglas.
 
     /**
-     * @param InvoiceObject $datos
+     * @param InvoiceObject|stdClass $datos
      */
     public function validarDatos($datos, stdClass $reglas): void
     {

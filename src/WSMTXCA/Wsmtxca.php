@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\AfipValues\ReceiptCodes;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
@@ -40,6 +41,8 @@ class Wsmtxca extends Invoice
      */
     public function createInvoice(): stdClass
     {
+        $this->datos->clean();
+        $this->clean();
         $this->validateDataInvoice();
 
         try {
@@ -60,17 +63,28 @@ class Wsmtxca extends Invoice
         return $this->wsAutorizarComprobante($this->datos);
     }
 
+    private function clean(): void
+    {
+        // Por Ahora no se esta usando
+        // $this->datos->importeOtrosTributos = null;
+        // $this->datos->arrayOtrosTributos = null;
+
+        if (in_array($this->datos->codigoComprobante, [ReceiptCodes::FACTURA_B, ReceiptCodes::NOTA_CREDITO_B], true)) {
+            unset($this->datos->importeIVA);
+        }
+    }
+
     /**
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado.
      *
      * @throws WsException
      * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function getCAEA(): stdClass
+    public function getCAEA(stdClass $data): stdClass
     {
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos($data, $this->getRules('fe'));
 
-        return $this->wsConsultarCAEA($this->datos);
+        return $this->wsConsultarCAEA($data);
     }
 
     /**
@@ -78,9 +92,9 @@ class Wsmtxca extends Invoice
      *
      * @throws WsException
      */
-    public function requestCAEA(): stdClass
+    public function requestCAEA(stdClass $datos): stdClass
     {
-        return $this->wsSolicitarCAEA($this->datos);
+        return $this->wsSolicitarCAEA($datos);
     }
 
     /**
@@ -92,7 +106,7 @@ class Wsmtxca extends Invoice
     public function consultarCAEAEntreFechas(): ?stdClass
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->wsConsultarCAEAEntreFechas($this->datos);
+        $result = $this->wsConsultarCAEAEntreFechas();
 
         return $result->CAEAResponse ?? null;
     }
@@ -107,7 +121,7 @@ class Wsmtxca extends Invoice
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->wsConsultarComprobante($this->datos);
+        return $this->wsConsultarComprobante();
     }
 
     public function getAvailablePosNumbers(): array

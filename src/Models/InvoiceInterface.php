@@ -16,9 +16,9 @@ interface InvoiceInterface
 {
     public function createInvoice(): stdClass;
 
-    public function getCAEA(): stdClass;
+    public function getCAEA(stdClass $data): stdClass;
 
-    public function requestCAEA(): stdClass;
+    public function requestCAEA(stdClass $datos): stdClass;
 
     public function getInvoice(): stdClass;
 }

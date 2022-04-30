@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Multinexo\Objects;
 
-class CondicionIvaEnum
+class DocumentObject
 {
-    protected const DEFAULT = 5;
 }

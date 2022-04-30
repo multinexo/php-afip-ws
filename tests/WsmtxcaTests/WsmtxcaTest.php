@@ -476,7 +476,7 @@ final class WsmtxcaTest extends TestAfipCase
      */
     public function testSolicitCAEA($caea): void
     {
-        $this->factura->datos = (object) [
+        $data = (object) [
             'caea' => $caea,
         ];
 
@@ -492,7 +492,7 @@ final class WsmtxcaTest extends TestAfipCase
         $factura_mock->shouldReceive('getCAEA')->andReturn($CAEAResponse);
         $this->factura = $factura_mock;
 
-        $result = $this->factura->getCAEA();
+        $result = $this->factura->getCAEA($data);
         $this->assertNotEmpty($result->CAEA);
     }
 
@@ -533,7 +533,7 @@ final class WsmtxcaTest extends TestAfipCase
             'arrayItems' => $arrayItems,
             'arraySubtotalesIVA' => $arraySubtotalesIVA,
             'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
-            'arrayOtrosTributos' => null,
+            'arrayOtrosTributos' => [],
         ];
 
         return json_decode(json_encode($comprobante));

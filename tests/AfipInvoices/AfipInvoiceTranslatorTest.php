@@ -13,6 +13,7 @@ namespace Tests\AfipInvoices;
 use Multinexo\AfipInvoices\AfipInvoice;
 use Multinexo\AfipInvoices\AfipInvoiceTranslator;
 use Multinexo\AfipValues\IvaConditionCodes;
+use Multinexo\AfipValues\ReceiptCodes;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +23,27 @@ use PHPUnit\Framework\TestCase;
  */
 final class AfipInvoiceTranslatorTest extends TestCase
 {
-    public function testDataHasRequiredFields(): void
+    public function testDataHasRequiredFieldsWsmtxca(): void
+    {
+        $invoice = new AfipInvoice();
+        $invoice->setReceiptNumber(5)
+            ->setReceiptCode(ReceiptCodes::FACTURA_A);
+        $invoice->createAfipDetail()
+            ->setQty(2)
+            ->setItemCode('P0001')
+            ->setDescription('Cool cooler')
+            ->setItemNet(50)
+            ->setIvaConditionCode(IvaConditionCodes::IVA_21)
+            ->setItemNet(55.25);
+
+        $data = (new AfipInvoiceTranslator($invoice))->getDataWsmtxcaArray();
+
+        $this->assertSame(110.5, $data['importeGravado']);
+        $this->assertSame(110.5, $data['importeSubtotal']);
+        $this->assertSame(99, $data['codigoDocumento']);
+    }
+
+    public function testDataHasRequiredFieldsWsfe(): void
     {
         $invoice = new AfipInvoice();
         $invoice->setReceiptNumber(5);
@@ -34,7 +55,7 @@ final class AfipInvoiceTranslatorTest extends TestCase
             ->setIvaConditionCode(IvaConditionCodes::IVA_21)
             ->setItemNet(55.25);
 
-        $data = (new AfipInvoiceTranslator($invoice))->getDataWsmtxcaArray();
+        $data = (new AfipInvoiceTranslator($invoice))->getDataWsfeArray();
 
         $this->assertSame(110.5, $data['importeGravado']);
         $this->assertSame(110.5, $data['importeSubtotal']);
