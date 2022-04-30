@@ -1,6 +1,7 @@
 # this project
 /storage/Afip/
 bootstrap/
+/CSR_*
 
 # reyesoft projects
 .php_cs.cache
