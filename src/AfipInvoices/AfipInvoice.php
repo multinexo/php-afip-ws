@@ -16,6 +16,9 @@ use Multinexo\Models\AfipConfig;
 use Multinexo\WSMTXCA\AfipResult;
 use Multinexo\WSMTXCA\Wsmtxca;
 
+/**
+ * @deprecated
+ */
 class AfipInvoice
 {
     /** @var int */
