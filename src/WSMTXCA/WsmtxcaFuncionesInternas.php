@@ -132,15 +132,12 @@ trait WsmtxcaFuncionesInternas
      *                  * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
 
-    /**
-     * @param InvoiceObject $cbte
-     */
-    public function wsAutorizarComprobante($cbte): stdClass
+    public function wsAutorizarComprobante(stdClass $payload): stdClass
     {
         $resultado = $this->service->client->autorizarComprobante(
             [
                 'authRequest' => $this->service->authRequest,
-                'comprobanteCAERequest' => $cbte,
+                'comprobanteCAERequest' => $payload,
             ]
         );
 
@@ -201,7 +198,13 @@ trait WsmtxcaFuncionesInternas
     }
 
     // TODO: Exception
-    public function checkSoapFault(stdClass $result): stdClass
+
+    /**
+     * @param \SoapFault|stdClass $result
+     *
+     * @return \SoapFault|stdClass
+     */
+    public function checkSoapFault($result)
     {
         if (is_soap_fault($result)) {
             var_dump(
@@ -221,10 +224,8 @@ trait WsmtxcaFuncionesInternas
     /**
      * Permite adaptar los datos enviados en el array de comprobante a los campos definidos por el ws de la AFIP
      * para la generacion de comprobantes con items.
-     *
-     * @param InvoiceObject $factura
      */
-    public function parseFacturaArray($factura): InvoiceObject
+    public function parseFacturaArray(InvoiceObject $factura): stdClass
     {
         $comprobante = [
             'codigoTipoComprobante' => $factura->codigoComprobante,
@@ -244,9 +245,9 @@ trait WsmtxcaFuncionesInternas
             'cotizacionMoneda' => $factura->cotizacionMoneda,
             'observaciones' => $factura->observaciones,
             'codigoConcepto' => $factura->codigoConcepto,
-            'fechaServicioDesde' => str_replace('-', '', $factura->fechaServicioDesde),
-            'fechaServicioHasta' => str_replace('-', '', $factura->fechaServicioHasta),
-            'fechaVencimientoPago' => str_replace('-', '', $factura->fechaVencimientoPago),
+            'fechaServicioDesde' => $factura->fechaServicioDesde,
+            'fechaServicioHasta' => $factura->fechaServicioHasta,
+            'fechaVencimientoPago' => $factura->fechaVencimientoPago,
             'arrayItems' => $factura->items,
         ];
 
@@ -255,6 +256,11 @@ trait WsmtxcaFuncionesInternas
         }
         if ($factura->importeGravado == 0) {
             unset($comprobante['importeGravado']);
+        }
+
+        // La Fecha de Servicio Desde no debe informarse dado que se indicó Concepto Productos
+        if (count($this->datos->items) > 0) {
+            unset($comprobante['fechaServicioDesde'], $comprobante['fechaServicioHasta'], $comprobante['fechaVencimientoPago']);
         }
 
         $comprobante = json_decode(json_encode($comprobante));
@@ -290,17 +296,16 @@ trait WsmtxcaFuncionesInternas
             $comprobante->{'arrayComprobantesAsociados'} = $arrayComprobantesAsociados;
         }
 
-        if (isset($factura->arrayOtrosTributos)) {
-            $arrayOtrosTributos = [];
-            foreach ($factura->arrayOtrosTributos as $tributo) {
-                $arrayOtrosTributos[] = [
-                    'codigo' => $tributo->codigoComprobante,
-                    'descripcion' => $tributo->descripcion,
-                    'baseImponible' => $tributo->baseImponible,
-                    'importe' => $tributo->importe,
-                ];
-            }
-
+        $arrayOtrosTributos = [];
+        foreach ($factura->arrayOtrosTributos as $tributo) {
+            $arrayOtrosTributos[] = [
+                'codigo' => $tributo->codigoComprobante,
+                'descripcion' => $tributo->descripcion,
+                'baseImponible' => $tributo->baseImponible,
+                'importe' => $tributo->importe,
+            ];
+        }
+        if (count($arrayOtrosTributos) > 0) {
             $comprobante->{'arrayOtrosTributos'} = $arrayOtrosTributos;
         }
     }

@@ -17,6 +17,7 @@ use Multinexo\Objects\InvoiceObject;
 use Multinexo\Objects\SubtotalesIvaObject;
 use Multinexo\WSFE\Wsfe;
 use stdClass;
+use Tests\InvoiceTestTrait;
 use Tests\TestAfipCase;
 
 /**
@@ -25,6 +26,8 @@ use Tests\TestAfipCase;
  */
 final class WsfeTest extends TestAfipCase
 {
+    use InvoiceTestTrait;
+
     /** @var Wsfe */
     private $factura;
 
@@ -46,9 +49,11 @@ final class WsfeTest extends TestAfipCase
         );
 
         $result = $this->factura->createInvoice();
-        $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
-        $this->assertNotEmpty($result->CAEFchVto);
+
+        $this->assertNotEmpty($result->cae);
+        $this->assertNotEmpty($result->cae_expiration_date);
+        $this->assertSame($result->emission_date, date('Y-m-d'));
+        $this->assertNotEmpty($result->observation);
     }
 
     public function testCreateInvoiceWithoutItemsMonotributo(): void
@@ -64,7 +69,7 @@ final class WsfeTest extends TestAfipCase
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsWithReceiptsAssociated(): void
@@ -84,7 +89,7 @@ final class WsfeTest extends TestAfipCase
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsMonotributoWithTributes(): void
@@ -119,7 +124,7 @@ final class WsfeTest extends TestAfipCase
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsWithIva(): int
@@ -139,9 +144,9 @@ final class WsfeTest extends TestAfipCase
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
 
-        return $result->CbteDesde;
+        return $result->number;
     }
 
     /*
@@ -280,36 +285,5 @@ final class WsfeTest extends TestAfipCase
 
         $result = $this->factura->requestCAEA($datos);
         $this->assertNotEmpty($result);
-    }
-
-    private static function getInvoiceData(
-        $codigoComprobante,
-        $importeTotal,
-        $importeGravado,
-        $importeSubtotal,
-        $importeNoGravado,
-        $importeIVA = .0,
-        $importTribute = .0
-    ): InvoiceObject {
-        $invoice = new InvoiceObject();
-        $invoice->cantidadRegistros = 1;
-        $invoice->puntoVenta = 3;
-        $invoice->codigoComprobante = $codigoComprobante;
-        $invoice->codigoConcepto = 1;
-        $invoice->codigoDocumento = 80;
-        $invoice->numeroDocumento = 20327936221;
-        $invoice->fechaEmision = date('Y-m-d');
-        $invoice->importeGravado = $importeGravado;
-        $invoice->importeNoGravado = $importeNoGravado;
-        $invoice->importeExento = 0;
-        $invoice->importeSubtotal = $importeSubtotal;
-        $invoice->importeIVA = $importeIVA;
-        $invoice->importeTotal = $importeTotal;
-        $invoice->importeOtrosTributos = $importTribute;
-        $invoice->fechaServicioDesde = '2016-03-16';
-        $invoice->fechaServicioHasta = '2016-03-16';
-        $invoice->fechaVencimientoPago = '2016-03-16';
-
-        return $invoice;
     }
 }

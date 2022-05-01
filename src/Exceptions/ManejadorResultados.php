@@ -30,25 +30,32 @@ class ManejadorResultados
     }
 
     // Recupera información de errores detectados lanzandolo en una excepción.
-    public function procesar(stdClass $resultado): void
+
+    /**
+     * @param \SoapFault|stdClass $resultado
+     *
+     * @throws WsException
+     */
+    public function procesar($resultado): void
     {
+        $errores = '';
         if (isset($resultado->Errors)) {
             $errores = reset($resultado->Errors)->Msg;
-        } else {
-            //Porque el error viene de otra forma si existe message
-            if (!property_exists($resultado, 'message')) {
-                $errores = isset($resultado->arrayErrores) ?
-                    (isset($resultado->arrayErrores->codigoDescripcion) ?
-                        $resultado->arrayErrores->codigoDescripcion->descripcion
-                        : $resultado->arrayErrores)
-                    : null;
-            } else {
-                $errores = $resultado->getMessage();
+        } elseif (isset($resultado->arrayErrores)) {
+            if (isset($resultado->arrayErrores->codigoDescripcion->descripcion)) {
+                $resultado->arrayErrores->codigoDescripcion = [$resultado->arrayErrores->codigoDescripcion];
             }
+            foreach ($resultado->arrayErrores->codigoDescripcion as $err) {
+                $errores .= $err->descripcion . ' (' . $err->codigo . ') ';
+            }
+        } elseif ($resultado instanceof \SoapFault) {
+            $errores = $resultado->getMessage();
         }
 
-        if (!empty($errores)) {
-            throw new WsException($errores);
+        if (empty($errores)) {
+            return;
         }
+
+        throw new WsException($errores);
     }
 }

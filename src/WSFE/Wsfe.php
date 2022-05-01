@@ -22,6 +22,7 @@ use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
+use Multinexo\Objects\InvoiceResultObject;
 use SoapClient;
 use stdClass;
 
@@ -40,8 +41,7 @@ class Wsfe extends Invoice
         parent::__construct($afipConfig);
     }
 
-    // Permite crear un comprobante sin items.
-    public function createInvoice(): stdClass
+    public function createInvoice(): InvoiceResultObject
     {
         $this->datos->clean();
         $this->clean();
@@ -56,7 +56,25 @@ class Wsfe extends Invoice
         $this->datos->FeDetReq->FECAEDetRequest->CbteDesde = $ultimoComprobante + 1;
         $this->datos->FeDetReq->FECAEDetRequest->CbteHasta = $ultimoComprobante + 1;
 
-        return $this->FECAESolicitar();
+        return $this->parseResult(
+            $this->FECAESolicitar()
+        );
+    }
+
+    private function parseResult(stdClass $response): InvoiceResultObject
+    {
+        $result = new InvoiceResultObject();
+        $date = $response->CbteFch;
+        $result->number = (int) $response->CbteDesde;
+        $result->emission_date = $date[0] . $date[1] . $date[2] . $date[3] . '-' . $date[4] . $date[5] . '-' . $date[6] . $date[7];
+
+        $result->cae = $response->CAE;
+        $result->cae_expiration_date = $response->CAEFchVto;
+        if (isset($response->Observaciones)) {
+            $result->observation = $response->Observaciones->Obs->Msg . ' (' . $response->Observaciones->Obs->Code . ')';
+        }
+
+        return $result;
     }
 
     private function clean(): void

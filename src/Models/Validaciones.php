@@ -106,7 +106,6 @@ trait Validaciones
     {
         $wsReglas = [];
         $codComprobantes = $this->codComprobantes();
-        $puntosVenta = $this->getAvailablePosNumbers();
         $codDocumento = $this->codDocumento();
         $codMonedas = $this->codMonedas();
 
@@ -114,7 +113,6 @@ trait Validaciones
             'periodo' => v::notEmpty()->date('Ym'),
             'orden' => v::notEmpty()->intVal()->between(1, 2)->length(1, 1),
             'codigoComprobante' => v::in($codComprobantes),
-            'puntoVenta' => v::in($puntosVenta), // fe s/item?
             'cantidadRegistros' => v::notEmpty()->intVal()->between(1, 9999),
             'codigoConcepto' => v::in(['1', '2', '3']),
             'codigoDocumento' => v::in($codDocumento),
@@ -140,10 +138,13 @@ trait Validaciones
         ];
         if ($this->ws === WebServiceEnum::WSFE) {
             $wsReglasPlus = [
+                'puntoVenta' => v::in($this->getAvailablePosNumbers()),
                 'arrayOpcionales' => v::optional(v::objectType()),
             ];
         } elseif ($this->ws === WebServiceEnum::WSMTXCA) {
             $wsReglasPlus = [
+                // 'puntoVenta' => v::in($this->getAvailablePosNumbers()), not working on testing environment
+                'puntoVenta' => v::notEmpty()->intVal()->between(1, 9999)->length(1, 4),
                 'codigoTipoAutorizacion' => v::optional(v::in(['A', 'E'])),
                 'observaciones' => v::optional(v::stringType()->length(0, 2000)),
                 'arrayItems' => v::notEmpty()->objectType(),

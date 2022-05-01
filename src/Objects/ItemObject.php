@@ -11,11 +11,9 @@ declare(strict_types=1);
 namespace Multinexo\Objects;
 
 /**
- * @property int $unidadesMtx
  * @property string $codigoMtx
  * @property string $codigo
  * @property string $descripcion
- * @property float $cantidad
  * @property int $codigoUnidadMedida
  * @property float $precioUnitario
  * @property float $importeBonificacion
@@ -25,4 +23,8 @@ namespace Multinexo\Objects;
  */
 class ItemObject extends \stdClass
 {
+    /** @var int */
+    public $unidadesMtx = 1;
+    /** @var float */
+    public $cantidad = 1;
 }

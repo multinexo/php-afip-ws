@@ -16,6 +16,7 @@ use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\Invoice;
 use Multinexo\Models\Validaciones;
+use Multinexo\Objects\InvoiceResultObject;
 use stdClass;
 
 /**
@@ -35,11 +36,9 @@ class Wsmtxca extends Invoice
     }
 
     /**
-     * Permite crear un comprobante con items.
-     *
      * @throws WsException
      */
-    public function createInvoice(): stdClass
+    public function createInvoice(): InvoiceResultObject
     {
         $this->datos->clean();
         $this->clean();
@@ -57,10 +56,28 @@ class Wsmtxca extends Invoice
             }
             $ultimoComprobante = 0;
         }
-        $this->datos = $this->parseFacturaArray($this->datos);
-        $this->datos->numeroComprobante = $ultimoComprobante + 1;
+        $payload = $this->parseFacturaArray($this->datos);
+        $payload->numeroComprobante = $ultimoComprobante + 1;
 
-        return $this->wsAutorizarComprobante($this->datos);
+        return $this->parseResult(
+            $this->wsAutorizarComprobante($payload)
+        );
+    }
+
+    private function parseResult(stdClass $response): InvoiceResultObject
+    {
+        $result = new InvoiceResultObject();
+        $result->original_response = $response;
+        $result->pos_number = (int) $response->comprobanteResponse->numeroPuntoVenta;
+        $result->number = (int) $response->comprobanteResponse->numeroComprobante;
+        $result->emission_date = $response->comprobanteResponse->fechaEmision;
+        $result->cae = $response->comprobanteResponse->CAE;
+        $result->cae_expiration_date = $response->comprobanteResponse->fechaVencimientoCAE;
+        if (isset($response->arrayObservaciones->codigoDescripcion)) {
+            $result->observation = $response->arrayObservaciones->codigoDescripcion->descripcion . ' (' . $response->arrayObservaciones->codigoDescripcion->codigo . ')';
+        }
+
+        return $result;
     }
 
     private function clean(): void

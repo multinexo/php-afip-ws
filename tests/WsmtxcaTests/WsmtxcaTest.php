@@ -11,8 +11,11 @@ declare(strict_types=1);
 namespace Tests\WsmtxcaTests;
 
 use Mockery;
+use Multinexo\Objects\ItemObject;
+use Multinexo\Objects\SubtotalesIvaObject;
 use Multinexo\WSMTXCA\Wsmtxca;
 use stdClass;
+use Tests\InvoiceTestTrait;
 use Tests\TestAfipCase;
 
 /**
@@ -21,6 +24,8 @@ use Tests\TestAfipCase;
  */
 final class WsmtxcaTest extends TestAfipCase
 {
+    use InvoiceTestTrait;
+
     /** @var Wsmtxca | Mockery\LegacyMockInterface */
     private $factura;
 
@@ -32,70 +37,51 @@ final class WsmtxcaTest extends TestAfipCase
 
     public function testCreateInvoiceWithItemsOfMonotributeToMonotribute(): void
     {
-        $this->assertTrue(true);
-
-        return;
-        $arrayItems = [
-            'item' => [
-                [
-                    'unidadesMtx' => 2,
-                    'codigoMtx' => '111',
-                    'codigo' => 'P0001',
-                    'descripcion' => 'descripcion1',
-                    'cantidad' => 1,
-                    'codigoUnidadMedida' => 7,
-                    'precioUnitario' => 50,
-                    'importeBonificacion' => 0,
-                    'codigoCondicionIVA' => 4,
-                    'importeIVA' => 5.25,
-                    'importeItem' => 55.25,
-                ],
-                [
-                    'unidadesMtx' => 1,
-                    'codigoMtx' => '222',
-                    'codigo' => 'P0002',
-                    'descripcion' => 'descripcion2',
-                    'cantidad' => 1,
-                    'codigoUnidadMedida' => 7,
-                    'precioUnitario' => 50,
-                    'importeBonificacion' => 0,
-                    'codigoCondicionIVA' => 3,
-                    'importeIVA' => 0,
-                    'importeItem' => 50,
-                ],
-            ],
-        ];
-
-        //Aca solamente son permitodos los tipos de IVA 4 - 5 - 6;
-        $arraySubtotalesIVA = [
-            'subtotalIVA' => [
-                [
-                    'codigoIva' => 4,
-                    'importe' => 5.25,
-                ],
-            ],
-        ];
-
-        $codigoComprobante = 1;
-        $importeTotal = 105.25;
-        $importeGravado = 100;
-        $importeOtrosTributos = null;
-        $importeSubtotal = 100;
-        $importeNoGravado = 0;
-
-        $this->factura->datos = $this->getDatosFactura(
-            $codigoComprobante,
-            $importeTotal,
-            $importeGravado,
-            $importeOtrosTributos,
-            $importeSubtotal,
-            $importeNoGravado,
-            $arrayItems,
-            $arraySubtotalesIVA
+        $this->factura->datos = self::getInvoiceData(
+            1,
+            105.25,
+            100,
+            100,
+            0,
+            0
         );
 
+        $item = new ItemObject();
+        $item->unidadesMtx = 2;
+        $item->codigoMtx = '111';
+        $item->codigo = 'P0001';
+        $item->descripcion = 'descripcion1';
+        $item->codigoUnidadMedida = 7;
+        $item->precioUnitario = 50;
+        $item->importeBonificacion = 0;
+        $item->codigoCondicionIVA = 4;
+        $item->importeIVA = 5.25;
+        $item->importeItem = 55.25;
+        $this->factura->datos->items[] = $item;
+
+        $item = new ItemObject();
+        $item->codigoMtx = '222';
+        $item->codigo = 'P0002';
+        $item->descripcion = 'descripcion2';
+        $item->cantidad = 2;
+        $item->codigoUnidadMedida = 7;
+        $item->precioUnitario = 25;
+        $item->importeBonificacion = 0;
+        $item->codigoCondicionIVA = 3;
+        $item->importeIVA = 0;
+        $item->importeItem = 50;
+        $this->factura->datos->items[] = $item;
+
+        $this->factura->datos->subtotalesIVA = [
+            SubtotalesIvaObject::create(4, 5.25),
+        ];
+
         $result = $this->factura->createInvoice();
-        $this->assertNotEmpty($result->comprobanteResponse->CAE);
+
+        $this->assertNotEmpty($result->cae);
+        $this->assertNotEmpty($result->cae_expiration_date);
+        $this->assertSame($result->emission_date, date('Y-m-d'));
+        $this->assertNotEmpty($result->observation);
     }
 
     //Test ejemplo de monotributista a monotributista, en los detalles existe tipo de iva (10.5% y 0%)
@@ -152,7 +138,7 @@ final class WsmtxcaTest extends TestAfipCase
         $importeSubtotal = 100;
         $importeNoGravado = 0;
 
-        $this->factura->datos = $this->getDatosFactura(
+        $this->factura->datos = $this->getInvoiceData(
             $codigoComprobante,
             $importeTotal,
             $importeGravado,
@@ -216,7 +202,7 @@ final class WsmtxcaTest extends TestAfipCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(
+        $this->factura->datos = $this->getInvoiceData(
             1,
             182.25,
             150,
@@ -267,7 +253,7 @@ final class WsmtxcaTest extends TestAfipCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(
+        $this->factura->datos = $this->getInvoiceData(
             6,
             150,
             150,
@@ -347,7 +333,7 @@ final class WsmtxcaTest extends TestAfipCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(
+        $this->factura->datos = $this->getInvoiceData(
             2,
             115.75,
             100,
@@ -414,7 +400,7 @@ final class WsmtxcaTest extends TestAfipCase
             ],
         ];
 
-        $this->factura->datos = $this->getDatosFactura(
+        $this->factura->datos = $this->getInvoiceData(
             1,
             115.75,
             100,
@@ -494,48 +480,5 @@ final class WsmtxcaTest extends TestAfipCase
 
         $result = $this->factura->getCAEA($data);
         $this->assertNotEmpty($result->CAEA);
-    }
-
-    public function getDatosFactura(
-        $codigoComprobante,
-        $importeTotal,
-        $importeGravado,
-        $importeOtrosTributos,
-        $importeSubtotal,
-        $importeNoGravado,
-        $arrayItems,
-        $arraySubtotalesIVA = null,
-        $arrayComprobantesAsociados = null
-    ) {
-        $comprobante = [
-            'cantidadRegistros' => 1,
-            'puntoVenta' => 1,
-            'codigoComprobante' => $codigoComprobante,
-            'numeroComprobante' => null,
-            'codigoConcepto' => 1,
-            'codigoDocumento' => 80,
-            'numeroDocumento' => 20305423174,
-            'fechaEmision' => date('Y-m-d'),
-            'codigoMoneda' => 'PES',
-            'cotizacionMoneda' => 1,
-            'importeGravado' => $importeGravado,
-            'importeNoGravado' => $importeNoGravado,
-            'importeExento' => 0,
-            'importeOtrosTributos' => $importeOtrosTributos,
-            'importeSubtotal' => $importeSubtotal,
-            'importeIVA' => 0,
-            'importeTotal' => $importeTotal,
-            'codigoTipoAutorizacion' => null,
-            'observaciones' => null,
-            'fechaServicioDesde' => null,
-            'fechaServicioHasta' => null,
-            'fechaVencimientoPago' => null,
-            'arrayItems' => $arrayItems,
-            'arraySubtotalesIVA' => $arraySubtotalesIVA,
-            'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
-            'arrayOtrosTributos' => [],
-        ];
-
-        return json_decode(json_encode($comprobante));
     }
 }
