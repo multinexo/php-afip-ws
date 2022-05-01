@@ -15,7 +15,7 @@ use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Objects\InvoiceObject;
 
-abstract class Invoice implements InvoiceInterface, AfipWebServiceInterface
+abstract class InvoiceWebService implements InvoiceInterface, AfipWebServiceInterface
 {
     /** @var Authentication */
     public $service;

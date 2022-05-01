@@ -14,7 +14,7 @@ use Multinexo\AfipValues\ReceiptCodes;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Models\Invoice;
+use Multinexo\Models\InvoiceWebService;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\InvoiceResultObject;
 use stdClass;
@@ -22,7 +22,7 @@ use stdClass;
 /**
  * Class Wsmtxca (Invoice with items).
  */
-class Wsmtxca extends Invoice
+class Wsmtxca extends InvoiceWebService
 {
     use Validaciones;
     use WsmtxcaFuncionesInternas;

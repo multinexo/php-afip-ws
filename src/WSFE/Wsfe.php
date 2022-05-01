@@ -17,7 +17,7 @@ use Multinexo\Exceptions\AfipUnhandledException;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Models\Invoice;
+use Multinexo\Models\InvoiceWebService;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
@@ -29,7 +29,7 @@ use stdClass;
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Wsfe extends Invoice
+class Wsfe extends InvoiceWebService
 {
     use Validaciones;
 
