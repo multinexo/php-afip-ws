@@ -10,17 +10,19 @@ declare(strict_types=1);
 
 namespace Multinexo\WSMTXCA;
 
+use Multinexo\AfipValues\ReceiptCodes;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Models\Invoice;
+use Multinexo\Models\InvoiceWebService;
 use Multinexo\Models\Validaciones;
+use Multinexo\Objects\InvoiceResultObject;
 use stdClass;
 
 /**
  * Class Wsmtxca (Invoice with items).
  */
-class Wsmtxca extends Invoice
+class Wsmtxca extends InvoiceWebService
 {
     use Validaciones;
     use WsmtxcaFuncionesInternas;
@@ -34,12 +36,12 @@ class Wsmtxca extends Invoice
     }
 
     /**
-     * Permite crear un comprobante con items.
-     *
      * @throws WsException
      */
-    public function createInvoice(): stdClass
+    public function createInvoice(): InvoiceResultObject
     {
+        $this->datos->clean();
+        $this->clean();
         $this->validateDataInvoice();
 
         try {
@@ -54,10 +56,39 @@ class Wsmtxca extends Invoice
             }
             $ultimoComprobante = 0;
         }
-        $this->datos = $this->parseFacturaArray($this->datos);
-        $this->datos->numeroComprobante = $ultimoComprobante + 1;
+        $payload = $this->parseFacturaArray($this->datos);
+        $payload->numeroComprobante = $ultimoComprobante + 1;
 
-        return $this->wsAutorizarComprobante($this->datos);
+        return $this->parseResult(
+            $this->wsAutorizarComprobante($payload)
+        );
+    }
+
+    private function parseResult(stdClass $response): InvoiceResultObject
+    {
+        $result = new InvoiceResultObject();
+        $result->original_response = $response;
+        $result->pos_number = (int) $response->comprobanteResponse->numeroPuntoVenta;
+        $result->number = (int) $response->comprobanteResponse->numeroComprobante;
+        $result->emission_date = $response->comprobanteResponse->fechaEmision;
+        $result->cae = $response->comprobanteResponse->CAE;
+        $result->cae_expiration_date = $response->comprobanteResponse->fechaVencimientoCAE;
+        if (isset($response->arrayObservaciones->codigoDescripcion)) {
+            $result->observation = $response->arrayObservaciones->codigoDescripcion->descripcion . ' (' . $response->arrayObservaciones->codigoDescripcion->codigo . ')';
+        }
+
+        return $result;
+    }
+
+    private function clean(): void
+    {
+        // Por Ahora no se esta usando
+        // $this->datos->importeOtrosTributos = null;
+        // $this->datos->arrayOtrosTributos = null;
+
+        if (in_array($this->datos->codigoComprobante, [ReceiptCodes::FACTURA_B, ReceiptCodes::NOTA_CREDITO_B], true)) {
+            unset($this->datos->importeIVA);
+        }
     }
 
     /**
@@ -66,11 +97,11 @@ class Wsmtxca extends Invoice
      * @throws WsException
      * @throws \Multinexo\Exceptions\ValidationException
      */
-    public function getCAEA(): stdClass
+    public function getCAEA(stdClass $data): stdClass
     {
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos($data, $this->getRules('fe'));
 
-        return $this->wsConsultarCAEA($this->datos);
+        return $this->wsConsultarCAEA($data);
     }
 
     /**
@@ -78,9 +109,9 @@ class Wsmtxca extends Invoice
      *
      * @throws WsException
      */
-    public function requestCAEA(): stdClass
+    public function requestCAEA(stdClass $datos): stdClass
     {
-        return $this->wsSolicitarCAEA($this->datos);
+        return $this->wsSolicitarCAEA($datos);
     }
 
     /**
@@ -92,7 +123,7 @@ class Wsmtxca extends Invoice
     public function consultarCAEAEntreFechas(): ?stdClass
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
-        $result = $this->wsConsultarCAEAEntreFechas($this->datos);
+        $result = $this->wsConsultarCAEAEntreFechas();
 
         return $result->CAEAResponse ?? null;
     }
@@ -107,7 +138,7 @@ class Wsmtxca extends Invoice
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->wsConsultarComprobante($this->datos);
+        return $this->wsConsultarComprobante();
     }
 
     public function getAvailablePosNumbers(): array

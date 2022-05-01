@@ -10,15 +10,16 @@ declare(strict_types=1);
 
 namespace Multinexo\Models;
 
+use Multinexo\Objects\InvoiceResultObject;
 use stdClass;
 
 interface InvoiceInterface
 {
-    public function createInvoice(): stdClass;
+    public function createInvoice(): InvoiceResultObject;
 
-    public function getCAEA(): stdClass;
+    public function getCAEA(stdClass $data): stdClass;
 
-    public function requestCAEA(): stdClass;
+    public function requestCAEA(stdClass $datos): stdClass;
 
     public function getInvoice(): stdClass;
 }

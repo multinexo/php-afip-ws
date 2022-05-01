@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Multinexo\Objects;
 
-class ItemUnidadMtxEnum
+class CondicionIvaEnum
 {
-    public const UNO = 1;
+    protected const DEFAULT = 5;
 }

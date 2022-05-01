@@ -14,4 +14,3 @@ parameters:
         - '#Access to an undefined property .*\\Wsaa::\$#'
         - '#Call to an undefined method .*\\Wsaa::#'
         - '#Parameter \#1 ...\$rule of static method Respect\\Validation\\Validator\:\:allOf\(\) expects#'
-        - '#Cannot call method getMessage\(\) on stdClass.#'

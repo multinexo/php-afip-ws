@@ -10,23 +10,26 @@ declare(strict_types=1);
 
 namespace Multinexo\WSFE;
 
+use Multinexo\AfipValues\IdCodes;
 use Multinexo\Auth\Authentication;
 use Multinexo\Exceptions\AfipUnavailableServiceException;
 use Multinexo\Exceptions\AfipUnhandledException;
 use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
-use Multinexo\Models\Invoice;
+use Multinexo\Models\InvoiceWebService;
 use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
+use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
+use Multinexo\Objects\InvoiceResultObject;
 use SoapClient;
 use stdClass;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Wsfe extends Invoice
+class Wsfe extends InvoiceWebService
 {
     use Validaciones;
 
@@ -38,9 +41,10 @@ class Wsfe extends Invoice
         parent::__construct($afipConfig);
     }
 
-    // Permite crear un comprobante sin items.
-    public function createInvoice(): stdClass
+    public function createInvoice(): InvoiceResultObject
     {
+        $this->datos->clean();
+        $this->clean();
         $this->validateDataInvoice();
 
         $ultimoComprobante = $this->FECompUltimoAutorizado(
@@ -52,26 +56,53 @@ class Wsfe extends Invoice
         $this->datos->FeDetReq->FECAEDetRequest->CbteDesde = $ultimoComprobante + 1;
         $this->datos->FeDetReq->FECAEDetRequest->CbteHasta = $ultimoComprobante + 1;
 
-        return $this->FECAESolicitar($this->datos);
+        return $this->parseResult(
+            $this->FECAESolicitar()
+        );
+    }
+
+    private function parseResult(stdClass $response): InvoiceResultObject
+    {
+        $result = new InvoiceResultObject();
+        $date = $response->CbteFch;
+        $result->number = (int) $response->CbteDesde;
+        $result->emission_date = $date[0] . $date[1] . $date[2] . $date[3] . '-' . $date[4] . $date[5] . '-' . $date[6] . $date[7];
+
+        $result->cae = $response->CAE;
+        $result->cae_expiration_date = $response->CAEFchVto;
+        if (isset($response->Observaciones)) {
+            $result->observation = $response->Observaciones->Obs->Msg . ' (' . $response->Observaciones->Obs->Code . ')';
+        }
+
+        return $result;
+    }
+
+    private function clean(): void
+    {
+        if ($this->datos->codigoDocumento == IdCodes::NO_ID && $this->datos->importeIVA <= 0) {
+            // Entity is a final costumer AND, because importeIVA==0, its a C invoice.
+            // Only document C (not B) requires net=total (kiosko kiosko client case).
+            $this->datos->importeGravado = $this->datos->importeSubtotal = $this->datos->importeTotal;
+        }
     }
 
     /*
      * Permite consultar  la  información  correspondiente  a  un  CAEA  previamente  otorgado
      * para un periodo/orden.
      */
-    public function getCAEA(): stdClass
+    public function getCAEA(stdClass $data): stdClass
     {
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos($data, $this->getRules('fe'));
 
-        return $this->FECAEAConsultar($this->datos);
+        return $this->FECAEAConsultar($data);
     }
 
     // Permite solicitar Código de Autorización Electrónico Anticipado (CAEA).
-    public function requestCAEA(): stdClass
+    public function requestCAEA(stdClass $datos): stdClass
     {
-        $this->validarDatos($this->datos, $this->getRules('fe'));
+        $this->validarDatos($datos, $this->getRules('fe'));
 
-        return $this->FECAEASolicitar($this->datos);
+        return $this->FECAEASolicitar($datos);
     }
 
     // Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
@@ -79,15 +110,17 @@ class Wsfe extends Invoice
     {
         $this->validarDatos($this->datos, $this->getRules('fe'));
 
-        return $this->FECompConsultar($this->datos);
+        return $this->FECompConsultar();
     }
 
     /*
      * Método  de autorización de comprobantes  electrónicos por  CAE
      * Solicitud de Código de Autorización Electrónico (CAE).
      */
-    public function FECAESolicitar(stdClass $data): stdClass
+    private function FECAESolicitar(): stdClass
     {
+        /** @var stdClass $data */
+        $data = $this->datos;
         $resultado = $this->service->client->FECAESolicitar([
             'Auth' => $this->service->authRequest,
             'FeCAEReq' => $data,
@@ -172,8 +205,10 @@ class Wsfe extends Invoice
      * Consulta Comprobante emitido y su código:
      * Permite consultar mediante tipo, numero de comprobante y punto de venta los datos  de un comprobante ya emitido.
      */
-    public function FECompConsultar(stdClass $data): stdClass
+    public function FECompConsultar(): stdClass
     {
+        /** @var stdClass $data */
+        $data = $this->datos;
         $resultado = $this->service->client->FECompConsultar([
             'Auth' => $this->service->authRequest,
             'FeCompConsReq' => [
@@ -242,7 +277,7 @@ class Wsfe extends Invoice
                     'DocNro' => $factura->numeroDocumento,
                     'CbteDesde' => $factura->numeroComprobante, // todo: depende de la cantidad de fact enviadas
                     'CbteHasta' => $factura->numeroComprobante,
-                    'CbteFch' => $factura->fechaEmision,
+                    'CbteFch' => str_replace('-', '', $factura->fechaEmision),
                     'ImpTotal' => $factura->importeTotal,
                     'ImpTotConc' => $factura->importeNoGravado,
                     'ImpNeto' => $factura->importeGravado,
@@ -263,44 +298,46 @@ class Wsfe extends Invoice
 
     /**
      * @param InvoiceObject $invoice
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function getDataDocument($invoice, stdClass &$document): void
     {
-        if (is_array($invoice->comprobantesAsociados)) {
-            $arrayComprobantesAsociados = [];
-            foreach ($invoice->comprobantesAsociados as $comprobantesAsociado) {
-                $arrayComprobantesAsociados[] = [
-                    'Tipo' => $comprobantesAsociado->codigoComprobante,
-                    'PtoVta' => $comprobantesAsociado->puntoVenta,
-                    'Nro' => $comprobantesAsociado->numeroComprobante,
-                ];
-            }
+        $arrayComprobantesAsociados = [];
+        foreach ($invoice->comprobantesAsociados as $comprobantesAsociado) {
+            /** @var AssociatedDocumentObject $comprobantesAsociado */
+            $arrayComprobantesAsociados[] = [
+                'Tipo' => $comprobantesAsociado->tipo,
+                'PtoVta' => $comprobantesAsociado->punto_de_venta,
+                'Nro' => $comprobantesAsociado->numero_comprobante,
+            ];
+        }
+        if (count($arrayComprobantesAsociados) > 0) {
             $document->FeDetReq->FECAEDetRequest->{'CbtesAsoc'} = $arrayComprobantesAsociados;
         }
 
-        if (isset($invoice->arrayOtrosTributos)) {
-            $arrayOtrosTributos = [];
-            foreach ($invoice->arrayOtrosTributos->otroTributo as $tributo) {
-                $arrayOtrosTributos[] = [
-                    'Id' => $tributo->codigoTributo,
-                    'Desc' => $tributo->descripcion,
-                    'BaseImp' => $tributo->baseImponible,
-                    'Alic' => $tributo->alicuota,
-                    'Importe' => $tributo->importe,
-                ];
-            }
+        $arrayOtrosTributos = [];
+        foreach ($invoice->arrayOtrosTributos as $tributo) {
+            $arrayOtrosTributos[] = [
+                'Id' => $tributo->codigoTributo,
+                'Desc' => $tributo->descripcion,
+                'BaseImp' => $tributo->baseImponible,
+                'Alic' => $tributo->alicuota,
+                'Importe' => $tributo->importe,
+            ];
+        }
+        if (count($arrayOtrosTributos) > 0) {
             $document->FeDetReq->FECAEDetRequest->{'Tributos'} = $arrayOtrosTributos;
         }
 
-        if (isset($invoice->arraySubtotalesIVA)) {
-            $arraySubtotalesIVA = [];
-            foreach ($invoice->arraySubtotalesIVA as $iva) {
-                $arraySubtotalesIVA[] = [
-                    'Id' => $iva->codigoIva,
-                    'BaseImp' => $iva->baseImponible,
-                    'Importe' => $iva->importe,
-                ];
-            }
+        $arraySubtotalesIVA = [];
+        foreach ($invoice->subtotalesIVA as $iva) {
+            $arraySubtotalesIVA[] = [
+                'Id' => $iva->codigoIVA,
+                'BaseImp' => $iva->baseImponible,
+                'Importe' => $iva->importe,
+            ];
+        }
+        if (count($arraySubtotalesIVA) > 0) {
             $document->FeDetReq->FECAEDetRequest->{'Iva'} = $arraySubtotalesIVA;
         }
 

@@ -79,7 +79,7 @@ final class AfipInvoiceTranslator
             'fechaServicioDesde' => null,
             'fechaServicioHasta' => null,
             'fechaVencimientoPago' => null,
-            'arrayComprobantesAsociados' => null,
+            'comprobantesAsociados' => null,
         ];
     }
 

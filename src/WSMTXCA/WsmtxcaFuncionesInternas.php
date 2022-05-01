@@ -25,8 +25,9 @@ trait WsmtxcaFuncionesInternas
      * Permite consultar los datos de un comprobante previamente autorizado, ya sea del tipo Código de Autorización CAE
      * ó CAEA.
      */
-    public function wsConsultarComprobante(stdClass $data): stdClass
+    public function wsConsultarComprobante(): stdClass
     {
+        $data = $this->datos;
         $resultado = $this->service->client->consultarComprobante(
             [
                 'authRequest' => $this->service->authRequest,
@@ -50,8 +51,10 @@ trait WsmtxcaFuncionesInternas
      * Permite consultar la información correspondiente a CAEA s que hayan tenido vigencia en algún momento dentro de un
      * rango de fechas determinado.
      */
-    public function wsConsultarCAEAEntreFechas(stdClass $data): stdClass
+    public function wsConsultarCAEAEntreFechas(): stdClass
     {
+        /** @var stdClass $data */
+        $data = $this->datos;
         $resultado = $this->service->client->consultarCAEAEntreFechas(
             [
                 'authRequest' => $this->service->authRequest,
@@ -128,12 +131,13 @@ trait WsmtxcaFuncionesInternas
      *                  * CAE: CAE asignado al  comprobante  autorizado.
      *                  * fechaVencimientoCAE: Fecha de  vencimiento del CAE  otorgado
      */
-    public function wsAutorizarComprobante(stdClass $cbte): stdClass
+
+    public function wsAutorizarComprobante(stdClass $payload): stdClass
     {
         $resultado = $this->service->client->autorizarComprobante(
             [
                 'authRequest' => $this->service->authRequest,
-                'comprobanteCAERequest' => $cbte,
+                'comprobanteCAERequest' => $payload,
             ]
         );
 
@@ -194,7 +198,13 @@ trait WsmtxcaFuncionesInternas
     }
 
     // TODO: Exception
-    public function checkSoapFault(stdClass $result): stdClass
+
+    /**
+     * @param \SoapFault|stdClass $result
+     *
+     * @return \SoapFault|stdClass
+     */
+    public function checkSoapFault($result)
     {
         if (is_soap_fault($result)) {
             var_dump(
@@ -215,18 +225,8 @@ trait WsmtxcaFuncionesInternas
      * Permite adaptar los datos enviados en el array de comprobante a los campos definidos por el ws de la AFIP
      * para la generacion de comprobantes con items.
      */
-    public function parseFacturaArray(stdClass $factura): InvoiceObject
+    public function parseFacturaArray(InvoiceObject $factura): stdClass
     {
-        $importeOtrosTributos = 0;
-        $importeGravado = 0;
-        if (property_exists($factura, 'importeOtrosTributos')) {
-            $importeOtrosTributos = $factura->importeOtrosTributos;
-        }
-
-        if (property_exists($factura, 'importeGravado')) {
-            $importeGravado = $factura->importeGravado;
-        }
-
         $comprobante = [
             'codigoTipoComprobante' => $factura->codigoComprobante,
             'numeroPuntoVenta' => $factura->puntoVenta,
@@ -235,11 +235,11 @@ trait WsmtxcaFuncionesInternas
             'codigoTipoAutorizacion' => $factura->codigoTipoAutorizacion,
             'codigoTipoDocumento' => $factura->codigoDocumento,
             'numeroDocumento' => $factura->numeroDocumento,
-            'importeGravado' => $importeGravado,
+            'importeGravado' => $factura->importeGravado,
             'importeNoGravado' => $factura->importeNoGravado,
             'importeExento' => $factura->importeExento,
             'importeSubtotal' => $factura->importeSubtotal,
-            'importeOtrosTributos' => $importeOtrosTributos,
+            'importeOtrosTributos' => $factura->importeOtrosTributos,
             'importeTotal' => $factura->importeTotal,
             'codigoMoneda' => $factura->codigoMoneda,
             'cotizacionMoneda' => $factura->cotizacionMoneda,
@@ -248,15 +248,19 @@ trait WsmtxcaFuncionesInternas
             'fechaServicioDesde' => $factura->fechaServicioDesde,
             'fechaServicioHasta' => $factura->fechaServicioHasta,
             'fechaVencimientoPago' => $factura->fechaVencimientoPago,
-            'arrayItems' => $factura->arrayItems,
+            'arrayItems' => $factura->items,
         ];
 
-        if (!property_exists($factura, 'importeOtrosTributos')) {
+        if ($factura->importeOtrosTributos == 0) {
             unset($comprobante['importeOtrosTributos']);
         }
-
-        if (!property_exists($factura, 'importeGravado')) {
+        if ($factura->importeGravado == 0) {
             unset($comprobante['importeGravado']);
+        }
+
+        // La Fecha de Servicio Desde no debe informarse dado que se indicó Concepto Productos
+        if (count($this->datos->items) > 0) {
+            unset($comprobante['fechaServicioDesde'], $comprobante['fechaServicioHasta'], $comprobante['fechaVencimientoPago']);
         }
 
         $comprobante = json_decode(json_encode($comprobante));
@@ -266,18 +270,19 @@ trait WsmtxcaFuncionesInternas
         return json_decode(json_encode($comprobante));
     }
 
-    private function setDocument(stdClass $factura, stdClass &$comprobante): void
+    /**
+     * @param InvoiceObject $factura
+     */
+    private function setDocument($factura, stdClass &$comprobante): void
     {
-        if (isset($factura->arraySubtotalesIVA)) {
-            $arraySubtotalesIVA = [];
-            foreach ($factura->arraySubtotalesIVA->subtotalIVA as $iva) {
-                $arraySubtotalesIVA[] = [
-                    'codigo' => $iva->codigoIva,
-                    'importe' => $iva->importe,
-                ];
-            }
-            $comprobante->{'arraySubtotalesIVA'} = $arraySubtotalesIVA;
+        $arraySubtotalesIVA = [];
+        foreach ($factura->subtotalesIVA as $iva) {
+            $arraySubtotalesIVA[] = [
+                'codigo' => $iva->codigoIVA,
+                'importe' => $iva->importe,
+            ];
         }
+        $comprobante->{'arraySubtotalesIVA'} = $arraySubtotalesIVA;
 
         if (isset($factura->arrayComprobantesAsociados)) {
             $arrayComprobantesAsociados = [];
@@ -291,17 +296,16 @@ trait WsmtxcaFuncionesInternas
             $comprobante->{'arrayComprobantesAsociados'} = $arrayComprobantesAsociados;
         }
 
-        if (isset($factura->arrayOtrosTributos)) {
-            $arrayOtrosTributos = [];
-            foreach ($factura->arrayOtrosTributos->otroTributo as $tributo) {
-                $arrayOtrosTributos[] = [
-                    'codigo' => $tributo->codigoComprobante,
-                    'descripcion' => $tributo->descripcion,
-                    'baseImponible' => $tributo->baseImponible,
-                    'importe' => $tributo->importe,
-                ];
-            }
-
+        $arrayOtrosTributos = [];
+        foreach ($factura->arrayOtrosTributos as $tributo) {
+            $arrayOtrosTributos[] = [
+                'codigo' => $tributo->codigoComprobante,
+                'descripcion' => $tributo->descripcion,
+                'baseImponible' => $tributo->baseImponible,
+                'importe' => $tributo->importe,
+            ];
+        }
+        if (count($arrayOtrosTributos) > 0) {
             $comprobante->{'arrayOtrosTributos'} = $arrayOtrosTributos;
         }
     }

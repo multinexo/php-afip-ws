@@ -12,8 +12,12 @@ namespace Tests\WsfeTests;
 
 use Multinexo\Exceptions\ValidationException;
 use Multinexo\Exceptions\WsException;
+use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
+use Multinexo\Objects\SubtotalesIvaObject;
 use Multinexo\WSFE\Wsfe;
+use stdClass;
+use Tests\InvoiceTestTrait;
 use Tests\TestAfipCase;
 
 /**
@@ -22,6 +26,8 @@ use Tests\TestAfipCase;
  */
 final class WsfeTest extends TestAfipCase
 {
+    use InvoiceTestTrait;
+
     /** @var Wsfe */
     private $factura;
 
@@ -39,15 +45,15 @@ final class WsfeTest extends TestAfipCase
             0,
             0,
             200.00,
-            0,
-            0,
-            null
+            0
         );
 
         $result = $this->factura->createInvoice();
-        $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
-        $this->assertNotEmpty($result->CAEFchVto);
+
+        $this->assertNotEmpty($result->cae);
+        $this->assertNotEmpty($result->cae_expiration_date);
+        $this->assertSame($result->emission_date, date('Y-m-d'));
+        $this->assertNotEmpty($result->observation);
     }
 
     public function testCreateInvoiceWithoutItemsMonotributo(): void
@@ -58,66 +64,50 @@ final class WsfeTest extends TestAfipCase
             200,
             0,
             0.00,
-            0,
-            0,
-            null
+            0
         );
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsWithReceiptsAssociated(): void
     {
         $arrayComprobantesAsociados = [
-            'comprobanteAsociado' => [
-                [
-                    'codigoComprobante' => 2,
-                    'puntoVenta' => 1221,
-                    'numeroComprobante' => 123131,
-                ],
-                [
-                    'codigoComprobante' => 3,
-                    'puntoVenta' => 1223,
-                    'numeroComprobante' => 4353,
-                ],
-            ],
+            AssociatedDocumentObject::create(2, 1221, 123131),
+            AssociatedDocumentObject::create(3, 1223, 4353),
         ];
         $this->factura->datos = self::getInvoiceData(
             2,
             200.00,
             0,
             0,
-            200.00,
-            0,
-            0,
-            $arrayComprobantesAsociados
+            200.00
         );
+        $this->factura->datos->comprobantesAsociados = $arrayComprobantesAsociados;
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsMonotributoWithTributes(): void
     {
         $arrayOtrosTributos = [
-            'otroTributo' => [
-                [
-                    'codigoTributo' => 2,
-                    'descripcion' => 'descripcion',
-                    'baseImponible' => 123131,
-                    'alicuota' => 1,
-                    'importe' => 5.00,
-                ],
-                [
-                    'codigoTributo' => 1,
-                    'descripcion' => 'descripcion',
-                    'baseImponible' => 123.45,
-                    'alicuota' => 1,
-                    'importe' => 5.00,
-                ],
+            (object) [
+                'codigoTributo' => 2,
+                'descripcion' => 'descripcion',
+                'baseImponible' => 123131,
+                'alicuota' => 1,
+                'importe' => 5.00,
+            ],
+            (object) [
+                'codigoTributo' => 1,
+                'descripcion' => 'descripcion',
+                'baseImponible' => 123.45,
+                'alicuota' => 1,
+                'importe' => 5.00,
             ],
         ];
 
@@ -128,70 +118,42 @@ final class WsfeTest extends TestAfipCase
             10,
             0,
             0,
-            10,
-            null,
-            $arrayOtrosTributos
+            10
         );
+        $this->factura->datos->arrayOtrosTributos = $arrayOtrosTributos;
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
     }
 
     public function testCreateInvoiceWithoutItemsWithIva(): int
     {
-        $arraySubtotalesIVA = [
-            'subtotalIVA' => [
-                [
-                    'codigoIva' => 5,
-                    'baseImponible' => 100,
-                    'importe' => 21,
-                ],
-                [
-                    'codigoIva' => 4,
-                    'baseImponible' => 50,
-                    'importe' => 5.25,
-                ],
-            ],
-        ];
-
         $this->factura->datos = self::getInvoiceData(
             1,
             176.25,
             150,
             0,
             0,
-            26.25,
-            0,
-            null,
-            null
+            26.25
         );
-        $this->factura->datos->arraySubtotalesIVA = json_decode(json_encode($arraySubtotalesIVA));
+        $this->factura->datos->subtotalesIVA = [
+            SubtotalesIvaObject::create(5, 21, 100),
+            SubtotalesIvaObject::create(4, 5.25, 50),
+        ];
 
         $result = $this->factura->createInvoice();
         $this->assertNotEmpty($result);
-        $this->assertNotEmpty($result->CAE);
+        $this->assertNotEmpty($result->cae);
 
-        return $result->CbteDesde;
+        return $result->number;
     }
 
+    /*
     public function testCreateInvoiceWithoutItemsWithOptionalData(): void
     {
         $this->expectException(WsException::class);
         self::expectExceptionMessageMatches('/El numero de proyecto ingresado \\d+ no es valido para el emisor \\d+/');
-
-        $arrayOpcionales = [
-            'Opcional' => [
-                [
-                    'codigoOpcional' => 2,
-                    'valor' => '1',
-                ],
-                [
-                    'codigoOpcional' => 91,
-                    'valor' => '89',
-                ],
-            ],
-        ];
 
         $this->factura->datos = self::getInvoiceData(
             1,
@@ -199,14 +161,21 @@ final class WsfeTest extends TestAfipCase
             0,
             0,
             200.00,
-            0,
-            0,
-            null,
-            null
+            0
         );
-        $this->factura->datos->arrayOpcionales = json_decode(json_encode($arrayOpcionales));
+        $this->factura->datos->opcionales = [
+            (object) [
+                'codigoOpcional' => 2,
+                'valor' => '1',
+            ],
+            (object) [
+                'codigoOpcional' => 91,
+                'valor' => '89',
+            ],
+        ];
         $this->factura->createInvoice();
     }
+    */
 
     public function testCreateInvoiceWithoutItemsWithErrorServer(): void
     {
@@ -287,7 +256,6 @@ final class WsfeTest extends TestAfipCase
 
         $this->factura->datos = new InvoiceObject();
         $this->factura->datos->codigoComprobante = 1;
-        $this->factura->datos->numeroComprobante = 'test';
         $this->factura->datos->puntoVenta = 1;
 
         $this->factura->getInvoice();
@@ -295,11 +263,11 @@ final class WsfeTest extends TestAfipCase
 
     public function testSolicitCAEA(): void
     {
-        $this->factura->datos = new InvoiceObject();
-        $this->factura->datos->periodo = '201604';
-        $this->factura->datos->orden = 1;
+        $datos = new stdClass();
+        $datos->periodo = '201604';
+        $datos->orden = 1;
 
-        $result = $this->factura->getCAEA();
+        $result = $this->factura->getCAEA($datos);
         $this->assertNotEmpty($result);
     }
 
@@ -311,52 +279,11 @@ final class WsfeTest extends TestAfipCase
             . ' Del 3/11/2016 hasta 3/31/2016'
         );
 
-        $this->factura->datos = new InvoiceObject();
-        $this->factura->datos->periodo = '201603';
-        $this->factura->datos->orden = 2;
+        $datos = new stdClass();
+        $datos->periodo = '201603';
+        $datos->orden = 2;
 
-        $result = $this->factura->requestCAEA();
+        $result = $this->factura->requestCAEA($datos);
         $this->assertNotEmpty($result);
-    }
-
-    private static function getInvoiceData(
-        $codigoComprobante,
-        $importeTotal,
-        $importeGravado,
-        $importeSubtotal,
-        $importeNoGravado,
-        $importeIVA,
-        $importTribute = 0,
-        $arrayComprobantesAsociados = null,
-        $arrayOtrosTributos = null
-    ) {
-        $comprobante = [
-            'cantidadRegistros' => 1,
-            'puntoVenta' => 3,
-            'codigoComprobante' => $codigoComprobante,
-            'numeroComprobante' => null,
-            'codigoConcepto' => 1,
-            'codigoDocumento' => 80,
-            'numeroDocumento' => 20327936221,
-            'fechaEmision' => date('Ymd'),
-            'codigoMoneda' => 'PES',
-            'cotizacionMoneda' => 1,
-            'importeGravado' => $importeGravado,
-            'importeNoGravado' => $importeNoGravado,
-            'importeExento' => 0,
-            'importeSubtotal' => $importeSubtotal,
-            'importeIVA' => $importeIVA,
-            'importeTotal' => $importeTotal,
-            'importeOtrosTributos' => $importTribute,
-            'fechaServicioDesde' => '20160316',
-            'fechaServicioHasta' => '20160316',
-            'fechaVencimientoPago' => '20160316',
-            'arrayComprobantesAsociados' => $arrayComprobantesAsociados,
-            'arrayOtrosTributos' => $arrayOtrosTributos,
-            'arraySubtotalesIVA' => null,
-            'arrayOpcionales' => null,
-        ];
-
-        return json_decode(json_encode($comprobante));
     }
 }

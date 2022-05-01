@@ -16,33 +16,54 @@ namespace Multinexo\Objects;
  * @property int $codigoConcepto
  * @property int $codigoDocumento
  * @property int $numeroDocumento
- * @property int $numeroComprobante // todo: depende de la cantidad de fact enviadas
- * @property string $fechaEmision Format Ymd
- * @property flaot $importeTotal
- * @property flaot $importeNoGravado
+ * @property string $fechaEmision Format Y-m-d
+ * @property float $importeTotal
+ * @property float $importeNoGravado
  * @property int $importeExento
  * @property float $importeIVA
+ * @property string|null $codigoTipoAutorizacion
+ * ONLY READ PROPERTIES
+ * @property \stdClass $FeDetReq
+ * @property \stdClass $otroTributo
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class InvoiceObject extends \stdClass
+class InvoiceObject extends DocumentObject
 {
     /** @var int */
     public $cantidadRegistros = 1;
+    /** @var int|null */
+    public $numeroComprobante;
     /** @var string */
     public $codigoMoneda = 'PES';
     /** @var int */
     public $cotizacionMoneda = 1;
-    /** @var int */
+    /** @var string */
     public $fechaServicioDesde;
-    /** @var int */
+    /** @var string */
     public $fechaServicioHasta;
-    /** @var int */
+    /** @var string */
     public $fechaVencimientoPago;
     /** @var float */
     public $importeGravado = .0;
     /** @var float */
     public $importeOtrosTributos = .0;
-    /** @var array|null */
-    public $comprobantesAsociados;
-    /** @var array|null */
-    public $arraySubtotalesIVA = [];
+    /** @var array */
+    public $arrayOtrosTributos = [];
+    /** @var float */
+    public $importeSubtotal = .0;
+    /** @var AssociatedDocumentObject[] */
+    public $comprobantesAsociados = [];
+    /** @var SubtotalesIvaObject[] */
+    public $subtotalesIVA = [];
+    /** @var \stdClass[] */
+    public $opcionales = [];
+    /** @var string */
+    public $observaciones = '';
+    /** @var array */
+    public $items = [];
+
+    public function clean(): void
+    {
+        $this->codigoTipoAutorizacion = null; // no debe informarse
+    }
 }

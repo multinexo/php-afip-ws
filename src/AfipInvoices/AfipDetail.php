@@ -13,6 +13,9 @@ namespace Multinexo\AfipInvoices;
 use Multinexo\AfipValues\IvaConditionCodes;
 use Multinexo\AfipValues\UnitSizeCodes;
 
+/**
+ * @deprecated
+ */
 class AfipDetail
 {
     /**
