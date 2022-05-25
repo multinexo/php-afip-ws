@@ -676,6 +676,7 @@ class Wsfe extends InvoiceWebService
             Log::debug('Fix testing env: ' . print_r($result->ResultGet, true));
             $fetched_pos_array = $result->ResultGet ?? [];
         }
+        Log::debug('getAvailablePosNumbers: ' . print_r($fetched_pos_array, true));
         foreach ($fetched_pos_array as $fetched_pos) {
             if (intval($fetched_pos->FchBaja) > 0) {
                 continue;
