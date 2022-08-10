@@ -677,8 +677,6 @@ class Wsfe extends InvoiceWebService
 
         $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
         if (!is_array($fetched_pos_array)) {
-            // testing dont work like production
-            Log::debug('Fix testing env: ' . print_r($result->ResultGet, true));
             $fetched_pos_array = $result->ResultGet ?? [];
         }
         foreach ($fetched_pos_array as $fetched_pos) {
