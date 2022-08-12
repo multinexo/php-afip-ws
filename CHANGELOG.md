@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.8] - 2022-08-12
+### Fixed
+- ValidacionDeToken: No validaron las fechas del token GenTime, ExpTime, NowUTC [#45](https://github.com/multinexo/php-afip-ws/issues/45)
+
 ## [2.0.5] - 2021-07-31
 ### Changed
 - CHANGELOG based on Keep aChangelog
