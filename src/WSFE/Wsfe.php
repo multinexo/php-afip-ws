@@ -18,7 +18,6 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\InvoiceWebService;
-use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
@@ -489,6 +488,12 @@ class Wsfe extends InvoiceWebService
      * FchDesde string(8) Fecha de vigencia desde
      * FchHasta string(8) Fecha de vigencia hasta
      */
+
+    /**
+     * @throws AfipUnavailableServiceException
+     * @throws AfipUnhandledException
+     * @throws WsException
+     */
     public function FEParamGetTiposCbte(): stdClass
     {
         $resultado = $this->service->client->FEParamGetTiposCbte([
@@ -497,28 +502,28 @@ class Wsfe extends InvoiceWebService
 
         $this->resultado->procesar($resultado);
 
-        $error_code = $resultado->FEParamGetTiposCbteResult->Errors->Code ?? null;
-        if ($error_code > 0) {
-            switch ($error_code) {
-                case 600:
-                    // ValidacionDeToken: No validaron las fechas del token GenTime, ExpTime, NowUTC:...
-                    throw new AfipUnavailableServiceException(
-                        $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? '',
-                        $error_code
-                    );
-                default:
-                    throw new WsException(
-                        $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? print_r($resultado, true),
-                        $error_code
-                    );
-            }
+        if (isset($resultado->FEParamGetTiposCbteResult->ResultGet)) {
+            return $resultado->FEParamGetTiposCbteResult->ResultGet;
         }
 
-        if (!isset($resultado->FEParamGetTiposCbteResult->ResultGet)) {
-            throw new AfipUnhandledException('ResultGet not defined: ' . print_r($resultado, true));
+        $err = $resultado->FEParamGetTiposCbteResult->Errors->Err
+            ?? $resultado->FEParamGetTiposCbteResult->Errors
+            ?? null;
+        switch ($err->Code ?? null) {
+            case 600:
+                // ValidacionDeToken: No validaron las fechas del token GenTime, ExpTime, NowUTC:...
+                throw new AfipUnavailableServiceException(
+                    $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? '',
+                    $err->Code
+                );
+            case null:
+                throw new AfipUnhandledException('ResultGet not defined: ' . print_r($resultado, true));
+            default:
+                throw new WsException(
+                    $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? print_r($resultado, true),
+                    $err->Code
+                );
         }
-
-        return $resultado->FEParamGetTiposCbteResult->ResultGet;
     }
 
     /*
@@ -672,8 +677,6 @@ class Wsfe extends InvoiceWebService
 
         $fetched_pos_array = $result->ResultGet->PtoVenta ?? [];
         if (!is_array($fetched_pos_array)) {
-            // testing dont work like production
-            Log::debug('Fix testing env: ' . print_r($result->ResultGet, true));
             $fetched_pos_array = $result->ResultGet ?? [];
         }
         foreach ($fetched_pos_array as $fetched_pos) {
