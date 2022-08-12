@@ -18,7 +18,6 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\InvoiceWebService;
-use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
@@ -489,6 +488,7 @@ class Wsfe extends InvoiceWebService
      * FchDesde string(8) Fecha de vigencia desde
      * FchHasta string(8) Fecha de vigencia hasta
      */
+
     /**
      * @throws AfipUnavailableServiceException
      * @throws AfipUnhandledException
