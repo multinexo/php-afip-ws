@@ -12,7 +12,6 @@ namespace Multinexo\WSAA;
 
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\GeneralHelper;
-use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use SimpleXMLElement;
 use SoapClient;
@@ -44,13 +43,9 @@ class Wsaa
         $expirationTime = self::getXmlAttribute($path, ['header', 'expirationTime']);
 
         if (strtotime((string) $expirationTime) <= strtotime(gmdate('Y-m-d h:m:i'))) {
-            Log::debug(((string) $expirationTime).' <= '.strtotime(gmdate('Y-m-d h:m:i')));
             self::authenticate($service);
 
             return true;
-        }
-        if (!(strtotime((string) $expirationTime) > strtotime('2022-08-01 00:00:00'))) {
-            Log::debug('Problem! '.((string) $expirationTime).' <= '.strtotime(gmdate('Y-m-d h:m:i')));
         }
 
         return false;
