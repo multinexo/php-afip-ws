@@ -513,7 +513,7 @@ class Wsfe extends InvoiceWebService
             case 600:
                 // ValidacionDeToken: No validaron las fechas del token GenTime, ExpTime, NowUTC:...
                 throw new AfipUnavailableServiceException(
-                    $resultado->FEParamGetTiposCbteResult->Errors->Msg ?? '',
+                    print_r($resultado->FEParamGetTiposCbteResult, true),
                     $err->Code
                 );
             case null:
