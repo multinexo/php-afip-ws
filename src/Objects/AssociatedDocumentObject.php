@@ -10,6 +10,9 @@ declare(strict_types=1);
 
 namespace Multinexo\Objects;
 
+/**
+ * @see https://github.com/AfipSDK/afip.php/issues/82#issuecomment-819823603
+ */
 class AssociatedDocumentObject
 {
     /** @var int */

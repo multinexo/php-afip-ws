@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 namespace Multinexo\Objects;
 
-class DocumentObject
+abstract class FiscalDocumentDto
 {
 }

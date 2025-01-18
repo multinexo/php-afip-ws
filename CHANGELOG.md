@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.10] - 2025-01-18
+### Added
+- Some enums changed based on AFIP/ARCA.
+
 ## [2.0.9] - 2022-08-27
 ### Fixed
 - empty exception on Wsfe.php:515 [#48](https://github.com/multinexo/php-afip-ws/issues/48)
