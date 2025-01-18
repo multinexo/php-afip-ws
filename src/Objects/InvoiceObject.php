@@ -11,24 +11,34 @@ declare(strict_types=1);
 namespace Multinexo\Objects;
 
 /**
- * @property int $puntoVenta
- * @property int $codigoComprobante
- * @property int $codigoConcepto
- * @property int $codigoDocumento
- * @property int $numeroDocumento
- * @property string $fechaEmision Format Y-m-d
- * @property float $importeTotal
- * @property float $importeNoGravado
- * @property int $importeExento
- * @property float $importeIVA
- * @property string|null $codigoTipoAutorizacion
- * ONLY READ PROPERTIES
+ * ONLY READ PROPERTIES.
+ *
  * @property \stdClass $FeDetReq
  * @property \stdClass $otroTributo
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class InvoiceObject extends DocumentObject
+class InvoiceObject extends FiscalDocumentDto
 {
+    /** @var ?int */
+    public $puntoVenta;
+    /** @var ?int */
+    public $codigoComprobante;
+    /** @var ?int */
+    public $codigoDocumento;
+    /** @var ?int */
+    public $numeroDocumento;
+    /** @var ?string */
+    public $fechaEmision; //  Format Y-m-d
+    /** @var ?float */
+    public $importeTotal;
+    /** @var ?float */
+    public $importeNoGravado;
+    /** @var ?float */
+    public $importeExento;
+    /** @var ?float */
+    public $importeIVA;
+    /** @var ?string */
+    public $codigoTipoAutorizacion;
     /** @var int */
     public $cantidadRegistros = 1;
     /** @var int|null */
