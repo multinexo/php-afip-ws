@@ -18,6 +18,7 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\InvoiceWebService;
+use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
@@ -70,6 +71,9 @@ class Wsfe extends InvoiceWebService
         $result->cae = $response->CAE;
         $result->cae_expiration_date = $response->CAEFchVto;
         if (isset($response->Observaciones)) {
+            Log::debug('OBSERVATIONS: '. print_r($response->Observaciones->Obs, true) );
+        }
+        if (!empty($response->Observaciones->Obs->Msg ?? '')) {
             $result->observation = $response->Observaciones->Obs->Msg . ' (' . $response->Observaciones->Obs->Code . ')';
         }
 
