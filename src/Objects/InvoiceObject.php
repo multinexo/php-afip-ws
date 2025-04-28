@@ -24,6 +24,8 @@ class InvoiceObject extends FiscalDocumentDto
     /** @var ?int */
     public $codigoComprobante;
     /** @var ?int */
+    public $codigoConcepto;
+    /** @var ?int */
     public $codigoDocumento;
     /** @var ?int */
     public $numeroDocumento;
