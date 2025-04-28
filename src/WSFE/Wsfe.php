@@ -73,8 +73,14 @@ class Wsfe extends InvoiceWebService
         if (isset($response->Observaciones)) {
             Log::debug('OBSERVATIONS: '. print_r($response->Observaciones->Obs, true) );
         }
-        if (!empty($response->Observaciones->Obs->Msg ?? '')) {
-            $result->observation = $response->Observaciones->Obs->Msg . ' (' . $response->Observaciones->Obs->Code . ')';
+        if (!empty($response->Observaciones->Obs)) {
+            $messages = is_array($response->Observaciones->Obs)
+                ? $response->Observaciones->Obs
+            :  [$response->Observaciones->Obs];
+            $result->observation =array_map(
+                function ($obs) { return  $obs->Msg . ' (' . $obs->Code . ')'; },
+                $messages
+            );
         }
 
         return $result;
