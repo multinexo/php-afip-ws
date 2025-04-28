@@ -49,6 +49,8 @@ class InvoiceObject extends FiscalDocumentDto
     public $codigoMoneda = 'PES';
     /** @var int */
     public $cotizacionMoneda = 1;
+    /** @var ?int */
+    public $condicionIVAReceptorId = null;
     /** @var string */
     public $fechaServicioDesde;
     /** @var string */

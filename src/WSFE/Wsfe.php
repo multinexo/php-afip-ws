@@ -289,6 +289,7 @@ class Wsfe extends InvoiceWebService
                     'ImpIVA' => $factura->importeIVA,
                     'MonId' => $factura->codigoMoneda,
                     'MonCotiz' => $factura->cotizacionMoneda,
+                    'CondicionIVAReceptorId' => $factura->condicionIVAReceptorId,
                 ],
             ],
         ];
