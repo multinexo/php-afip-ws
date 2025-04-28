@@ -50,7 +50,7 @@ class InvoiceObject extends FiscalDocumentDto
     /** @var int */
     public $cotizacionMoneda = 1;
     /** @var ?int */
-    public $condicionIVAReceptorId = null;
+    public $condicionIVAReceptorId;
     /** @var string */
     public $fechaServicioDesde;
     /** @var string */
