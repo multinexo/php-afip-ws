@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.0.11] - 2025-04-28
+
 ### Changed
 - Some enums removed.
+
+### Added
+- condicionIVAReceptorId and codigoConcepto on InvoiceObject.
+- Support for multiple observations on Invoice result.
 
 ## [2.0.10] - 2025-01-18
 ### Added
