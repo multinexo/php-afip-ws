@@ -70,6 +70,7 @@ class Wsfe extends InvoiceWebService
 
         $result->cae = $response->CAE;
         $result->cae_expiration_date = $response->CAEFchVto;
+
         if (!empty($response->Observaciones->Obs)) {
             $messages = is_array($response->Observaciones->Obs)
                 ? $response->Observaciones->Obs
