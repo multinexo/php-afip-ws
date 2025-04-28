@@ -18,7 +18,6 @@ use Multinexo\Exceptions\ManejadorResultados;
 use Multinexo\Exceptions\WsException;
 use Multinexo\Models\AfipConfig;
 use Multinexo\Models\InvoiceWebService;
-use Multinexo\Models\Log;
 use Multinexo\Models\Validaciones;
 use Multinexo\Objects\AssociatedDocumentObject;
 use Multinexo\Objects\InvoiceObject;
@@ -75,13 +74,13 @@ class Wsfe extends InvoiceWebService
             $messages = is_array($response->Observaciones->Obs)
                 ? $response->Observaciones->Obs
             : [$response->Observaciones->Obs];
-            $result->observation = implode(
+            $result->observation = implode(PHP_EOL,
                 array_map(
                 function ($obs) {
                     return $obs->Msg . ' (' . $obs->Code . ').';
                 },
                 $messages
-            ), PHP_EOL);
+            ));
         }
 
         return $result;
