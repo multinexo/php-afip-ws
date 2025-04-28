@@ -24,6 +24,8 @@ class InvoiceObject extends FiscalDocumentDto
     /** @var ?int */
     public $codigoComprobante;
     /** @var ?int */
+    public $codigoConcepto;
+    /** @var ?int */
     public $codigoDocumento;
     /** @var ?int */
     public $numeroDocumento;
@@ -47,6 +49,8 @@ class InvoiceObject extends FiscalDocumentDto
     public $codigoMoneda = 'PES';
     /** @var int */
     public $cotizacionMoneda = 1;
+    /** @var ?int */
+    public $condicionIVAReceptorId;
     /** @var string */
     public $fechaServicioDesde;
     /** @var string */

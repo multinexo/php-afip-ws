@@ -69,8 +69,18 @@ class Wsfe extends InvoiceWebService
 
         $result->cae = $response->CAE;
         $result->cae_expiration_date = $response->CAEFchVto;
-        if (isset($response->Observaciones)) {
-            $result->observation = $response->Observaciones->Obs->Msg . ' (' . $response->Observaciones->Obs->Code . ')';
+
+        if (!empty($response->Observaciones->Obs)) {
+            $messages = is_array($response->Observaciones->Obs)
+                ? $response->Observaciones->Obs
+            : [$response->Observaciones->Obs];
+            $result->observation = implode(PHP_EOL,
+                array_map(
+                function ($obs) {
+                    return $obs->Msg . ' (' . $obs->Code . ').';
+                },
+                $messages
+            ));
         }
 
         return $result;
@@ -285,6 +295,7 @@ class Wsfe extends InvoiceWebService
                     'ImpIVA' => $factura->importeIVA,
                     'MonId' => $factura->codigoMoneda,
                     'MonCotiz' => $factura->cotizacionMoneda,
+                    'CondicionIVAReceptorId' => $factura->condicionIVAReceptorId,
                 ],
             ],
         ];
